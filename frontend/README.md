@@ -36,7 +36,7 @@ The native Vite config loader requires the Node version above. In a restricted W
 - React + TypeScript + Vite provide the app; Tailwind is wired through the Vite plugin. Leaflet/react-leaflet provide map interaction and OpenStreetMap tiles; Recharts renders cash flow. These are the dependencies required by the teammate assignment.
 - `src/types.ts` mirrors every model/request/response in `backend/app/models.py`. Dates travel as ISO strings. Arbitrary dictionary fields remain dictionaries.
 - `src/mocks/` contains the board/profile fixtures and a response for every route. The fixed economics reproduce the golden example. Mock extraction does **not** parse arbitrary input, and mock routes/cash flow are illustrative; the UI labels this.
-- The current backend also consists of stubs. Its profit results are fixed, its optimizer returns one chain, and extraction ignores the actual text/image. The UI displays `/api/health` statuses. It displays whatever number of chains the backend returns; up to three are supported. Full real-data behavior depends on the other teammates replacing their modules.
+- The backend's profit, geo, optimizer and cash-flow modules are live; Gemini (extraction/explanations) and Nessie (bank data) are still stubs until those teammates merge. The UI shows each module's status from `/api/health`. It displays up to three chains, including losing runs (flagged with their `losing_reason`).
 - Editing a city clears old coordinates, preventing a new city from retaining a previous city's map position. Missing coordinates produce a map notice rather than invented locations. Map tiles need internet access.
 - Changing saved costs invalidates old results. Bank import requires saving profile edits first. Reset does not erase the backend's in-memory offer registry because the frozen API exposes no delete/reset endpoint; planning only submits currently selected local IDs.
 - All economics and decision values come from API responses (or explicitly labeled fixtures). The frontend only formats numbers and calculates display differences/proportions.
@@ -44,8 +44,8 @@ The native Vite config loader requires the Node version above. In a restricted W
 
 ## Verification
 
-Backend: `cd backend && pytest -q` — 8 passed (2 dependency deprecation warnings).
+Backend: `cd backend && pytest -q` — 56 passed, including the golden profit test (±$0.01). `python scripts/demo_check.py --in-process` — 15/15.
 
-Frontend: TypeScript compilation and production bundling; browser verification against the actual API with mock mode disabled covered extraction/confirmation, golden result, ranking, counter message/copy, route map, cash flow, bank comparison/acceptance, and demo reset. Review at 1280×800 and the narrower projector/mobile layouts. The backend currently has only smoke tests; no separate golden profit test exists yet.
+Frontend: `npm run build` (TypeScript + Vite) passes. Verified in the browser against the live API with mock mode off: example → confirm → economics, chain planning + map, cash-flow chart and table, and the bank comparison.
 
 Judge explanation: “The frontend asks the API to read the offer, makes the driver confirm every field, and displays the code's economics. It compares runs on a map and shows when bank bills hit. Gemini writes words; backend code supplies the numbers.”

@@ -22,7 +22,6 @@ import {
   YAxis,
   Tooltip,
   ReferenceLine,
-  ReferenceDot,
   CartesianGrid,
 } from "recharts";
 
@@ -475,6 +474,18 @@ export default function App() {
                         </div>
                       ))}
                     </div>
+                    {result.verdict === "take" ? (
+                      <div className="counter">
+                        <div>
+                          <small>YOUR TARGET RATE</small>
+                          <h3>This offer already beats your target</h3>
+                          <small>
+                            Target: {money(result.counter_offer_rate)} ·
+                            Break-even: {money(result.break_even_rate)}
+                          </small>
+                        </div>
+                      </div>
+                    ) : (
                     <div className="counter">
                       <div>
                         <small>YOUR TARGET RATE</small>
@@ -494,7 +505,8 @@ export default function App() {
                         Write the message ↗
                       </button>
                     </div>
-                    {message && (
+                    )}
+                    {message && result.verdict !== "take" && (
                       <div className="message">
                         <p>{message}</p>
                         <button
@@ -988,17 +1000,52 @@ export default function App() {
                       </div>
                       <div className="cash-chart">
                         <ResponsiveContainer width="100%" height="100%">
-                          <LineChart data={cash.timeline}>
+                          <LineChart
+                            data={cash.timeline.map((e) => ({
+                              ...e,
+                              t: Date.parse(`${String(e.date)}T12:00:00`),
+                              bill:
+                                /payment|insurance|bill|phone|eld/i.test(
+                                  String(e.label),
+                                ) && Number(e.amount) < 0,
+                            }))}
+                          >
                             <CartesianGrid
                               strokeDasharray="3 3"
                               vertical={false}
                             />
-                            <XAxis dataKey="date" tick={{ fontSize: 11 }} />
+                            <XAxis
+                              dataKey="t"
+                              type="number"
+                              scale="time"
+                              domain={["dataMin", "dataMax"]}
+                              padding={{ left: 12, right: 24 }}
+                              ticks={cash.timeline
+                                .map((e) =>
+                                  Date.parse(`${String(e.date)}T12:00:00`),
+                                )
+                                .reduce<number[]>(
+                                  // one tick per date, at least 3 days apart
+                                  (kept, t) =>
+                                    kept.length &&
+                                    t - kept[kept.length - 1] < 3 * 864e5
+                                      ? kept
+                                      : [...kept, t],
+                                  [],
+                                )}
+                              tick={{ fontSize: 11 }}
+                              tickFormatter={(t) =>
+                                new Date(t).toLocaleDateString("en-US", {
+                                  month: "short",
+                                  day: "numeric",
+                                })
+                              }
+                            />
                             <YAxis tickFormatter={(v) => `$${v}`} width={65} />
                             <Tooltip
                               formatter={(v) => money(Number(v))}
                               labelFormatter={(_, payload) =>
-                                String(payload?.[0]?.payload?.label || "")
+                                `${String(payload?.[0]?.payload?.date || "")} · ${String(payload?.[0]?.payload?.label || "")}`
                               }
                             />
                             <ReferenceLine
@@ -1011,25 +1058,37 @@ export default function App() {
                               dataKey="balance"
                               stroke="#244e50"
                               strokeWidth={3}
-                              dot={{ r: 5 }}
+                              isAnimationActive={false}
+                              dot={(props) => {
+                                const { cx, cy, index, payload } = props as {
+                                  cx: number;
+                                  cy: number;
+                                  index: number;
+                                  payload: { bill: boolean };
+                                };
+                                return payload.bill ? (
+                                  <circle
+                                    key={index}
+                                    cx={cx}
+                                    cy={cy}
+                                    r={7}
+                                    fill="#c03937"
+                                    stroke="white"
+                                    strokeWidth={2}
+                                  />
+                                ) : (
+                                  <circle
+                                    key={index}
+                                    cx={cx}
+                                    cy={cy}
+                                    r={5}
+                                    fill="white"
+                                    stroke="#244e50"
+                                    strokeWidth={2}
+                                  />
+                                );
+                              }}
                             />
-                            {cash.timeline
-                              .filter(
-                                (e) =>
-                                  /payment|insurance|bill|phone|eld/i.test(
-                                    String(e.label),
-                                  ) && Number(e.amount) < 0,
-                              )
-                              .map((e, i) => (
-                                <ReferenceDot
-                                  key={i}
-                                  x={String(e.date)}
-                                  y={Number(e.balance)}
-                                  r={7}
-                                  fill="#c03937"
-                                  stroke="white"
-                                />
-                              ))}
                           </LineChart>
                         </ResponsiveContainer>
                       </div>

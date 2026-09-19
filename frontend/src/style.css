@@ -800,6 +800,9 @@ thead th {
 .map-card {
   padding: 20px;
   min-width: 0;
+  align-self: start;
+  position: sticky;
+  top: 20px;
 }
 .map {
   height: 390px;
@@ -816,10 +819,13 @@ thead th {
   place-items: center;
   background: #173f42;
   color: white;
-  width: 32px;
+  width: max-content;
+  min-width: 32px;
   height: 32px;
+  padding: 0 8px;
+  transform: translateX(calc(16px - 50%));
   border: 2px solid white;
-  border-radius: 50%;
+  border-radius: 16px;
   font-weight: 700;
   font-size: 11px;
   box-shadow: 0 2px 8px #0003;
@@ -932,6 +938,9 @@ footer span:last-child {
   }
   .plan-layout {
     grid-template-columns: 1fr;
+  }
+  .map-card {
+    position: static;
   }
   .chain-list {
     grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
