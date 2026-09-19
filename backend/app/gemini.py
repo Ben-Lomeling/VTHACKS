@@ -12,6 +12,8 @@ STATUS = "stub"
 
 
 def extract_load(text: str | None, image_bytes: bytes | None, mime_type: str | None) -> ExtractionResult:
+    if text and "greensboro" in text.lower():
+        return _demo_bad_load()
     load = Load(
         id="P" + uuid.uuid4().hex[:6],
         origin=Place(city="Roanoke, VA", lat=37.271, lng=-79.9414),
@@ -32,6 +34,29 @@ def extract_load(text: str | None, image_bytes: bytes | None, mime_type: str | N
     return ExtractionResult(
         load=load, confidence=confidence,
         warnings=["Loaded miles not stated in the offer; estimated"],
+    )
+
+
+def _demo_bad_load() -> ExtractionResult:
+    """Stub only: the frontend's "Try an example" text (the demo's bad load, same as demo_check BAD_LOAD).
+    The real Gemini extraction replaces this whole function."""
+    load = Load(
+        id="P" + uuid.uuid4().hex[:6],
+        origin=Place(city="Greensboro, NC"),
+        destination=Place(city="Jacksonville, FL"),
+        rate_usd=1200.0,
+        trailer_type="dry_van",
+        weight_lbs=40000,
+        broker="Coastal Brokerage",
+        source="pasted",
+    )
+    confidence = {f: "high" for f in Load.model_fields if f not in ("id", "source")}
+    for f in ("loaded_miles_est", "pickup_window_start", "pickup_window_end", "delivery_by"):
+        confidence[f] = "low"
+    return ExtractionResult(
+        load=load, confidence=confidence,
+        warnings=["Loaded miles not stated in the offer; estimated",
+                  "Pickup and delivery times are vague (\"Mon\", \"Tue\"); check them"],
     )
 
 

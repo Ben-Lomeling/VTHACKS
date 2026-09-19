@@ -27,7 +27,12 @@ export function RouteMap({
     const point = coordinate(p);
     if (point) {
       points.push(point);
-      pins.push({ point, label, text: p.city });
+      // Stops in the same city share one pin (e.g. "H · 1P · 3D" at home).
+      const same = pins.find(
+        (pin) => pin.point[0] === point[0] && pin.point[1] === point[1],
+      );
+      if (same) same.label += ` · ${label}`;
+      else pins.push({ point, label, text: p.city });
     }
     return point;
   };

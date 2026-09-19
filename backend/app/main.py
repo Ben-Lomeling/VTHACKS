@@ -109,9 +109,14 @@ async def extract(text: str | None = Form(None), image: UploadFile | None = File
     image_bytes = await image.read() if image is not None else None
     mime = image.content_type if image is not None else None
     try:
-        return gemini.extract_load(text, image_bytes, mime)
+        result = gemini.extract_load(text, image_bytes, mime)
     except Exception as e:  # Gemini errors/timeouts surface to the UI
         raise HTTPException(status_code=502, detail=f"Extraction failed: {e}")
+    # Gemini reads city names, not coordinates. Place them here so the confirm form and the map have them.
+    origin, w1 = geo.resolve(result.load.origin)
+    destination, w2 = geo.resolve(result.load.destination)
+    load = result.load.model_copy(update={"origin": origin, "destination": destination})
+    return result.model_copy(update={"load": load, "warnings": result.warnings + w1 + w2})
 
 
 @app.post("/api/evaluate", response_model=LoadEconomics)

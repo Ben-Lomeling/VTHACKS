@@ -1,0 +1,913 @@
+{
+  "account": {
+    "_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+    "type": "Checking",
+    "nickname": "Truck Operating",
+    "rewards": 0,
+    "balance": 3800,
+    "account_number": "3490303564395159",
+    "customer_id": "3e7bd0bf-e49e-4e1c-afd5-4647ccc6e707"
+  },
+  "purchases": [
+    {
+      "_id": "00a990ec-7f7b-45aa-8d65-2257cb1b81d4",
+      "type": "merchant",
+      "merchant_id": "d53b3210-879a-40b4-8725-e8993ea405b6",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-07-27",
+      "amount": 367,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "00cfcb62-86b6-4b2d-b492-32654cf35f7f",
+      "type": "merchant",
+      "merchant_id": "af30e496-3097-4c38-9e8a-8e25eeec60aa",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-08-12",
+      "amount": 367,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "04692bf3-1e1f-4541-89dc-150b0609b0b1",
+      "type": "merchant",
+      "merchant_id": "ade2ae1a-d926-451c-847d-a54a2162c49a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-08-04",
+      "amount": 367,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "050e09ec-ec0a-4fad-a288-86fb38f7ea86",
+      "type": "merchant",
+      "merchant_id": "ade2ae1a-d926-451c-847d-a54a2162c49a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-09-15",
+      "amount": 366,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "0869b17e-6c7c-4016-857b-76f7e05757d8",
+      "type": "merchant",
+      "merchant_id": "ade2ae1a-d926-451c-847d-a54a2162c49a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-09-09",
+      "amount": 367,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "0a3a258c-fe8e-446a-8e00-28823b163e9e",
+      "type": "merchant",
+      "merchant_id": "af30e496-3097-4c38-9e8a-8e25eeec60aa",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-06-25",
+      "amount": 367,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "0a572d46-a950-4e9b-9911-27613097989f",
+      "type": "merchant",
+      "merchant_id": "ade2ae1a-d926-451c-847d-a54a2162c49a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-07-11",
+      "amount": 367,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "0f989749-47dd-4766-96a0-00c2eefb216b",
+      "type": "merchant",
+      "merchant_id": "af30e496-3097-4c38-9e8a-8e25eeec60aa",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-07-13",
+      "amount": 366,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "13b5cd0b-7fa0-49e3-bfaf-58609e15890d",
+      "type": "merchant",
+      "merchant_id": "d53b3210-879a-40b4-8725-e8993ea405b6",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-07-15",
+      "amount": 367,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "13ddf140-c374-4bcd-8ed9-bd647ea1ed69",
+      "type": "merchant",
+      "merchant_id": "d53b3210-879a-40b4-8725-e8993ea405b6",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-09-01",
+      "amount": 367,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "15ad57eb-dc85-4ebe-84da-6962e6259e69",
+      "type": "merchant",
+      "merchant_id": "36f28c11-465f-450e-a16d-cecb713c83c0",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-07-13",
+      "amount": 3000,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DRIVE TIRES"
+    },
+    {
+      "_id": "17aea0b0-de44-4e5b-84cc-d7e3368c77c6",
+      "type": "merchant",
+      "merchant_id": "d53b3210-879a-40b4-8725-e8993ea405b6",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-09-13",
+      "amount": 367,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "1ef2f041-6d13-47b2-a14c-f5aef9949f38",
+      "type": "merchant",
+      "merchant_id": "d53b3210-879a-40b4-8725-e8993ea405b6",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-08-02",
+      "amount": 366,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "1f0a96dc-0e04-41b9-a4c5-732274a75b03",
+      "type": "merchant",
+      "merchant_id": "d53b3210-879a-40b4-8725-e8993ea405b6",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-07-03",
+      "amount": 367,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "227f0940-8b8b-44c3-a843-0d194b89f60e",
+      "type": "merchant",
+      "merchant_id": "ade2ae1a-d926-451c-847d-a54a2162c49a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-08-10",
+      "amount": 366,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "233c9b32-e4a0-40ca-8013-12ef458a6360",
+      "type": "merchant",
+      "merchant_id": "a4b84ad0-80a1-4c42-952a-3b5c4f21059a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-08-16",
+      "amount": 110,
+      "status": "completed",
+      "medium": "balance",
+      "description": "TOLLS"
+    },
+    {
+      "_id": "29317b7d-1c71-46c7-ba1e-2b3a1ddf50b0",
+      "type": "merchant",
+      "merchant_id": "af30e496-3097-4c38-9e8a-8e25eeec60aa",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-09-05",
+      "amount": 367,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "2fd20d6b-9ef0-44ec-86b9-523ea7c5b010",
+      "type": "merchant",
+      "merchant_id": "a4b84ad0-80a1-4c42-952a-3b5c4f21059a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-07-20",
+      "amount": 110,
+      "status": "completed",
+      "medium": "balance",
+      "description": "TOLLS"
+    },
+    {
+      "_id": "2ff5509c-3a51-4c22-a80f-351905d8e815",
+      "type": "merchant",
+      "merchant_id": "a4b84ad0-80a1-4c42-952a-3b5c4f21059a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-07-29",
+      "amount": 110,
+      "status": "completed",
+      "medium": "balance",
+      "description": "TOLLS"
+    },
+    {
+      "_id": "32ff3b36-dca4-4d8f-bd18-218ea116c73f",
+      "type": "merchant",
+      "merchant_id": "a4b84ad0-80a1-4c42-952a-3b5c4f21059a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-09-12",
+      "amount": 110,
+      "status": "completed",
+      "medium": "balance",
+      "description": "TOLLS"
+    },
+    {
+      "_id": "3c56f210-8fef-4cf8-8235-ca80851e32f3",
+      "type": "merchant",
+      "merchant_id": "a4b84ad0-80a1-4c42-952a-3b5c4f21059a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-06-23",
+      "amount": 110,
+      "status": "completed",
+      "medium": "balance",
+      "description": "TOLLS"
+    },
+    {
+      "_id": "3d551c1d-b430-43b6-9692-cd53000fc113",
+      "type": "merchant",
+      "merchant_id": "ade2ae1a-d926-451c-847d-a54a2162c49a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-06-23",
+      "amount": 366,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "3e3329b2-7644-4ae3-b3cf-60c74ca75ffa",
+      "type": "merchant",
+      "merchant_id": "af30e496-3097-4c38-9e8a-8e25eeec60aa",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-09-11",
+      "amount": 366,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "46c2f9d3-9891-4869-99d0-7ea1ca3bc241",
+      "type": "merchant",
+      "merchant_id": "d53b3210-879a-40b4-8725-e8993ea405b6",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-08-08",
+      "amount": 367,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "50ba381a-d999-4a75-b179-4fc6dc4bcc13",
+      "type": "merchant",
+      "merchant_id": "a4b84ad0-80a1-4c42-952a-3b5c4f21059a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-08-07",
+      "amount": 110,
+      "status": "completed",
+      "medium": "balance",
+      "description": "TOLLS"
+    },
+    {
+      "_id": "554f643b-53a5-4096-bb28-84150d77bcbc",
+      "type": "merchant",
+      "merchant_id": "af30e496-3097-4c38-9e8a-8e25eeec60aa",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-08-30",
+      "amount": 366,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "60f21c40-c6e1-4cc8-8eb3-de903aa3d442",
+      "type": "merchant",
+      "merchant_id": "af30e496-3097-4c38-9e8a-8e25eeec60aa",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-08-06",
+      "amount": 366,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "61f64ee0-8b69-429c-ab15-c48e097f474c",
+      "type": "merchant",
+      "merchant_id": "d53b3210-879a-40b4-8725-e8993ea405b6",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-08-26",
+      "amount": 366,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "634236ca-efbb-4c10-9948-ba4e29edcc44",
+      "type": "merchant",
+      "merchant_id": "af30e496-3097-4c38-9e8a-8e25eeec60aa",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-07-25",
+      "amount": 366,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "641600aa-10d1-45d9-8e1d-8b1ed37c9ba3",
+      "type": "merchant",
+      "merchant_id": "d53b3210-879a-40b4-8725-e8993ea405b6",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-08-20",
+      "amount": 367,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "6448c48f-e649-4e56-bb97-26bb9afc851b",
+      "type": "merchant",
+      "merchant_id": "a4b84ad0-80a1-4c42-952a-3b5c4f21059a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-09-03",
+      "amount": 110,
+      "status": "completed",
+      "medium": "balance",
+      "description": "TOLLS"
+    },
+    {
+      "_id": "67e49b34-bb59-4ac1-820f-8a4e6b2b6e99",
+      "type": "merchant",
+      "merchant_id": "a4b84ad0-80a1-4c42-952a-3b5c4f21059a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-08-25",
+      "amount": 110,
+      "status": "completed",
+      "medium": "balance",
+      "description": "TOLLS"
+    },
+    {
+      "_id": "6844e439-2791-4531-ad65-db34ff792cd3",
+      "type": "merchant",
+      "merchant_id": "a4b84ad0-80a1-4c42-952a-3b5c4f21059a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-07-11",
+      "amount": 110,
+      "status": "completed",
+      "medium": "balance",
+      "description": "TOLLS"
+    },
+    {
+      "_id": "68ca881f-0d28-486a-b907-4b1f4f41b555",
+      "type": "merchant",
+      "merchant_id": "a4b84ad0-80a1-4c42-952a-3b5c4f21059a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-07-02",
+      "amount": 110,
+      "status": "completed",
+      "medium": "balance",
+      "description": "TOLLS"
+    },
+    {
+      "_id": "6b61b117-9a77-4dba-ba65-93d67f95019a",
+      "type": "merchant",
+      "merchant_id": "d53b3210-879a-40b4-8725-e8993ea405b6",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-07-09",
+      "amount": 366,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "6ef3427e-1178-4696-9548-f95ed2211ec4",
+      "type": "merchant",
+      "merchant_id": "ade2ae1a-d926-451c-847d-a54a2162c49a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-07-05",
+      "amount": 366,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "72e4443a-cf75-45e2-9746-7d34b4dbff5b",
+      "type": "merchant",
+      "merchant_id": "af30e496-3097-4c38-9e8a-8e25eeec60aa",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-07-01",
+      "amount": 366,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "897cc462-40f4-4739-9b59-12a8d0e7c15e",
+      "type": "merchant",
+      "merchant_id": "af30e496-3097-4c38-9e8a-8e25eeec60aa",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-09-17",
+      "amount": 367,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "8db8e891-6381-4a12-a54c-19634e2a8eb0",
+      "type": "merchant",
+      "merchant_id": "ade2ae1a-d926-451c-847d-a54a2162c49a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-08-16",
+      "amount": 367,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "97d86b2c-68c4-41b6-a258-26dc56b5e7fc",
+      "type": "merchant",
+      "merchant_id": "ade2ae1a-d926-451c-847d-a54a2162c49a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-08-28",
+      "amount": 367,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "9a6bedea-175b-476a-ad1b-cb6a6bc3df17",
+      "type": "merchant",
+      "merchant_id": "d53b3210-879a-40b4-8725-e8993ea405b6",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-08-14",
+      "amount": 366,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "9b20a709-d8a5-4691-9072-dee59d153f75",
+      "type": "merchant",
+      "merchant_id": "d53b3210-879a-40b4-8725-e8993ea405b6",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-07-21",
+      "amount": 366,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "a77acdea-d0a7-4926-9ea3-ac3b8572c1e8",
+      "type": "merchant",
+      "merchant_id": "af30e496-3097-4c38-9e8a-8e25eeec60aa",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-07-19",
+      "amount": 367,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "a963341f-e632-45b1-8990-aecfbe3fd45f",
+      "type": "merchant",
+      "merchant_id": "d53b3210-879a-40b4-8725-e8993ea405b6",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-09-19",
+      "amount": 379,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 96.5 GAL @ 3.920"
+    },
+    {
+      "_id": "adf3d415-34df-48eb-9de3-c975424b7d62",
+      "type": "merchant",
+      "merchant_id": "cb290538-62b8-4718-81be-01d9e464fd4a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-08-11",
+      "amount": 3000,
+      "status": "completed",
+      "medium": "balance",
+      "description": "BRAKE JOB"
+    },
+    {
+      "_id": "b75031c7-a949-4c1d-b5cd-5f9f3f986e64",
+      "type": "merchant",
+      "merchant_id": "af30e496-3097-4c38-9e8a-8e25eeec60aa",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-08-18",
+      "amount": 366,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "bad4177a-ca40-4bd5-aa8b-c51e54564900",
+      "type": "merchant",
+      "merchant_id": "d53b3210-879a-40b4-8725-e8993ea405b6",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-09-07",
+      "amount": 366,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "becd1ee1-015e-4150-8ef8-378c28864dde",
+      "type": "merchant",
+      "merchant_id": "ade2ae1a-d926-451c-847d-a54a2162c49a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-09-03",
+      "amount": 366,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "c5ce3ab2-bff5-412d-a0ac-46181649c33e",
+      "type": "merchant",
+      "merchant_id": "af30e496-3097-4c38-9e8a-8e25eeec60aa",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-07-31",
+      "amount": 367,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "c81724c2-7883-4c7a-93ba-3a2cd8ab83ac",
+      "type": "merchant",
+      "merchant_id": "af30e496-3097-4c38-9e8a-8e25eeec60aa",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-07-07",
+      "amount": 367,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "ce7b7fcb-0f6d-47c1-a623-54344891eb83",
+      "type": "merchant",
+      "merchant_id": "d53b3210-879a-40b4-8725-e8993ea405b6",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-06-27",
+      "amount": 366,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "d35341bf-5d3e-4314-bc48-8fedeca12030",
+      "type": "merchant",
+      "merchant_id": "af30e496-3097-4c38-9e8a-8e25eeec60aa",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-08-24",
+      "amount": 367,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "e22e6e32-14d6-40c3-acf8-2531870d00ad",
+      "type": "merchant",
+      "merchant_id": "ade2ae1a-d926-451c-847d-a54a2162c49a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-08-22",
+      "amount": 366,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "e69bf5c1-584e-450e-b7e1-242fef3e7787",
+      "type": "merchant",
+      "merchant_id": "ade2ae1a-d926-451c-847d-a54a2162c49a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-06-29",
+      "amount": 367,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "e6a3e82e-c06a-487e-a6e2-fc74f4e57a07",
+      "type": "merchant",
+      "merchant_id": "ade2ae1a-d926-451c-847d-a54a2162c49a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-07-23",
+      "amount": 367,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "e8907826-36db-4c76-a795-c69f2f8f77ab",
+      "type": "merchant",
+      "merchant_id": "ade2ae1a-d926-451c-847d-a54a2162c49a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-07-29",
+      "amount": 366,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    },
+    {
+      "_id": "e8df9dd9-d355-48ca-b89d-81c3b570d241",
+      "type": "merchant",
+      "merchant_id": "cb290538-62b8-4718-81be-01d9e464fd4a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-09-09",
+      "amount": 1000,
+      "status": "completed",
+      "medium": "balance",
+      "description": "PM SERVICE"
+    },
+    {
+      "_id": "f2645d7f-7988-4422-b201-52176b0a2778",
+      "type": "merchant",
+      "merchant_id": "ade2ae1a-d926-451c-847d-a54a2162c49a",
+      "payer_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b",
+      "purchase_date": "2026-07-17",
+      "amount": 366,
+      "status": "completed",
+      "medium": "balance",
+      "description": "DIESEL 93.5 GAL @ 3.920"
+    }
+  ],
+  "bills": [
+    {
+      "_id": "37769623-3547-4370-bd0a-a5698d10823b",
+      "status": "recurring",
+      "payee": "Truck payment",
+      "nickname": "Truck payment",
+      "creation_date": "2026-09-19",
+      "payment_date": "2026-10-01",
+      "recurring_date": 1,
+      "upcoming_payment_date": "2026-10-01",
+      "payment_amount": 2150.0,
+      "account_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b"
+    },
+    {
+      "_id": "42262f8b-6cd3-4fb9-ae10-405370f83884",
+      "status": "recurring",
+      "payee": "ELD / phone",
+      "nickname": "ELD / phone",
+      "creation_date": "2026-09-19",
+      "payment_date": "2026-10-15",
+      "recurring_date": 15,
+      "upcoming_payment_date": "2026-10-15",
+      "payment_amount": 65.0,
+      "account_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b"
+    },
+    {
+      "_id": "d793da2e-990e-4e9a-88ef-0a61fa83c5c6",
+      "status": "recurring",
+      "payee": "Truck insurance",
+      "nickname": "Truck insurance",
+      "creation_date": "2026-09-19",
+      "payment_date": "2026-10-05",
+      "recurring_date": 5,
+      "upcoming_payment_date": "2026-10-05",
+      "payment_amount": 1100.0,
+      "account_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b"
+    }
+  ],
+  "deposits": [
+    {
+      "_id": "0e83974a-799e-4813-8b35-d12ce5cd0aaa",
+      "medium": "balance",
+      "transaction_date": "2026-08-30",
+      "status": "completed",
+      "amount": 1200,
+      "description": "LOAD PAY Piedmont Transport Group"
+    },
+    {
+      "_id": "11fc469a-cb87-4085-b866-3bcca22083ab",
+      "medium": "balance",
+      "transaction_date": "2026-09-11",
+      "status": "completed",
+      "amount": 1200,
+      "description": "LOAD PAY Atlantic Freight Brokers"
+    },
+    {
+      "_id": "18e4c6df-cc2a-473b-9186-6f937cb85023",
+      "medium": "balance",
+      "transaction_date": "2026-07-01",
+      "status": "completed",
+      "amount": 1200,
+      "description": "LOAD PAY Atlantic Freight Brokers"
+    },
+    {
+      "_id": "19c33b69-cefc-4295-91ca-60db645ba52e",
+      "medium": "balance",
+      "transaction_date": "2026-06-25",
+      "status": "completed",
+      "amount": 1200,
+      "description": "LOAD PAY Blue Ridge Logistics"
+    },
+    {
+      "_id": "478f7350-f745-4e3d-811c-e4bc45a7214c",
+      "medium": "balance",
+      "transaction_date": "2026-07-31",
+      "status": "completed",
+      "amount": 1200,
+      "description": "LOAD PAY Blue Ridge Logistics"
+    },
+    {
+      "_id": "6376b870-3b2b-4d29-a5ff-2f66c3b7747f",
+      "medium": "balance",
+      "transaction_date": "2026-08-06",
+      "status": "completed",
+      "amount": 1200,
+      "description": "LOAD PAY Atlantic Freight Brokers"
+    },
+    {
+      "_id": "746b8017-c351-4aa1-974b-fddbc3362b64",
+      "medium": "balance",
+      "transaction_date": "2026-07-13",
+      "status": "completed",
+      "amount": 1200,
+      "description": "LOAD PAY Blue Ridge Logistics"
+    },
+    {
+      "_id": "7994be3f-cbbd-4ea8-bae3-6dc2f5ff1bcf",
+      "medium": "balance",
+      "transaction_date": "2026-07-25",
+      "status": "completed",
+      "amount": 1200,
+      "description": "LOAD PAY Piedmont Transport Group"
+    },
+    {
+      "_id": "8f84248e-37d0-4986-acd8-3efb78e7d2b7",
+      "medium": "balance",
+      "transaction_date": "2026-08-18",
+      "status": "completed",
+      "amount": 1200,
+      "description": "LOAD PAY Blue Ridge Logistics"
+    },
+    {
+      "_id": "b3eceb7f-ee78-46f7-803e-146b740e8298",
+      "medium": "balance",
+      "transaction_date": "2026-07-07",
+      "status": "completed",
+      "amount": 1200,
+      "description": "LOAD PAY Piedmont Transport Group"
+    },
+    {
+      "_id": "baf9409b-dd88-4c00-ae60-1334ee0b6982",
+      "medium": "balance",
+      "transaction_date": "2026-08-24",
+      "status": "completed",
+      "amount": 1200,
+      "description": "LOAD PAY Atlantic Freight Brokers"
+    },
+    {
+      "_id": "c6e8c048-19f6-49ac-8938-3585f19de338",
+      "medium": "balance",
+      "transaction_date": "2026-09-17",
+      "status": "completed",
+      "amount": 1200,
+      "description": "LOAD PAY Piedmont Transport Group"
+    },
+    {
+      "_id": "dc3ceb30-f312-496d-8b4b-a0f583b052ef",
+      "medium": "balance",
+      "transaction_date": "2026-09-05",
+      "status": "completed",
+      "amount": 1200,
+      "description": "LOAD PAY Blue Ridge Logistics"
+    },
+    {
+      "_id": "dcfb3c03-6977-414c-8ee0-0324486fae52",
+      "medium": "balance",
+      "transaction_date": "2026-07-19",
+      "status": "completed",
+      "amount": 1200,
+      "description": "LOAD PAY Atlantic Freight Brokers"
+    },
+    {
+      "_id": "ed83a10a-067a-4b44-8d95-791183427185",
+      "medium": "balance",
+      "transaction_date": "2026-08-12",
+      "status": "completed",
+      "amount": 1200,
+      "description": "LOAD PAY Piedmont Transport Group"
+    }
+  ],
+  "merchants": [
+    {
+      "_id": "36f28c11-465f-450e-a16d-cecb713c83c0",
+      "name": "Blue Ridge Truck Tires",
+      "category": "tires",
+      "address": {
+        "street_number": "100",
+        "street_name": "Main St",
+        "city": "Salem",
+        "state": "VA",
+        "zip": "24011"
+      },
+      "geocode": {
+        "lat": 37.293,
+        "lng": -80.055
+      }
+    },
+    {
+      "_id": "a4b84ad0-80a1-4c42-952a-3b5c4f21059a",
+      "name": "E-ZPass Virginia",
+      "category": "tolls",
+      "address": {
+        "street_number": "100",
+        "street_name": "Main St",
+        "city": "Richmond",
+        "state": "VA",
+        "zip": "24011"
+      },
+      "geocode": {
+        "lat": 37.541,
+        "lng": -77.436
+      }
+    },
+    {
+      "_id": "ade2ae1a-d926-451c-847d-a54a2162c49a",
+      "name": "Pilot Travel Center Wytheville",
+      "category": "fuel",
+      "address": {
+        "street_number": "100",
+        "street_name": "Main St",
+        "city": "Wytheville",
+        "state": "VA",
+        "zip": "24011"
+      },
+      "geocode": {
+        "lat": 36.948,
+        "lng": -81.085
+      }
+    },
+    {
+      "_id": "af30e496-3097-4c38-9e8a-8e25eeec60aa",
+      "name": "Love's Travel Stop Raphine",
+      "category": "fuel",
+      "address": {
+        "street_number": "100",
+        "street_name": "Main St",
+        "city": "Raphine",
+        "state": "VA",
+        "zip": "24011"
+      },
+      "geocode": {
+        "lat": 37.936,
+        "lng": -79.232
+      }
+    },
+    {
+      "_id": "cb290538-62b8-4718-81be-01d9e464fd4a",
+      "name": "Valley Diesel Repair",
+      "category": "repair",
+      "address": {
+        "street_number": "100",
+        "street_name": "Main St",
+        "city": "Roanoke",
+        "state": "VA",
+        "zip": "24011"
+      },
+      "geocode": {
+        "lat": 37.271,
+        "lng": -79.941
+      }
+    },
+    {
+      "_id": "d53b3210-879a-40b4-8725-e8993ea405b6",
+      "name": "TA Truck Service Greensboro",
+      "category": "fuel",
+      "address": {
+        "street_number": "100",
+        "street_name": "Main St",
+        "city": "Greensboro",
+        "state": "NC",
+        "zip": "24011"
+      },
+      "geocode": {
+        "lat": 36.073,
+        "lng": -79.792
+      }
+    }
+  ],
+  "metadata": {
+    "source": "Nessie sandbox; seeded demo data",
+    "recorded_at": "2026-09-19T14:25:53.402834+00:00"
+  }
+}

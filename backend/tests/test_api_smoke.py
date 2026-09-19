@@ -28,6 +28,11 @@ def test_extract_text_and_image():
     assert r.status_code == 200
 
 
+def test_extract_places_cities_on_the_map():
+    load = client.post("/api/extract", data={"text": "Greensboro, NC -> Jacksonville, FL $1,200"}).json()["load"]
+    assert load["origin"]["lat"] is not None and load["destination"]["lng"] is not None
+
+
 def test_extract_requires_input():
     assert client.post("/api/extract", data={}).status_code == 400
 

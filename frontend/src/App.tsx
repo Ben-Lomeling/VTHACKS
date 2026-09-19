@@ -14,6 +14,7 @@ import type {
 import { Field, PlaceFields } from "./components/Fields";
 import { LoadForm } from "./components/LoadForm";
 import { RouteMap } from "./components/RouteMap";
+import { RunTimeline } from "./components/RunTimeline";
 import {
   ResponsiveContainer,
   LineChart,
@@ -22,7 +23,6 @@ import {
   YAxis,
   Tooltip,
   ReferenceLine,
-  ReferenceDot,
   CartesianGrid,
 } from "recharts";
 
@@ -32,8 +32,11 @@ const money = (n: number) =>
     currency: "USD",
     maximumFractionDigits: 2,
   });
+// The demo's "bad load": looks like $2.43/mi on paper, keeps about $0.55/mi.
 const example =
-  "Roanoke, VA → Charlotte, NC. $1,200 total. 500 loaded miles. Dry van, 38,000 lbs of paper products. Pickup Sep 22, 8am–12pm. Deliver Sep 23 by 8am. Blue Ridge Logistics. Net 30.";
+  "Greensboro, NC → Jacksonville, FL. $1,200 flat. Dry van, 40,000 lbs. Coastal Brokerage. Pickup Mon, deliver Tue. Net 30.";
+// Add ?dev to the URL to see which backend modules are live vs stub.
+const DEV = new URLSearchParams(window.location.search).has("dev");
 type Screen = "Setup" | "Check a load" | "Plan my run";
 const profileNumbers: [keyof TruckProfile, string, string, number, number?][] =
   [
@@ -289,9 +292,11 @@ export default function App() {
               <span className="badge">DEMO DATA</span>
               {USE_MOCKS
                 ? "Mock mode · fixed example responses; your input is not analyzed."
-                : `Backend modules: ${Object.entries(health!.modules)
-                    .map(([k, v]) => `${k}: ${v}`)
-                    .join(" · ")}`}
+                : DEV
+                  ? `Backend modules: ${Object.entries(health!.modules)
+                      .map(([k, v]) => `${k}: ${v}`)
+                      .join(" · ")}`
+                  : "Simulated load board."}
               <span>Nessie bank data is sandbox data.</span>
             </div>
           )}
@@ -419,8 +424,9 @@ export default function App() {
                       </div>
                     </div>
                     <p>
-                      {result.loaded_miles} loaded + {result.deadhead_miles}{" "}
-                      empty = {result.total_miles} total miles
+                      {result.loaded_miles.toFixed(0)} loaded +{" "}
+                      {result.deadhead_miles.toFixed(0)} empty ={" "}
+                      {result.total_miles.toFixed(0)} total miles
                     </p>
                     <h3>Where the money goes</h3>
                     <p className="gross-pay">
@@ -475,6 +481,18 @@ export default function App() {
                         </div>
                       ))}
                     </div>
+                    {result.verdict === "take" ? (
+                      <div className="counter">
+                        <div>
+                          <small>YOUR TARGET RATE</small>
+                          <h3>This offer already beats your target</h3>
+                          <small>
+                            Target: {money(result.counter_offer_rate)} ·
+                            Break-even: {money(result.break_even_rate)}
+                          </small>
+                        </div>
+                      </div>
+                    ) : (
                     <div className="counter">
                       <div>
                         <small>YOUR TARGET RATE</small>
@@ -494,7 +512,8 @@ export default function App() {
                         Write the message ↗
                       </button>
                     </div>
-                    {message && (
+                    )}
+                    {message && result.verdict !== "take" && (
                       <div className="message">
                         <p>{message}</p>
                         <button
@@ -528,6 +547,21 @@ export default function App() {
                         Explain this result
                       </button>
                     )}
+                    <div className="card-footer">
+                      <small>
+                        One load is one decision. See what a full run home pays.
+                      </small>
+                      <button
+                        className="primary"
+                        disabled={!!busy || !profile}
+                        onClick={() => {
+                          setScreen("Plan my run");
+                          void plan();
+                        }}
+                      >
+                        Find a better run →
+                      </button>
+                    </div>
                   </section>
                 )}
                 {offers.length > 0 && (
@@ -863,6 +897,13 @@ export default function App() {
                   {runExplanation}
                 </blockquote>
               )}
+              {result && chains[0] && (
+                <CompareCard
+                  offer={result}
+                  load={offers.find((l) => l.id === result.load_id)}
+                  best={chains[0]}
+                />
+              )}
               {!chains.length ? (
                 <div className="empty-state">
                   <span>↗</span>
@@ -947,6 +988,7 @@ export default function App() {
                         profile={profile}
                       />
                     )}
+                    {chain && <RunTimeline chain={chain} />}
                   </section>
                 </div>
               )}
@@ -988,17 +1030,52 @@ export default function App() {
                       </div>
                       <div className="cash-chart">
                         <ResponsiveContainer width="100%" height="100%">
-                          <LineChart data={cash.timeline}>
+                          <LineChart
+                            data={cash.timeline.map((e) => ({
+                              ...e,
+                              t: Date.parse(`${String(e.date)}T12:00:00`),
+                              bill:
+                                /payment|insurance|bill|phone|eld/i.test(
+                                  String(e.label),
+                                ) && Number(e.amount) < 0,
+                            }))}
+                          >
                             <CartesianGrid
                               strokeDasharray="3 3"
                               vertical={false}
                             />
-                            <XAxis dataKey="date" tick={{ fontSize: 11 }} />
+                            <XAxis
+                              dataKey="t"
+                              type="number"
+                              scale="time"
+                              domain={["dataMin", "dataMax"]}
+                              padding={{ left: 12, right: 24 }}
+                              ticks={cash.timeline
+                                .map((e) =>
+                                  Date.parse(`${String(e.date)}T12:00:00`),
+                                )
+                                .reduce<number[]>(
+                                  // one tick per date, at least 3 days apart
+                                  (kept, t) =>
+                                    kept.length &&
+                                    t - kept[kept.length - 1] < 3 * 864e5
+                                      ? kept
+                                      : [...kept, t],
+                                  [],
+                                )}
+                              tick={{ fontSize: 11 }}
+                              tickFormatter={(t) =>
+                                new Date(t).toLocaleDateString("en-US", {
+                                  month: "short",
+                                  day: "numeric",
+                                })
+                              }
+                            />
                             <YAxis tickFormatter={(v) => `$${v}`} width={65} />
                             <Tooltip
                               formatter={(v) => money(Number(v))}
                               labelFormatter={(_, payload) =>
-                                String(payload?.[0]?.payload?.label || "")
+                                `${String(payload?.[0]?.payload?.date || "")} · ${String(payload?.[0]?.payload?.label || "")}`
                               }
                             />
                             <ReferenceLine
@@ -1011,25 +1088,37 @@ export default function App() {
                               dataKey="balance"
                               stroke="#244e50"
                               strokeWidth={3}
-                              dot={{ r: 5 }}
+                              isAnimationActive={false}
+                              dot={(props) => {
+                                const { cx, cy, index, payload } = props as {
+                                  cx: number;
+                                  cy: number;
+                                  index: number;
+                                  payload: { bill: boolean };
+                                };
+                                return payload.bill ? (
+                                  <circle
+                                    key={index}
+                                    cx={cx}
+                                    cy={cy}
+                                    r={7}
+                                    fill="#c03937"
+                                    stroke="white"
+                                    strokeWidth={2}
+                                  />
+                                ) : (
+                                  <circle
+                                    key={index}
+                                    cx={cx}
+                                    cy={cy}
+                                    r={5}
+                                    fill="white"
+                                    stroke="#244e50"
+                                    strokeWidth={2}
+                                  />
+                                );
+                              }}
                             />
-                            {cash.timeline
-                              .filter(
-                                (e) =>
-                                  /payment|insurance|bill|phone|eld/i.test(
-                                    String(e.label),
-                                  ) && Number(e.amount) < 0,
-                              )
-                              .map((e, i) => (
-                                <ReferenceDot
-                                  key={i}
-                                  x={String(e.date)}
-                                  y={Number(e.balance)}
-                                  r={7}
-                                  fill="#c03937"
-                                  stroke="white"
-                                />
-                              ))}
                           </LineChart>
                         </ResponsiveContainer>
                       </div>
@@ -1068,5 +1157,66 @@ export default function App() {
         </div>
       </main>
     </div>
+  );
+}
+
+// This offer on its own vs. the best run the optimizer found. Every number is
+// from the API; the frontend only subtracts and divides for display.
+function CompareCard({
+  offer,
+  load,
+  best,
+}: {
+  offer: LoadEconomics;
+  load?: Load;
+  best: Chain;
+}) {
+  const gain = best.total_net_profit - offer.net_profit;
+  const bestCpm = best.total_miles ? best.total_net_profit / best.total_miles : 0;
+  const inBest = best.loads.includes(offer.load_id);
+  return (
+    <section className="card">
+      <div className="section-heading">
+        <div>
+          <p className="eyebrow">THIS OFFER VS. YOUR BEST RUN</p>
+          <h2>Same truck. Very different week.</h2>
+        </div>
+      </div>
+      <div className="compare">
+        <div>
+          <span className="eyebrow">THIS OFFER</span>
+          <strong>{money(offer.net_profit)}</strong>
+          <p>
+            {load ? `${load.origin.city} → ${load.destination.city}` : offer.load_id}
+          </p>
+          <p>
+            {money(offer.true_net_cpm)}/mi net · {offer.total_miles.toFixed(0)} mi ·{" "}
+            <span className={`badge ${offer.verdict}`}>{offer.verdict}</span>
+          </p>
+          <p>{load ? `Leaves you in ${load.destination.city}.` : "Leaves you wherever it delivers."}</p>
+        </div>
+        <span className="vs">vs</span>
+        <div className={gain > 0 ? "better" : ""}>
+          <span className="eyebrow">BEST RUN</span>
+          <strong>{money(best.total_net_profit)}</strong>
+          <p>{best.loads.join(" → ")}</p>
+          <p>
+            {money(bestCpm)}/mi net · {best.total_miles.toFixed(0)} mi ·{" "}
+            {money(best.net_per_day)}/day
+          </p>
+          <p>
+            {best.days.toFixed(1)} days · ends {best.home_deadhead_miles.toFixed(0)} mi
+            from home
+          </p>
+        </div>
+      </div>
+      <p className="compare-verdict">
+        {inBest
+          ? `Your offer is part of the best run: it earns ${money(best.total_net_profit)} once the right loads are around it.`
+          : gain > 0
+            ? `The best run keeps ${money(gain)} more than this offer and gets you home.`
+            : "This offer beats every run we found. Take it."}
+      </p>
+    </section>
   );
 }
