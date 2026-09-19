@@ -67,6 +67,8 @@ class TruckProfile(BaseModel):
     miles_per_month: float = 10000
     dispatch_pct: float = 0.10        # 0 if self-dispatched
     target_net_cpm: float = 0.75      # driver's minimum acceptable net $/mile
+    min_posted_cpm: float = 0         # his own rule on the POSTED rate ("I don't take under $3/mi"); 0 = no rule
+    pays_weekly: bool = False         # True = a dispatcher pays him weekly; False = brokers pay on their own terms
     cost_source: Literal["manual", "nessie"] = "manual"
 
 class Load(BaseModel):
@@ -105,6 +107,7 @@ class LoadEconomics(BaseModel):
     true_net_cpm: float        # net / total_miles  (what the driver actually keeps)
     break_even_rate: float
     counter_offer_rate: float  # rate needed to hit target_net_cpm
+    meets_posted_rule: bool | None = None   # against profile.min_posted_cpm; None when he has no rule
     verdict: Literal["take", "negotiate", "skip"]
 
 class Chain(BaseModel):
@@ -301,6 +304,17 @@ costs $36, lands $1,044 that evening, and keeps him at $731; it pays itself back
 **22nd**; `scripts/demo_check.py` prints the live values. Re-check this line whenever the board, the profile or
 the Nessie data changes.)
 
+### How he gets paid (from the real driver, Sat Sep 19)
+Two setups, one switch on Setup:
+- **Direct with brokers** (default, and the demo): each load pays on `delivery + payment_terms_days` (net 30–45). This is
+  the gap the Capital One advance closes.
+- **Through a dispatcher** (`profile.pays_weekly = true`): the dispatcher pays weekly, so cash flow uses **7 days** for
+  every load instead of its broker terms, and he pays the dispatcher a cut (`dispatch_pct`, 7% for our driver).
+
+`profile.min_posted_cpm` is his own rule of thumb on the **posted** rate ("I don't take anything under $3/mi").
+`profit.evaluate_load` reports `meets_posted_rule`; it never changes the verdict, which stays on `target_net_cpm`
+(what he KEEPS after every cost). Showing both is the demo's point: $3.00/mi posted can still be $0.55/mi kept.
+
 ## Module interfaces (frozen: everyone codes against these signatures)
 ```python
 # geo.py
@@ -340,7 +354,7 @@ so `main.py` and the frontend can wire everything on day one.
 | POST | `/api/chains` | `{seed_load_ids?: str[], include_board: bool}` → `Chain[]` (top 3) |
 | GET | `/api/board` | → `Load[]` (simulated) |
 | GET | `/api/costs/from-bank` | → `{current: TruckProfile, proposed: TruckProfile, evidence: dict}` |
-| POST | `/api/cashflow` | `{chain: Chain}` → `CashflowCheck` (includes advances already taken on this run's loads) |
+| POST | `/api/cashflow` | `{chain: Chain}` → `CashflowCheck` (includes advances already taken on this run's loads; `profile.pays_weekly` overrides broker terms with 7 days) |
 | POST | `/api/advance` | `{chain: Chain, load_id: str}` → `CashflowCheck` (creates a Capital One advance in Nessie: pending deposit on delivery day + repayment bill on the broker's pay date; 404 if the load isn't on the run) |
 | POST | `/api/demo/reset-bank` | → `{removed: int}` (deletes every advance deposit/bill on the demo account; the UI's "Reset demo" calls it) |
 | POST | `/api/explain` | `{economics, chain?, cashflow?}` → `{text: str}` |

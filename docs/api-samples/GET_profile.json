@@ -20,6 +20,8 @@
     "miles_per_month": 10000.0,
     "dispatch_pct": 0.1,
     "target_net_cpm": 0.75,
+    "min_posted_cpm": 3.0,
+    "pays_weekly": false,
     "cost_source": "manual"
   },
   "status": 200

@@ -1271,3 +1271,17 @@ footer span:last-child {
 .money-legend .swatch:not(:first-child) {
   margin-left: 12px;
 }
+.result-numbers em {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.rule-ok {
+  color: #1f8a4c;
+}
+.rule-no {
+  color: #c03937;
+}

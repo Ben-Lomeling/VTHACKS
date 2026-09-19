@@ -21,6 +21,8 @@
       "miles_per_month": 10000.0,
       "dispatch_pct": 0.1,
       "target_net_cpm": 0.75,
+      "min_posted_cpm": 3.0,
+      "pays_weekly": false,
       "cost_source": "manual"
     },
     "proposed": {
@@ -43,6 +45,8 @@
       "miles_per_month": 10000.0,
       "dispatch_pct": 0.1,
       "target_net_cpm": 0.75,
+      "min_posted_cpm": 3.0,
+      "pays_weekly": false,
       "cost_source": "nessie"
     },
     "evidence": {
@@ -56,19 +60,19 @@
           "day_of_month": 22
         },
         {
-          "payee": "ELD / phone",
-          "amount": 65.0,
-          "day_of_month": 15
-        },
-        {
           "payee": "Truck insurance",
           "amount": 1100.0,
           "day_of_month": 5
+        },
+        {
+          "payee": "ELD / phone",
+          "amount": 65.0,
+          "day_of_month": 15
         }
       ],
       "unparsed_count": 0,
       "window_days": 90,
-      "source": "fixture"
+      "source": "live"
     }
   },
   "status": 200

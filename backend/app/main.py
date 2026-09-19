@@ -20,6 +20,7 @@ from app.models import (
     TextResponse, TruckProfile,
 )
 
+WEEKLY_PAY_DAYS = 7               # a dispatcher who pays weekly
 BACKEND = Path(__file__).resolve().parents[1]
 DATA = BACKEND / "data"
 load_dotenv(BACKEND.parent / ".env")
@@ -170,10 +171,11 @@ def _check(chain: Chain) -> CashflowCheck:
     loads, balance, bills, today = _all_loads(), nessie.get_checking_balance(), nessie.get_upcoming_bills(60), demo_now().date()
     taken = nessie.advances()
     advanced = set(taken) & set(chain.loads)
-    check = cashflow.simulate(chain, loads, balance, bills, today, advanced)
+    pay_days = WEEKLY_PAY_DAYS if PROFILE.pays_weekly else None
+    check = cashflow.simulate(chain, loads, balance, bills, today, advanced, pay_days)
     start, _ = geo.resolve(PROFILE.current_location)
     home, _ = geo.resolve(PROFILE.home)
-    check.route, check.money_stops = cashflow.balance_along_route(chain, loads, start, home, balance, bills, today, advanced)
+    check.route, check.money_stops = cashflow.balance_along_route(chain, loads, start, home, balance, bills, today, advanced, pay_days)
     check.advances = [taken[i] for i in chain.loads if i in advanced]
     if check.advance_load_ids:
         check.advance_offer = _advance_terms(chain, check.advance_load_ids[0])
@@ -192,7 +194,8 @@ def _advance_terms(chain: Chain, load_id: str) -> dict:
     delivered = datetime.fromisoformat(str(stop["delivered_at"])).date()
     return {"load_id": load_id, "amount": round(take_home - fee, 2), "fee": round(fee, 2), "on": delivered.isoformat(),
             "repay_amount": round(take_home, 2),
-            "repay_on": (delivered + timedelta(days=load.payment_terms_days)).isoformat(), "broker": load.broker}
+            "repay_on": (delivered + timedelta(days=WEEKLY_PAY_DAYS if PROFILE.pays_weekly else load.payment_terms_days)).isoformat(),
+            "broker": load.broker}
 
 
 @app.post("/api/advance", response_model=CashflowCheck)
