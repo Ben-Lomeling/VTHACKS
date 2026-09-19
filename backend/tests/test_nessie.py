@@ -50,11 +50,11 @@ def test_fixture_costs(profile):
 
 
 def test_fallback_and_recovery(monkeypatch, bank, profile):
-    assert nessie.get_checking_balance() == 3800
+    assert nessie.get_checking_balance() == 2500
     assert nessie.data_source() == 'fixture'
     assert nessie.STATUS == 'fixture'
     monkeypatch.setattr(nessie, '_live', lambda resources: bank)
-    assert nessie.get_checking_balance() == 3800
+    assert nessie.get_checking_balance() == 2500
     assert nessie.data_source() == 'live'
     assert nessie.get_costs_from_bank(profile)['evidence']['source'] == 'live'
     assert nessie.STATUS == 'live'
@@ -63,16 +63,16 @@ def test_fallback_and_recovery(monkeypatch, bank, profile):
 @pytest.mark.parametrize('bad', [{}, {'account': {'balance': 'NaN'}}, {'account': {'balance': 'invalid'}}])
 def test_invalid_live_response_falls_back(monkeypatch, bad):
     monkeypatch.setattr(nessie, '_live', lambda resources: bad)
-    assert nessie.get_checking_balance() == 3800
+    assert nessie.get_checking_balance() == 2500
     assert nessie.STATUS == 'fixture'
 
 
 def test_bills_month_boundary():
     assert nessie.get_upcoming_bills() == [
-        {'payee': 'Truck payment', 'amount': 2150, 'due_date': date(2026, 10, 1)},
+        {'payee': 'Truck payment', 'amount': 2150, 'due_date': date(2026, 9, 22)},
         {'payee': 'Truck insurance', 'amount': 1100, 'due_date': date(2026, 10, 5)},
         {'payee': 'ELD / phone', 'amount': 65, 'due_date': date(2026, 10, 15)},
-        {'payee': 'Truck payment', 'amount': 2150, 'due_date': date(2026, 11, 1)},
+        {'payee': 'Truck payment', 'amount': 2150, 'due_date': date(2026, 10, 22)},
         {'payee': 'Truck insurance', 'amount': 1100, 'due_date': date(2026, 11, 5)},
     ]
 
@@ -161,7 +161,7 @@ def test_client_endpoints_timeout_and_secret(monkeypatch, tmp_path, bank):
     original = httpx.Client
     monkeypatch.setattr(module.httpx, 'Client', lambda **kw: original(transport=httpx.MockTransport(handler), **kw))
     result = module._live(('account', 'purchases', 'merchants', 'bills', 'deposits'))
-    assert result['account']['balance'] == 3800
+    assert result['account']['balance'] == 2500
     assert len(result['merchants']) == 6
     assert len(seen) == 10
 
@@ -171,7 +171,7 @@ def test_errors_do_not_log_key(monkeypatch, caplog):
         raise httpx.ConnectError('https://example.test/?key=SECRET')
     monkeypatch.setattr(nessie, '_live', fail)
     with caplog.at_level('INFO'):
-        assert nessie.get_checking_balance() == 3800
+        assert nessie.get_checking_balance() == 2500
     assert 'SECRET' not in caplog.text
 
 

@@ -35,7 +35,7 @@ def record(client: httpx.Client, ids: dict, output: Path) -> dict:
     snapshot["merchants"] = [get(f"/merchants/{mid}") for mid in sorted(merchant_ids)]
     if snapshot["account"]["_id"] != ids["account_id"]:
         raise ValueError("Unexpected account in response")
-    if abs(float(snapshot["account"]["balance"]) - 3800) > 1:
+    if abs(float(snapshot["account"]["balance"]) - 2500) > 1:
         raise ValueError("Balance drift: refusing to replace demo fixture")
     snapshot["metadata"] = {"source": "Nessie sandbox; seeded demo data",
         "recorded_at": datetime.now(timezone.utc).isoformat()}

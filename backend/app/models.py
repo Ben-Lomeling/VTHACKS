@@ -94,7 +94,8 @@ class CashflowCheck(BaseModel):
     shortfall: bool               # lowest_balance < 0
     quick_pay_fixes_it: bool
     quick_pay_cost: float
-    timeline: list[dict]          # [{date, label, amount, balance}] for the chart
+    timeline: list[dict]          # [{date, label, amount, balance}] for the chart (this trip only)
+    later: list[dict] = []        # [{date, label, amount}] money after he's home (broker pay, advance repayment); not in balance
 
 
 # ---- Request / response bodies for the API table ----

@@ -37,7 +37,7 @@
       "trailer_type": "dry_van",
       "mpg_loaded": 6.5,
       "mpg_empty": 7.5,
-      "fuel_price": 3.92,
+      "fuel_price": 3.9199619997624984,
       "variable_cpm": 0.27,
       "fixed_monthly": 3315.0,
       "miles_per_month": 10000.0,
@@ -47,28 +47,28 @@
     },
     "evidence": {
       "fuel_gallons": 4210.5,
-      "fuel_spend": 16505.16,
+      "fuel_spend": 16505.0,
       "maintenance_spend": 8100.0,
       "bills": [
         {
           "payee": "Truck payment",
           "amount": 2150.0,
-          "day_of_month": 1
-        },
-        {
-          "payee": "Truck insurance",
-          "amount": 1100.0,
-          "day_of_month": 5
+          "day_of_month": 22
         },
         {
           "payee": "ELD / phone",
           "amount": 65.0,
           "day_of_month": 15
+        },
+        {
+          "payee": "Truck insurance",
+          "amount": 1100.0,
+          "day_of_month": 5
         }
       ],
       "unparsed_count": 0,
       "window_days": 90,
-      "source": "stub"
+      "source": "fixture"
     }
   },
   "status": 200

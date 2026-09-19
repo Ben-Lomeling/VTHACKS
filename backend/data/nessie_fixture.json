@@ -4,7 +4,7 @@
     "type": "Checking",
     "nickname": "Truck Operating",
     "rewards": 0,
-    "balance": 3800,
+    "balance": 2500,
     "account_number": "3490303564395159",
     "customer_id": "3e7bd0bf-e49e-4e1c-afd5-4647ccc6e707"
   },
@@ -655,9 +655,9 @@
       "payee": "Truck payment",
       "nickname": "Truck payment",
       "creation_date": "2026-09-19",
-      "payment_date": "2026-10-01",
-      "recurring_date": 1,
-      "upcoming_payment_date": "2026-10-01",
+      "payment_date": "2026-09-22",
+      "recurring_date": 22,
+      "upcoming_payment_date": "2026-09-22",
       "payment_amount": 2150.0,
       "account_id": "6eb81b0c-90ea-45ca-a096-a8f3a98b334b"
     },

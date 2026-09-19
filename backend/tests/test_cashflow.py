@@ -1,9 +1,9 @@
-"""cashflow.simulate: the truck-payment dip, quick-pay fix, and edge cases. Pure, no network."""
+"""cashflow.simulate: the mid-trip truck-payment dip, the Capital One advance fix, and edge cases. Pure, no network."""
 from datetime import date
 
 import pytest
 
-from app.cashflow import simulate
+from app.cashflow import _events, home_date, simulate
 from app.models import Chain, Load, Place, TruckProfile
 from app.profit import evaluate_load
 
@@ -34,47 +34,57 @@ def chain_of(*stops) -> tuple[Chain, dict[str, Load]]:
     return chain, {l.id: l for l, _, _ in stops}
 
 
-def test_truck_payment_on_the_1st_dips_negative_and_one_quick_pay_fixes_it():
+def test_truck_payment_mid_trip_dips_negative_and_one_advance_fixes_it():
     chain, loads = chain_of(
         (load("L1", 1200), "2026-09-22T08:00:00", "2026-09-23T10:00:00"),
-        (load("L2", 1200), "2026-09-24T08:00:00", "2026-09-25T10:00:00"),
+        (load("L2", 1200), "2026-09-24T08:00:00", "2026-09-25T06:00:00"),
     )
-    # 2,700 - 342.97 - 342.97 = 2,014.06, then the 2,150 truck payment on Oct 1 -> -135.94
-    truck_payment_only = BILLS[:1]
-    cf = simulate(chain, loads, 2700.0, truck_payment_only, TODAY)
+    # 2,700 - 342.97 (Sep 22), then Sep 24: -342.97 diesel and the 2,150 truck payment -> -135.94
+    mid_trip = [{"payee": "Truck payment", "amount": 2150.0, "due_date": date(2026, 9, 24)}]
+    cf = simulate(chain, loads, 2700.0, mid_trip, TODAY)
     assert cf.shortfall is True
-    assert cf.lowest_balance_date == date(2026, 10, 1)
+    assert cf.lowest_balance_date == date(2026, 9, 24)
     assert cf.lowest_balance == pytest.approx(2700 - 2 * 342.97 - 2150, abs=0.02)
-    # quick pay on L1 alone (earliest delivery): +1,080 - 36 fee on Sep 25 keeps him positive
+    # advance on L1 alone (earliest delivery): +1,080 - 36 fee on its delivery day (Sep 23) keeps him positive
     assert cf.quick_pay_fixes_it is True
     assert cf.quick_pay_cost == pytest.approx(36.0)
 
 
-def test_timeline_is_in_date_order_with_running_balance():
+def test_timeline_is_this_trip_only_and_broker_pay_goes_to_later():
     chain, loads = chain_of((load("L1", 1200), "2026-09-22T08:00:00", "2026-09-23T10:00:00"))
     cf = simulate(chain, loads, 5000.0, BILLS, TODAY)
-    dates = [e["date"] for e in cf.timeline]
-    assert dates == sorted(dates)
     assert cf.timeline[0] == {"date": "2026-09-21", "label": "Checking balance today", "amount": 0.0, "balance": 5000.0}
     running = 5000.0
     for e in cf.timeline[1:]:
         running += e["amount"]
         assert e["balance"] == pytest.approx(running, abs=0.02)
-    labels = [e["label"] for e in cf.timeline]
-    assert labels == ["Checking balance today", "Diesel for L1", "Truck payment", "Truck insurance",
-                      "Pay for L1 (Blue Ridge Logistics)"]
-    # pay = rate - 10% dispatch, on delivery (Sep 23) + 30 days
-    assert cf.timeline[-1]["date"] == "2026-10-23" and cf.timeline[-1]["amount"] == pytest.approx(1080.0)
+    # home Sep 25 (depart Sep 22 + 3 days): October bills are next month's runs' problem
+    assert [e["label"] for e in cf.timeline] == ["Checking balance today", "Diesel for L1"]
+    # pay = rate - 10% dispatch, on delivery (Sep 23) + 30 days, shown but not counted
+    assert cf.later == [{"date": "2026-10-23", "label": "Pay for L1 (Blue Ridge Logistics)", "amount": 1080.0}]
 
 
-def test_no_shortfall_means_no_quick_pay():
+def test_home_date_is_first_departure_plus_days():
+    chain, _ = chain_of((load("L1", 1200), "2026-09-22T08:00:00", "2026-09-23T10:00:00"))
+    assert home_date(chain, TODAY) == date(2026, 9, 25)
+
+
+def test_advance_lands_on_delivery_day_and_is_repaid_when_the_broker_pays():
+    chain, loads = chain_of((load("L1", 1200), "2026-09-22T08:00:00", "2026-09-23T10:00:00"))
+    events, later = _events(chain, loads, [], TODAY, {"L1"})
+    assert events[-1] == (date(2026, 9, 23), "Capital One advance on L1", pytest.approx(1044.0))
+    assert later == [(date(2026, 10, 23), "Advance on L1 repaid", -1080.0),
+                     (date(2026, 10, 23), "Pay for L1 (Blue Ridge Logistics)", 1080.0)]
+    assert sum(a for _, _, a in later) == 0          # net cost of the advance = the fee
+
+
+def test_no_shortfall_means_no_advance():
     chain, loads = chain_of((load("L1", 1200), "2026-09-22T08:00:00", "2026-09-23T10:00:00"))
     cf = simulate(chain, loads, 10_000.0, BILLS, TODAY)
     assert cf.shortfall is False and cf.quick_pay_fixes_it is False and cf.quick_pay_cost == 0
-    assert cf.lowest_balance_date == date(2026, 10, 5) or cf.lowest_balance > 0
 
 
-def test_shortfall_quick_pay_cannot_fix():
+def test_shortfall_advance_cannot_fix():
     chain, loads = chain_of((load("L1", 1200), "2026-09-22T08:00:00", "2026-09-23T10:00:00"))
     early_bill = [{"payee": "Repair shop", "amount": 5000.0, "due_date": date(2026, 9, 22)}]
     cf = simulate(chain, loads, 100.0, early_bill, TODAY)
@@ -83,16 +93,19 @@ def test_shortfall_quick_pay_cannot_fix():
 
 
 def test_money_out_before_money_in_on_the_same_day():
-    chain, loads = chain_of((load("L1", 1200), "2026-09-22T08:00:00", "2026-09-29T10:00:00"))
-    # quick-pay would land Oct 1, the same day as the truck payment; the payment is booked first
-    cf = simulate(chain, loads, 1000.0, BILLS, TODAY)
-    assert cf.shortfall is True
-    oct1 = [e["label"] for e in cf.timeline if e["date"] == "2026-10-01"]
-    assert oct1 == ["Truck payment"]
-
-
-def test_bills_after_the_last_payment_are_ignored_and_string_dates_work():
     chain, loads = chain_of((load("L1", 1200), "2026-09-22T08:00:00", "2026-09-23T10:00:00"))
-    bills = [{"payee": "Way later", "amount": 99999, "due_date": "2026-12-01"}]
+    # the advance would land Sep 23, the same day as the truck payment; the payment is booked first
+    same_day = [{"payee": "Truck payment", "amount": 2150.0, "due_date": date(2026, 9, 23)}]
+    cf = simulate(chain, loads, 1000.0, same_day, TODAY)
+    assert cf.shortfall is True and cf.quick_pay_fixes_it is False
+    events, _ = _events(chain, loads, same_day, TODAY, {"L1"})
+    assert [label for d, label, _ in events if d == date(2026, 9, 23)] == ["Truck payment", "Capital One advance on L1"]
+
+
+def test_bills_after_he_is_home_are_ignored_and_string_dates_work():
+    chain, loads = chain_of((load("L1", 1200), "2026-09-22T08:00:00", "2026-09-23T10:00:00"))
+    bills = [{"payee": "Way later", "amount": 99999, "due_date": "2026-12-01"},
+             {"payee": "On the road", "amount": 10, "due_date": "2026-09-24"}]
     cf = simulate(chain, loads, 1000.0, bills, TODAY)
-    assert all(e["label"] != "Way later" for e in cf.timeline)
+    labels = [e["label"] for e in cf.timeline]
+    assert "Way later" not in labels and "On the road" in labels

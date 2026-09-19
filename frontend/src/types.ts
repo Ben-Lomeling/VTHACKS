@@ -78,6 +78,7 @@ export interface CashflowCheck {
   quick_pay_fixes_it: boolean;
   quick_pay_cost: number;
   timeline: Record<string, unknown>[];
+  later: Record<string, unknown>[];
 }
 export interface EvaluateRequest {
   load: Load;
