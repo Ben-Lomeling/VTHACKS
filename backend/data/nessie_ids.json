@@ -1,0 +1,113 @@
+{
+  "state": "complete",
+  "merchants": {
+    "Pilot Travel Center Wytheville": {
+      "id": "541e5d26-cb66-4074-af3b-8c690b9dc8b6",
+      "category": "fuel"
+    },
+    "Love's Travel Stop Raphine": {
+      "id": "8a4dcf30-1330-417b-933f-4cfc945994ac",
+      "category": "fuel"
+    },
+    "TA Truck Service Greensboro": {
+      "id": "9105f9e7-42b6-468e-a06d-d68f4b48fe89",
+      "category": "fuel"
+    },
+    "Blue Ridge Truck Tires": {
+      "id": "0b6dd067-936d-42dc-9743-cfc7e514602d",
+      "category": "tires"
+    },
+    "Valley Diesel Repair": {
+      "id": "80a4ac37-20f4-41c2-936a-c2131819a374",
+      "category": "repair"
+    },
+    "E-ZPass Virginia": {
+      "id": "0d8190f0-13ba-42b9-b18c-04a0eb326094",
+      "category": "tolls"
+    }
+  },
+  "purchases": [
+    "71e33c4c-b9a5-4f17-980b-6a3ae19e38b1",
+    "1aec16a2-7eb7-43e5-a434-356cebdb5aa3",
+    "8721f6dc-bbf4-44b0-915a-67f3a025da57",
+    "75e19c41-512f-45f6-9e1a-1c4d594d9ee0",
+    "af3d46af-df59-4fd1-9c69-fb37a2e88428",
+    "41361042-870a-4510-80d2-1e42da3a9208",
+    "1c0d820b-fd83-48dd-89a0-36fd4dceced8",
+    "ad3da073-1e0a-4d32-8c86-6aa869bebf75",
+    "0c63ae5e-0649-4cae-a92c-5e65e7477fc4",
+    "0ce0b736-3747-46dc-a6a2-8f8752d7f029",
+    "51a3f530-86b1-4cc3-83ee-207a194c34e2",
+    "790adccf-f41c-45a3-9fb8-36642821b23b",
+    "d2ac7a39-8ee8-4fdb-b3f4-0085e2bc9f87",
+    "e20d2d30-beb8-4426-aada-5d39c1d7c07c",
+    "d8f158da-d9b0-4af3-bfb1-33b71a81789b",
+    "fba4ab8c-3c09-4fdd-8fb0-2af97de63324",
+    "2d6055d8-aad4-4258-b9a6-4137f9403832",
+    "a7243ad6-8a7e-4331-9ab6-cb2165a6889f",
+    "b0a9e85a-a8ec-4b87-8365-012ead9084ad",
+    "3d331ee5-2946-481f-99b7-dbf7d1a76738",
+    "98e04761-33ec-4280-b879-c2d1224f33d6",
+    "9c3c95ec-fefc-4743-b763-a8a69df1ec31",
+    "787c728f-9d8d-48c5-b4e1-c7cf2dfa904e",
+    "9d5d52eb-6dfa-4992-a96a-cc0277300349",
+    "c8ca2490-8c4a-41a8-be88-ccb99091956d",
+    "6349263c-2588-4a62-a1a1-38a2f0cce3a6",
+    "a77d228c-f2d9-4731-8d74-a354f8191662",
+    "bfd8291b-4f7a-4157-91b7-da7ce3945ba2",
+    "8fb264fe-6e9f-4a17-a5f6-96d97350f9ef",
+    "9d2a9a0f-3766-47d5-baa8-a16f4e156ab3",
+    "7f19c083-2fcb-4bff-8f76-afb0bed3288a",
+    "02ee32c8-b9dc-465a-97b4-01da35aa95d6",
+    "6c378c43-679d-479c-b508-4c2e73ccd0da",
+    "73bd4a8e-a113-401e-be62-4b669e2071d0",
+    "fb7f5f0c-183f-4b10-bd7d-539462352fe3",
+    "c28f3f6f-7793-40dd-b93d-37d55701fa07",
+    "620915a4-c440-4237-927f-48ed77cd57ac",
+    "4485d80c-820f-440a-b735-3ff8a0fec88e",
+    "9eb8fe81-2d59-457e-9bfe-3082e3558896",
+    "dc0adfb2-ed20-4f18-bd65-b2424a564334",
+    "5c05b9b7-e725-4f1e-b2ed-f9670428493c",
+    "b717f385-7c0c-44a0-8086-28d41bc63e71",
+    "599d17e5-cd42-434b-8524-7630c1188d8a",
+    "ac04eaae-2d1e-4963-911c-7cc53e2fff98",
+    "e3993a2d-b88e-403a-9ce6-5a943be6b56c",
+    "8a8cf095-8f2e-479b-a438-972804513dc5",
+    "419332dd-1c26-4f88-bc0e-9bac657ac6d7",
+    "5d8af73e-b47a-4169-9696-07ee11a40e08",
+    "f25fe5e4-9363-4162-ba1e-85ed6c3c7519",
+    "e7c30793-66e7-44b9-b71b-b63284cf733d",
+    "f226a82b-4219-4f49-ad7a-db5ffcf198b7",
+    "1de41120-1020-48d5-b21d-7dde7d9e423e",
+    "feae5fa1-23e4-46f4-9332-c3ac808cad8d",
+    "c52ce63e-b1dd-4924-b0a0-d5616847c781",
+    "9caac6e6-eb17-4500-aee6-fe5c89634916",
+    "457482a4-a8d7-4e1f-bfaa-cdb604662950",
+    "68553484-43a5-4a55-916e-bd716c9816a8",
+    "884506fc-295e-409f-9359-1e38e437189d"
+  ],
+  "deposits": [
+    "b573cc2a-ca60-4568-9abe-2184e5c20157",
+    "66e2c326-4d06-4f00-9028-97f6f35c4c26",
+    "a2cb2206-f249-43ac-abe0-c482c4bfb614",
+    "1603e936-60ff-4bec-989c-c46811286e5f",
+    "ab4c8e98-7160-4b15-98d2-d89fdfdd41e2",
+    "bea9b7db-e7e2-412f-96be-e3da17f78e06",
+    "1ae82748-8e4f-41a4-9fa3-b493876cf813",
+    "d7dff1a5-80e9-476b-a039-8bf296812469",
+    "3aa4d044-cbad-4f1c-9d8c-7b1eae4ec98c",
+    "6035a3b1-eafd-4dbf-859f-eea66d01ef73",
+    "a2a85d32-1f08-4097-805a-6d967607b2e5",
+    "8350585e-eafb-4cd8-ba5f-b3073408e57d",
+    "a0e64cba-8571-4966-9373-d5ca9414bd70",
+    "428daa78-a1eb-440c-bb68-34f74a7d874e",
+    "639d004c-1089-470f-92d8-c422be138c49"
+  ],
+  "bills": [
+    "009f9469-efd2-4d1f-9c65-f5fb6c2385e9",
+    "744cf9e9-069e-400f-8bc8-31bba6f50543",
+    "ed1b41a2-0797-408a-8020-c88c0434c508"
+  ],
+  "customer_id": "16fc9183-27c1-465c-a318-63d2e3f5da2d",
+  "account_id": "e0724dde-9938-45e1-b33c-a634af1acc3c"
+}

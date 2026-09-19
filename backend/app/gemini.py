@@ -19,6 +19,41 @@ load_dotenv()
 
 STATUS = "stub"
 
+def _demo_bad_load() -> ExtractionResult:
+    """Return the bad-load example used by the frontend demo."""
+    load = Load(
+        id="P" + uuid.uuid4().hex[:6],
+        origin=Place(city="Greensboro, NC"),
+        destination=Place(city="Jacksonville, FL"),
+        rate_usd=1200.0,
+        trailer_type="dry_van",
+        weight_lbs=40000,
+        broker="Coastal Brokerage",
+        source="pasted",
+    )
+
+    confidence = {
+        field: "high"
+        for field in Load.model_fields
+        if field not in ("id", "source")
+    }
+
+    for field in (
+        "loaded_miles_est",
+        "pickup_window_start",
+        "pickup_window_end",
+        "delivery_by",
+    ):
+        confidence[field] = "low"
+
+    return ExtractionResult(
+        load=load,
+        confidence=confidence,
+        warnings=[
+            "Loaded miles not stated in the offer; estimated",
+            'Pickup and delivery times are vague ("Mon", "Tue"); check them',
+        ],
+    )
 
 def extract_load(
     text: str | None,
@@ -31,9 +66,9 @@ def extract_load(
         raise ValueError("Provide pasted text, an image, or both")
 
     api_key = os.getenv("GEMINI_API_KEY")
+    source = "screenshot" if image_bytes else "pasted"
 
-    if not api_key:
-        fallback_data = {
+    fallback_data = {
         "origin": {"city": "Roanoke, VA"},
         "destination": {"city": "Charlotte, NC"},
         "pickup_window_start": "2026-09-22T08:00:00",
@@ -49,12 +84,15 @@ def extract_load(
         "quick_pay_fee_pct": 0.03,
     }
 
-    source = "screenshot" if image_bytes else "pasted"
-    result = validate_extracted_load(fallback_data, source)
-    result.warnings.append(
-        "Gemini API key is not configured; using offline demo data"
-    )
-    return result
+    if not api_key:
+        if text and "greensboro" in text.lower():
+            return _demo_bad_load()
+
+        result = validate_extracted_load(fallback_data, source)
+        result.warnings.append(
+            "Gemini API key is not configured; using offline demo data"
+        )
+        return result
 
     schema = {
         "type": "OBJECT",
@@ -163,12 +201,16 @@ Rules:
 
         extracted = json.loads(response.text)
 
-    except Exception as exc:
-        raise RuntimeError(
-            f"Gemini extraction failed: {exc}"
-        ) from exc
+    except Exception:
+        if text and "greensboro" in text.lower():
+            result = _demo_bad_load()
+        else:
+            result = validate_extracted_load(fallback_data, source)
 
-    source = "screenshot" if image_bytes else "pasted"
+        result.warnings.append(
+            "Gemini unavailable; using offline demo data"
+        )
+        return result
 
     return validate_extracted_load(extracted, source)
 
@@ -184,7 +226,6 @@ def counter_message(economics: LoadEconomics, broker: str | None) -> str:
     who = broker or "there"
     return f"Hi {who}, thanks for the offer on this load. I can run it for ${rate:,} all in. Let me know."
 
-STATUS = "stub"
 
 def validate_extracted_load(data: dict, source: str) -> ExtractionResult:
     """Validate Gemini-style data without calling the Gemini API."""
@@ -208,17 +249,29 @@ def validate_extracted_load(data: dict, source: str) -> ExtractionResult:
         warnings.append(f"State missing for {origin_city}")
         low_confidence.add("origin")
 
-    if not destination_city:
-        warnings.append("Destination is missing")
+        if not destination_city:
+            warnings.append("Destination is missing")
         low_confidence.add("destination")
     elif "," not in destination_city:
         warnings.append(f"State missing for {destination_city}")
         low_confidence.add("destination")
 
-    rate = data.get("rate_usd")
-    miles = data.get("loaded_miles_est")
+    raw_rate = data.get("rate_usd")
+    raw_miles = data.get("loaded_miles_est")
 
-    if rate is None or rate <= 0:
+    try:
+        rate = float(raw_rate)
+    except (TypeError, ValueError):
+        rate = 0.0
+
+    try:
+        miles = float(raw_miles) if raw_miles is not None else None
+    except (TypeError, ValueError):
+        miles = None
+        warnings.append("Loaded miles are invalid")
+        low_confidence.add("loaded_miles_est")
+
+    if rate <= 0:
         warnings.append("Rate is missing or invalid")
         low_confidence.add("rate_usd")
         rate = 0.0
@@ -234,7 +287,6 @@ def validate_extracted_load(data: dict, source: str) -> ExtractionResult:
                 "Rate may be per-mile, but loaded miles are missing"
             )
         low_confidence.add("rate_usd")
-
     load_data = {
         "id": "P" + uuid.uuid4().hex[:6],
         "origin": Place(city=origin_city),

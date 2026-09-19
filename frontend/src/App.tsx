@@ -14,6 +14,8 @@ import type {
 import { Field, PlaceFields } from "./components/Fields";
 import { LoadForm } from "./components/LoadForm";
 import { RouteMap } from "./components/RouteMap";
+import { RunTimeline } from "./components/RunTimeline";
+import { AdvanceOffer } from "./components/AdvanceOffer";
 import {
   ResponsiveContainer,
   LineChart,
@@ -22,7 +24,6 @@ import {
   YAxis,
   Tooltip,
   ReferenceLine,
-  ReferenceDot,
   CartesianGrid,
 } from "recharts";
 
@@ -32,8 +33,11 @@ const money = (n: number) =>
     currency: "USD",
     maximumFractionDigits: 2,
   });
+// The demo's "bad load": looks like $2.43/mi on paper, keeps about $0.55/mi.
 const example =
-  "Roanoke, VA → Charlotte, NC. $1,200 total. 500 loaded miles. Dry van, 38,000 lbs of paper products. Pickup Sep 22, 8am–12pm. Deliver Sep 23 by 8am. Blue Ridge Logistics. Net 30.";
+  "Greensboro, NC → Jacksonville, FL. $1,200 flat. Dry van, 40,000 lbs. Coastal Brokerage. Pickup Mon, deliver Tue. Net 30.";
+// Add ?dev to the URL to see which backend modules are live vs stub.
+const DEV = new URLSearchParams(window.location.search).has("dev");
 type Screen = "Setup" | "Check a load" | "Plan my run";
 const profileNumbers: [keyof TruckProfile, string, string, number, number?][] =
   [
@@ -85,6 +89,8 @@ export default function App() {
   const [cash, setCash] = useState<CashflowCheck>();
   const [runExplanation, setRunExplanation] = useState("");
   const [bank, setBank] = useState<CostsFromBank>();
+  // Accepting bank costs changes every number in the demo story, so it takes a second, explicit click.
+  const [confirmBank, setConfirmBank] = useState(false);
   async function run(label: string, fn: () => Promise<void>) {
     setBusy(label);
     setError("");
@@ -141,8 +147,21 @@ export default function App() {
   }
   useEffect(() => {
     setBank(undefined);
+    setConfirmBank(false);
   }, [draft]);
   const chain = chains[selected];
+  // Feature A: the map is colored by money, so fetch the cash flow as soon as a run is picked.
+  useEffect(() => {
+    if (!chain) return;
+    let current = true;
+    api
+      .cashflow(chain)
+      .then((c) => current && setCash(c))
+      .catch(() => undefined); // the "Can I afford this run?" button still shows errors
+    return () => {
+      current = false;
+    };
+  }, [chain]);
   const allLoads = [...board, ...offers];
   const analyze = () =>
     run("Reading your offer…", async () => {
@@ -236,6 +255,7 @@ export default function App() {
               disabled={!!busy || !profile}
               onClick={() =>
                 void run("Resetting the demo…", async () => {
+                  await api.resetBank(); // undo Capital One advances in the bank sandbox
                   const p = await api.saveProfile(
                     structuredClone(defaultProfile),
                   );
@@ -246,7 +266,9 @@ export default function App() {
                   setOffers([]);
                   setText("");
                   setImage(undefined);
-                  setToast("Demo profile restored. Local offers cleared.");
+                  setToast(
+                    "Demo profile restored. Local offers and bank advances cleared.",
+                  );
                 })
               }
             >
@@ -289,9 +311,11 @@ export default function App() {
               <span className="badge">DEMO DATA</span>
               {USE_MOCKS
                 ? "Mock mode · fixed example responses; your input is not analyzed."
-                : `Backend modules: ${Object.entries(health!.modules)
-                    .map(([k, v]) => `${k}: ${v}`)
-                    .join(" · ")}`}
+                : DEV
+                  ? `Backend modules: ${Object.entries(health!.modules)
+                      .map(([k, v]) => `${k}: ${v}`)
+                      .join(" · ")}`
+                  : "Simulated load board."}
               <span>Nessie bank data is sandbox data.</span>
             </div>
           )}
@@ -419,8 +443,9 @@ export default function App() {
                       </div>
                     </div>
                     <p>
-                      {result.loaded_miles} loaded + {result.deadhead_miles}{" "}
-                      empty = {result.total_miles} total miles
+                      {result.loaded_miles.toFixed(0)} loaded +{" "}
+                      {result.deadhead_miles.toFixed(0)} empty ={" "}
+                      {result.total_miles.toFixed(0)} total miles
                     </p>
                     <h3>Where the money goes</h3>
                     <p className="gross-pay">
@@ -475,26 +500,41 @@ export default function App() {
                         </div>
                       ))}
                     </div>
-                    <div className="counter">
-                      <div>
-                        <small>YOUR TARGET RATE</small>
-                        <h3>Counter at {money(result.counter_offer_rate)}</h3>
-                        <small>
-                          Break-even: {money(result.break_even_rate)}
-                        </small>
+                    {result.verdict === "take" ? (
+                      <div className="counter">
+                        <div>
+                          <small>YOUR TARGET RATE</small>
+                          <h3>This offer already beats your target</h3>
+                          <small>
+                            Target: {money(result.counter_offer_rate)} ·
+                            Break-even: {money(result.break_even_rate)}
+                          </small>
+                        </div>
                       </div>
-                      <button
-                        disabled={!!busy}
-                        onClick={() =>
-                          void run("Writing your counter-offer…", async () =>
-                            setMessage((await api.counterMessage(result)).text),
-                          )
-                        }
-                      >
-                        Write the message ↗
-                      </button>
-                    </div>
-                    {message && (
+                    ) : (
+                      <div className="counter">
+                        <div>
+                          <small>YOUR TARGET RATE</small>
+                          <h3>Counter at {money(result.counter_offer_rate)}</h3>
+                          <small>
+                            Break-even: {money(result.break_even_rate)}
+                          </small>
+                        </div>
+                        <button
+                          disabled={!!busy}
+                          onClick={() =>
+                            void run("Writing your counter-offer…", async () =>
+                              setMessage(
+                                (await api.counterMessage(result)).text,
+                              ),
+                            )
+                          }
+                        >
+                          Write the message ↗
+                        </button>
+                      </div>
+                    )}
+                    {message && result.verdict !== "take" && (
                       <div className="message">
                         <p>{message}</p>
                         <button
@@ -528,6 +568,21 @@ export default function App() {
                         Explain this result
                       </button>
                     )}
+                    <div className="card-footer">
+                      <small>
+                        One load is one decision. See what a full run home pays.
+                      </small>
+                      <button
+                        className="primary"
+                        disabled={!!busy || !profile}
+                        onClick={() => {
+                          setScreen("Plan my run");
+                          void plan();
+                        }}
+                      >
+                        Find a better run →
+                      </button>
+                    </div>
                   </section>
                 )}
                 {offers.length > 0 && (
@@ -791,26 +846,51 @@ export default function App() {
                       {String(bank.evidence.source || "Nessie")} ·{" "}
                       {String(bank.evidence.window_days || 90)} days
                     </p>
+                    {confirmBank && (
+                      <p className="notice">
+                        This replaces your costs with the bank&apos;s and
+                        changes every result on Check a load and Plan my run.
+                        Reset demo ↺ puts the demo profile back.
+                      </p>
+                    )}
                     <div className="button-row">
+                      {!confirmBank ? (
+                        <button
+                          type="button"
+                          className="primary"
+                          disabled={!!busy}
+                          onClick={() => setConfirmBank(true)}
+                        >
+                          Accept bank costs
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          className="primary"
+                          disabled={!!busy}
+                          onClick={() =>
+                            void run("Applying bank costs…", async () => {
+                              setConfirmBank(false);
+                              const p = await api.saveProfile(bank.proposed);
+                              setProfile(p);
+                              setDraft(structuredClone(p));
+                              invalidate();
+                              setToast(
+                                "Bank costs accepted. Recalculate your offers.",
+                              );
+                            })
+                          }
+                        >
+                          Yes, use bank costs
+                        </button>
+                      )}
                       <button
                         type="button"
-                        className="primary"
-                        disabled={!!busy}
-                        onClick={() =>
-                          void run("Applying bank costs…", async () => {
-                            const p = await api.saveProfile(bank.proposed);
-                            setProfile(p);
-                            setDraft(structuredClone(p));
-                            invalidate();
-                            setToast(
-                              "Bank costs accepted. Recalculate your offers.",
-                            );
-                          })
-                        }
+                        onClick={() => {
+                          setBank(undefined);
+                          setConfirmBank(false);
+                        }}
                       >
-                        Accept bank costs
-                      </button>
-                      <button type="button" onClick={() => setBank(undefined)}>
                         Keep mine
                       </button>
                     </div>
@@ -863,6 +943,13 @@ export default function App() {
                   {runExplanation}
                 </blockquote>
               )}
+              {result && chains[0] && (
+                <CompareCard
+                  offer={result}
+                  load={offers.find((l) => l.id === result.load_id)}
+                  best={chains[0]}
+                />
+              )}
               {!chains.length ? (
                 <div className="empty-state">
                   <span>↗</span>
@@ -906,7 +993,9 @@ export default function App() {
                           OPTION 0{i + 1}
                           {c.losing || c.total_net_profit <= 0
                             ? " · NO PROFIT"
-                            : i === 0 ? " · HIGHEST TOTAL NET" : ""}
+                            : i === 0
+                              ? " · HIGHEST TOTAL NET"
+                              : ""}
                         </span>
                         <strong>
                           {money(c.total_net_profit)}
@@ -923,7 +1012,8 @@ export default function App() {
                         <div>
                           {(c.losing || c.total_net_profit <= 0) && (
                             <p className="notice">
-                              {c.losing_reason || "This run does not earn a profit after costs."}
+                              {c.losing_reason ||
+                                "This run does not earn a profit after costs."}
                             </p>
                           )}
                           {c.feasible_notes.map((n, j) => (
@@ -945,8 +1035,27 @@ export default function App() {
                         chain={chain}
                         loads={allLoads}
                         profile={profile}
+                        cash={cash}
                       />
                     )}
+                    {chain && (
+                      <AdvanceOffer
+                        cash={cash}
+                        busy={!!busy}
+                        onAdvance={(loadId) =>
+                          void run(
+                            "Booking your Capital One advance…",
+                            async () => {
+                              setCash(await api.advance(chain, loadId));
+                              setToast(
+                                `Capital One advance on ${loadId} booked. Your run is covered.`,
+                              );
+                            },
+                          )
+                        }
+                      />
+                    )}
+                    {chain && <RunTimeline chain={chain} route={cash?.route} />}
                   </section>
                 </div>
               )}
@@ -971,8 +1080,9 @@ export default function App() {
                     </button>
                   </div>
                   <p>
-                    Capital One Nessie sandbox balance and bills. The chart
-                    shows the original payment schedule.
+                    Capital One Nessie sandbox balance and bills, from today
+                    until you're home. Next month's bills are covered by your
+                    next runs.
                   </p>
                   {cash && (
                     <>
@@ -982,23 +1092,60 @@ export default function App() {
                         {cash.lowest_balance_date}.{" "}
                         {cash.shortfall
                           ? cash.quick_pay_fixes_it
-                            ? `Quick pay fixes the shortfall for ${money(cash.quick_pay_cost)}.`
-                            : "Quick pay does not cover this shortfall."
-                          : "Your balance stays nonnegative; quick pay is not needed."}
+                            ? `A Capital One advance fixes it for ${money(cash.quick_pay_cost)}, repaid when the broker pays.`
+                            : "A Capital One advance does not cover this shortfall."
+                          : cash.advances.length
+                            ? "Covered: your Capital One advance keeps you above $0 for the whole trip."
+                            : "You stay above $0 for the whole trip; no advance needed."}
                       </div>
                       <div className="cash-chart">
                         <ResponsiveContainer width="100%" height="100%">
-                          <LineChart data={cash.timeline}>
+                          <LineChart
+                            data={cash.timeline.map((e) => ({
+                              ...e,
+                              t: Date.parse(`${String(e.date)}T12:00:00`),
+                              bill:
+                                /payment|insurance|bill|phone|eld/i.test(
+                                  String(e.label),
+                                ) && Number(e.amount) < 0,
+                            }))}
+                          >
                             <CartesianGrid
                               strokeDasharray="3 3"
                               vertical={false}
                             />
-                            <XAxis dataKey="date" tick={{ fontSize: 11 }} />
+                            <XAxis
+                              dataKey="t"
+                              type="number"
+                              scale="time"
+                              domain={["dataMin", "dataMax"]}
+                              padding={{ left: 12, right: 24 }}
+                              ticks={cash.timeline
+                                .map((e) =>
+                                  Date.parse(`${String(e.date)}T12:00:00`),
+                                )
+                                .reduce<number[]>(
+                                  // one tick per date, at least 3 days apart
+                                  (kept, t) =>
+                                    kept.length &&
+                                    t - kept[kept.length - 1] < 864e5
+                                      ? kept
+                                      : [...kept, t],
+                                  [],
+                                )}
+                              tick={{ fontSize: 11 }}
+                              tickFormatter={(t) =>
+                                new Date(t).toLocaleDateString("en-US", {
+                                  month: "short",
+                                  day: "numeric",
+                                })
+                              }
+                            />
                             <YAxis tickFormatter={(v) => `$${v}`} width={65} />
                             <Tooltip
                               formatter={(v) => money(Number(v))}
                               labelFormatter={(_, payload) =>
-                                String(payload?.[0]?.payload?.label || "")
+                                `${String(payload?.[0]?.payload?.date || "")} · ${String(payload?.[0]?.payload?.label || "")}`
                               }
                             />
                             <ReferenceLine
@@ -1011,25 +1158,37 @@ export default function App() {
                               dataKey="balance"
                               stroke="#244e50"
                               strokeWidth={3}
-                              dot={{ r: 5 }}
+                              isAnimationActive={false}
+                              dot={(props) => {
+                                const { cx, cy, index, payload } = props as {
+                                  cx: number;
+                                  cy: number;
+                                  index: number;
+                                  payload: { bill: boolean };
+                                };
+                                return payload.bill ? (
+                                  <circle
+                                    key={index}
+                                    cx={cx}
+                                    cy={cy}
+                                    r={7}
+                                    fill="#c03937"
+                                    stroke="white"
+                                    strokeWidth={2}
+                                  />
+                                ) : (
+                                  <circle
+                                    key={index}
+                                    cx={cx}
+                                    cy={cy}
+                                    r={5}
+                                    fill="white"
+                                    stroke="#244e50"
+                                    strokeWidth={2}
+                                  />
+                                );
+                              }}
                             />
-                            {cash.timeline
-                              .filter(
-                                (e) =>
-                                  /payment|insurance|bill|phone|eld/i.test(
-                                    String(e.label),
-                                  ) && Number(e.amount) < 0,
-                              )
-                              .map((e, i) => (
-                                <ReferenceDot
-                                  key={i}
-                                  x={String(e.date)}
-                                  y={Number(e.balance)}
-                                  r={7}
-                                  fill="#c03937"
-                                  stroke="white"
-                                />
-                              ))}
                           </LineChart>
                         </ResponsiveContainer>
                       </div>
@@ -1055,6 +1214,28 @@ export default function App() {
                           </tbody>
                         </table>
                       </div>
+                      {cash.later.length > 0 && (
+                        <div className="table-wrap">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>After you're home</th>
+                                <th>Amount</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {cash.later.map((e, i) => (
+                                <tr key={i}>
+                                  <td>
+                                    {String(e.date)} · {String(e.label)}
+                                  </td>
+                                  <td>{money(Number(e.amount))}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
                     </>
                   )}
                 </section>
@@ -1068,5 +1249,75 @@ export default function App() {
         </div>
       </main>
     </div>
+  );
+}
+
+// This offer on its own vs. the best run the optimizer found. Every number is
+// from the API; the frontend only subtracts and divides for display.
+function CompareCard({
+  offer,
+  load,
+  best,
+}: {
+  offer: LoadEconomics;
+  load?: Load;
+  best: Chain;
+}) {
+  const gain = best.total_net_profit - offer.net_profit;
+  const bestCpm = best.total_miles
+    ? best.total_net_profit / best.total_miles
+    : 0;
+  const inBest = best.loads.includes(offer.load_id);
+  return (
+    <section className="card">
+      <div className="section-heading">
+        <div>
+          <p className="eyebrow">THIS OFFER VS. YOUR BEST RUN</p>
+          <h2>Same truck. Very different week.</h2>
+        </div>
+      </div>
+      <div className="compare">
+        <div>
+          <span className="eyebrow">THIS OFFER</span>
+          <strong>{money(offer.net_profit)}</strong>
+          <p>
+            {load
+              ? `${load.origin.city} → ${load.destination.city}`
+              : offer.load_id}
+          </p>
+          <p>
+            {money(offer.true_net_cpm)}/mi net · {offer.total_miles.toFixed(0)}{" "}
+            mi ·{" "}
+            <span className={`badge ${offer.verdict}`}>{offer.verdict}</span>
+          </p>
+          <p>
+            {load
+              ? `Leaves you in ${load.destination.city}.`
+              : "Leaves you wherever it delivers."}
+          </p>
+        </div>
+        <span className="vs">vs</span>
+        <div className={gain > 0 ? "better" : ""}>
+          <span className="eyebrow">BEST RUN</span>
+          <strong>{money(best.total_net_profit)}</strong>
+          <p>{best.loads.join(" → ")}</p>
+          <p>
+            {money(bestCpm)}/mi net · {best.total_miles.toFixed(0)} mi ·{" "}
+            {money(best.net_per_day)}/day
+          </p>
+          <p>
+            {best.days.toFixed(1)} days · ends{" "}
+            {best.home_deadhead_miles.toFixed(0)} mi from home
+          </p>
+        </div>
+      </div>
+      <p className="compare-verdict">
+        {inBest
+          ? `Your offer is part of the best run: it earns ${money(best.total_net_profit)} once the right loads are around it.`
+          : gain > 0
+            ? `The best run keeps ${money(gain)} more than this offer and gets you home.`
+            : "This offer beats every run we found. Take it."}
+      </p>
+    </section>
   );
 }

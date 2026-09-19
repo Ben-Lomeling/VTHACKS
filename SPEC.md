@@ -130,7 +130,13 @@ class CashflowCheck(BaseModel):
     shortfall: bool               # lowest_balance < 0
     quick_pay_fixes_it: bool
     quick_pay_cost: float
-    timeline: list[dict]          # [{date, label, amount, balance}] for the chart
+    timeline: list[dict]          # [{date, label, amount, balance}] for the chart (this trip only)
+    later: list[dict] = []        # [{date, label, amount}] money after he's home (broker pay, advance repayment); not in balance
+    route: list[dict] = []        # [{from: [lat, lng], to: [lat, lng], start, end, balance, loaded}] trip stretches, one balance each
+    money_stops: list[dict] = []  # [{at, lat, lng, label, amount, balance, kind: fuel|bill|pay|advance}] where money moves on the trip
+    advance_load_ids: list[str] = []  # loads a (further) Capital One advance should go on to fix the trip; [] if not needed / can't
+    advances: list[dict] = []     # advances already taken on this run: {load_id, amount, on, repay_amount, repay_on, deposit_id, bill_id, source}
+    advance_offer: dict | None = None  # terms for advance_load_ids[0]: {load_id, amount, fee, on, repay_amount, repay_on, broker}
 ```
 
 ## The math (profit.py) — pure functions, no I/O
@@ -233,10 +239,10 @@ feasible ends near home. Exclude chains that end more than
 If their prompt differs, change the framing, not the architecture.
 
 ### Seed (run once, Friday night)
-`scripts/seed_nessie.py` creates: customer "Dad's LLC" → Checking account (balance ~$3,800) →
+`scripts/seed_nessie.py` creates: customer "Dad's LLC" → Checking account (balance ~$2,500) →
 merchants (Pilot/Love's-style fuel stops with `geocode`, a tire shop, a repair shop, a toll authority,
 an insurer) → 90 days of purchases (diesel, tires, repairs, tolls) → recurring bills (truck payment
-$2,150 due on the 1st, insurance $1,100 due on the 5th, phone/ELD $65) → deposits (past load payments,
+$2,150 due on the 22nd, insurance $1,100 due on the 5th, phone/ELD $65) → deposits (past load payments,
 each with a broker name in `description`). Save created IDs to `backend/data/nessie_ids.json`.
 If Nessie is down or returns errors, `nessie.py` reads `backend/data/nessie_fixture.json`
 (same shapes, recorded from a successful run). **Record that fixture as soon as seeding works.**
@@ -257,23 +263,43 @@ Split of work: `nessie.py` exposes `get_checking_balance() -> float` and
 `get_upcoming_bills(days: int) -> list[dict]` (each `{payee, amount, due_date}`), normalized so
 nothing downstream sees raw Nessie JSON. `cashflow.py` is pure and does the simulation below.
 Input: chain + today's date. Simulate day by day:
+- **Window = this trip only** (Decision 1, Sat Sep 19): from `today` until he's home (`chain.schedule[0].depart_at
+  + chain.days`, as a date). A single 2.6-day run can't pay a whole month of bills; next month is covered by his next
+  runs, so bills and broker pay after he's home are left out of the balance.
 - Start = current checking balance.
 - Subtract fuel cost on each leg's pickup day (diesel is paid up front).
-- Subtract bills on their due dates.
-- Add each load's pay on `delivery date + payment_terms_days`. Pay deposited = `rate − dispatch fee`
-  (the dispatcher takes his cut before the driver sees it).
-- Report lowest balance and date. If negative, re-run with quick pay
-  (paid 2 days after delivery, minus `rate × quick_pay_fee_pct`) on the fewest loads needed (earliest delivery
-  first) and report whether that fixes it and what it costs. `timeline` is the ORIGINAL run (it shows the dip);
-  the quick-pay result is reported in `quick_pay_fixes_it` / `quick_pay_cost`.
+- Subtract bills due inside the window on their due dates.
+- Broker pay (`rate − dispatch fee`, on `delivery date + payment_terms_days`) almost always lands after the window.
+  It goes in `later` (`[{date, label, amount}]`, not counted in the balance) so the driver sees when money arrives.
+- Report lowest balance and date. If negative, re-run with a **Capital One advance** on the fewest loads needed
+  (earliest delivery first). An advance deposits `rate − dispatch fee − rate × quick_pay_fee_pct` **on delivery day**
+  and is paid back (`rate − dispatch fee`) automatically when the broker pays, so its repayment is a `later` entry
+  that cancels that broker's pay. Report whether that fixes it and what it costs. `timeline` is the ORIGINAL run
+  (it shows the dip); the advance result is reported in `quick_pay_fixes_it` / `quick_pay_cost` (field names kept
+  from v1 for compatibility; the UI says "Capital One advance").
 - Timeline details: the first entry is `{date: today, label: "Checking balance today", amount: 0, balance}`;
-  money out is booked before money in on the same day; bills count only if due between today and the run's
-  last payment. If quick pay can't fix it, `quick_pay_cost` is the cost of quick pay on every load.
-Demo moment: "Best run makes $1,496, but your balance goes negative on Oct 5 when the $1,100 insurance
-hits, and bottoms out at −$359 on Oct 15, before the first broker pays on Oct 21. Quick pay on the Atlanta
-load costs $36 and keeps you positive the whole way."
-(Numbers from the current simulated board with a $3,800 starting balance; `scripts/demo_check.py` prints
-the live values. Re-check this line whenever the board, the profile or the Nessie data changes.)
+  money out is booked before money in on the same day. If advances can't fix it, `quick_pay_cost` is the cost of an
+  advance on every load.
+- **Money on the map** (Feature A): `cashflow.balance_along_route(chain, loads_by_id, start, home, start_balance,
+  bills, today)` walks the same events in time order along the drawn route (start → pickup → delivery → … → home).
+  Diesel is paid at pickup, an advance lands at delivery, and bills post at **noon** on their due date wherever the
+  truck is then (position interpolated by time along the current stretch; estimate). It returns `route` (stretches
+  cut at every money event, each with the balance while driving it) and `money_stops` (markers). `/api/cashflow`
+  fills both using the profile's current location and home. The UI colors stretches **green ≥ $500, amber $0–500,
+  red < $0**.
+- **Capital One advance** (Feature B): `POST /api/advance` books the advance the driver tapped. Nessie gets a
+  `pending` deposit (`rate − dispatch − fee`, dated delivery day, description `CAPITAL ONE ADVANCE <load>`) and a
+  `pending` bill (payee `Capital One advance repayment`, `rate − dispatch`, dated the broker's pay date; must carry
+  `recurring_date` or Nessie can't list bills). Pending items don't move Nessie's balance, so `cashflow` adds the
+  advance itself; `get_upcoming_bills` skips the repayment bill (cashflow models it, and Nessie misdates it). Offline
+  the advance lives in memory (`source: "fixture"`). The server remembers advances until restart or
+  `/api/demo/reset-bank`. `advance_load_ids` tells the UI which load to offer (earliest delivery that fixes it).
+Demo moment: "Best run makes $1,496. His truck payment ($2,150) comes due on Sep 22 while he's hauling through
+Tennessee, and his balance goes to −$313. A Capital One advance on the Atlanta load (delivered the night before)
+costs $36, lands $1,044 that evening, and keeps him at $731; it pays itself back when the broker pays on Oct 21."
+(Numbers from the current simulated board with a **$2,500** starting balance and the truck payment due on the
+**22nd**; `scripts/demo_check.py` prints the live values. Re-check this line whenever the board, the profile or
+the Nessie data changes.)
 
 ## Module interfaces (frozen: everyone codes against these signatures)
 ```python
@@ -285,14 +311,19 @@ def evaluate_load(load: Load, profile: TruckProfile, deadhead_miles: float, load
 # optimizer.py
 def best_chains(profile: TruckProfile, start: Place, start_time: datetime, loads: list[Load], top_k: int = 3) -> list[Chain]
 # cashflow.py
-def simulate(chain: Chain, loads_by_id: dict[str, Load], start_balance: float, bills: list[dict], today: date) -> CashflowCheck
+def simulate(chain: Chain, loads_by_id: dict[str, Load], start_balance: float, bills: list[dict], today: date,
+             advance: set[str] = frozenset()) -> CashflowCheck   # advance = loads already advanced
+def balance_along_route(chain, loads_by_id, start: Place, home: Place, start_balance, bills, today, advance=frozenset()) -> tuple[list[dict], list[dict]]
 # gemini.py
 def extract_load(text: str | None, image_bytes: bytes | None, mime_type: str | None) -> ExtractionResult
 def explain(payload: dict) -> str
 def counter_message(economics: LoadEconomics, broker: str | None) -> str
 # nessie.py
 def get_checking_balance() -> float
-def get_upcoming_bills(days: int = 45) -> list[dict]             # [{payee, amount, due_date: date}]
+def get_upcoming_bills(days: int = 45) -> list[dict]             # [{payee, amount, due_date: date}] (skips advance repayments)
+def create_advance(load_id, amount, on: date, repay_amount, repay_on: date, who="") -> dict   # offline -> source "fixture"
+def advances() -> dict[str, dict]                                 # advances created since start / last reset
+def reset_advances() -> int
 def get_costs_from_bank(profile: TruckProfile) -> dict          # {current, proposed, evidence}
 ```
 Until a module is done, its owner commits a **stub** with the exact signature that returns realistic fake data,
@@ -309,7 +340,9 @@ so `main.py` and the frontend can wire everything on day one.
 | POST | `/api/chains` | `{seed_load_ids?: str[], include_board: bool}` → `Chain[]` (top 3) |
 | GET | `/api/board` | → `Load[]` (simulated) |
 | GET | `/api/costs/from-bank` | → `{current: TruckProfile, proposed: TruckProfile, evidence: dict}` |
-| POST | `/api/cashflow` | `{chain: Chain}` → `CashflowCheck` |
+| POST | `/api/cashflow` | `{chain: Chain}` → `CashflowCheck` (includes advances already taken on this run's loads) |
+| POST | `/api/advance` | `{chain: Chain, load_id: str}` → `CashflowCheck` (creates a Capital One advance in Nessie: pending deposit on delivery day + repayment bill on the broker's pay date; 404 if the load isn't on the run) |
+| POST | `/api/demo/reset-bank` | → `{removed: int}` (deletes every advance deposit/bill on the demo account; the UI's "Reset demo" calls it) |
 | POST | `/api/explain` | `{economics, chain?, cashflow?}` → `{text: str}` |
 | POST | `/api/counter-message` | `{economics}` → `{text: str}` (Gemini writes message; rate comes from code) |
 

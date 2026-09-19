@@ -3,9 +3,9 @@
     "chain": "<first item of POST_chains response>"
   },
   "response": {
-    "starting_balance": 3800.0,
-    "lowest_balance": -359.03,
-    "lowest_balance_date": "2026-10-15",
+    "starting_balance": 2500.0,
+    "lowest_balance": -494.03,
+    "lowest_balance_date": "2026-09-23",
     "shortfall": true,
     "quick_pay_fixes_it": true,
     "quick_pay_cost": 36.0,
@@ -14,61 +14,186 @@
         "date": "2026-09-21",
         "label": "Checking balance today",
         "amount": 0.0,
-        "balance": 3800.0
+        "balance": 2500.0
       },
       {
         "date": "2026-09-21",
         "label": "Diesel for L027",
         "amount": -244.95,
-        "balance": 3555.05
+        "balance": 2255.05
       },
       {
         "date": "2026-09-22",
         "label": "Diesel for L058",
         "amount": -417.59,
-        "balance": 3137.46
+        "balance": 1837.46
+      },
+      {
+        "date": "2026-09-22",
+        "label": "Truck payment",
+        "amount": -2150.0,
+        "balance": -312.54
       },
       {
         "date": "2026-09-23",
         "label": "Diesel for L012",
         "amount": -181.49,
-        "balance": 2955.97
-      },
-      {
-        "date": "2026-10-01",
-        "label": "Truck payment",
-        "amount": -2150.0,
-        "balance": 805.97
-      },
-      {
-        "date": "2026-10-05",
-        "label": "Truck insurance",
-        "amount": -1100.0,
-        "balance": -294.03
-      },
-      {
-        "date": "2026-10-15",
-        "label": "ELD / phone",
-        "amount": -65.0,
-        "balance": -359.03
-      },
+        "balance": -494.03
+      }
+    ],
+    "later": [
       {
         "date": "2026-10-21",
         "label": "Pay for L027 (Blue Ridge Logistics)",
-        "amount": 1080.0,
-        "balance": 720.97
+        "amount": 1080.0
       },
       {
         "date": "2026-10-23",
         "label": "Pay for L058 (Summit Carrier Services)",
-        "amount": 1530.0,
-        "balance": 2250.97
+        "amount": 1530.0
       },
       {
         "date": "2026-10-23",
         "label": "Pay for L012 (Piedmont Transport Group)",
-        "amount": 765.0,
-        "balance": 3015.97
+        "amount": 765.0
+      }
+    ],
+    "route": [
+      {
+        "from": [
+          37.271,
+          -79.9414
+        ],
+        "to": [
+          37.271,
+          -79.9414
+        ],
+        "start": "2026-09-21T06:00:00",
+        "end": "2026-09-21T07:00:00",
+        "balance": 2500.0,
+        "loaded": false
+      },
+      {
+        "from": [
+          37.271,
+          -79.9414
+        ],
+        "to": [
+          33.749,
+          -84.388
+        ],
+        "start": "2026-09-21T07:00:00",
+        "end": "2026-09-21T19:22:48",
+        "balance": 2255.05,
+        "loaded": true
+      },
+      {
+        "from": [
+          33.749,
+          -84.388
+        ],
+        "to": [
+          35.9606,
+          -83.9207
+        ],
+        "start": "2026-09-21T19:22:48",
+        "end": "2026-09-22T09:06:07.586052",
+        "balance": 2255.05,
+        "loaded": false
+      },
+      {
+        "from": [
+          35.9606,
+          -83.9207
+        ],
+        "to": [
+          36.34565200811442,
+          -83.07555836948038
+        ],
+        "start": "2026-09-22T09:06:07.586052",
+        "end": "2026-09-22T12:00:00",
+        "balance": 1837.46,
+        "loaded": true
+      },
+      {
+        "from": [
+          36.34565200811442,
+          -83.07555836948038
+        ],
+        "to": [
+          39.2904,
+          -76.6122
+        ],
+        "start": "2026-09-22T12:00:00",
+        "end": "2026-09-23T10:09:43.586052",
+        "balance": -312.54,
+        "loaded": true
+      },
+      {
+        "from": [
+          39.2904,
+          -76.6122
+        ],
+        "to": [
+          39.6418,
+          -77.72
+        ],
+        "start": "2026-09-23T10:09:43.586052",
+        "end": "2026-09-23T11:41:43.153410",
+        "balance": -312.54,
+        "loaded": false
+      },
+      {
+        "from": [
+          39.6418,
+          -77.72
+        ],
+        "to": [
+          37.271,
+          -79.9414
+        ],
+        "start": "2026-09-23T11:41:43.153410",
+        "end": "2026-09-23T20:34:31.153410",
+        "balance": -494.03,
+        "loaded": true
+      }
+    ],
+    "money_stops": [
+      {
+        "at": "2026-09-21T07:00:00",
+        "lat": 37.271,
+        "lng": -79.9414,
+        "label": "Diesel for L027",
+        "amount": -244.95,
+        "balance": 2255.05,
+        "kind": "fuel"
+      },
+      {
+        "at": "2026-09-22T09:06:07.586052",
+        "lat": 35.9606,
+        "lng": -83.9207,
+        "label": "Diesel for L058",
+        "amount": -417.59,
+        "balance": 1837.46,
+        "kind": "fuel"
+      },
+      {
+        "at": "2026-09-22T12:00:00",
+        "lat": 36.34565,
+        "lng": -83.07556,
+        "label": "Truck payment",
+        "amount": -2150.0,
+        "balance": -312.54,
+        "kind": "bill"
+      },
+      {
+        "at": "2026-09-23T11:41:43.153410",
+        "lat": 39.6418,
+        "lng": -77.72,
+        "label": "Diesel for L012",
+        "amount": -181.49,
+        "balance": -494.03,
+        "kind": "fuel"
       }
     ]
   },

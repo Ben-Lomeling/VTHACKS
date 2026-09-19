@@ -131,9 +131,10 @@ Solid arrows are pure Python. Dotted arrows leave the laptop, and each has an of
    miles away, the window is missed, or the delivery would be late. Score = profit of every leg minus the
    empty drive home. We show the top 3 that end near home, each starting with a different load. 60 loads take
    a few milliseconds.
-3. **Cash flow (`cashflow.py`).** Starting from his real bank balance, diesel goes out on pickup day, bills on
-   their due dates, and pay comes in on delivery + the broker's payment terms. If he'd go negative before
-   he's paid, we find the fewest loads to switch to quick pay and what it costs.
+3. **Cash flow (`cashflow.py`).** Starting from his real bank balance, for this trip (today until he's home):
+   diesel goes out on pickup day and bills on their due dates. Broker pay comes weeks later (delivery + payment
+   terms), so it's listed but not counted. If he'd go negative on the road, we find the fewest loads that need a
+   Capital One advance (paid on delivery day, small fee, repaid when the broker pays) and what it costs.
 4. **Honest estimates.** Miles are straight-line × 1.2, driving is 50 mph, HOS is simplified. We say so.
 
 ## Known simplifications

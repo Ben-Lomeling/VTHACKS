@@ -7,7 +7,7 @@
       "optimizer": "live",
       "cashflow": "live",
       "gemini": "stub",
-      "nessie": "stub"
+      "nessie": "live"
     },
     "demo_now": "2026-09-21T06:00:00",
     "board_loads": 60,

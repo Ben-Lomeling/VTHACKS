@@ -800,6 +800,9 @@ thead th {
 .map-card {
   padding: 20px;
   min-width: 0;
+  align-self: start;
+  position: sticky;
+  top: 20px;
 }
 .map {
   height: 390px;
@@ -816,10 +819,13 @@ thead th {
   place-items: center;
   background: #173f42;
   color: white;
-  width: 32px;
+  width: max-content;
+  min-width: 32px;
   height: 32px;
+  padding: 0 8px;
+  transform: translateX(calc(16px - 50%));
   border: 2px solid white;
-  border-radius: 50%;
+  border-radius: 16px;
   font-weight: 700;
   font-size: 11px;
   box-shadow: 0 2px 8px #0003;
@@ -932,6 +938,9 @@ footer span:last-child {
   }
   .plan-layout {
     grid-template-columns: 1fr;
+  }
+  .map-card {
+    position: static;
   }
   .chain-list {
     grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
@@ -1054,4 +1063,211 @@ footer span:last-child {
 }
 .stacked-costs .bar-4 {
   background: #a8d45e;
+}
+
+/* Run timeline (drive / wait / rest / home) */
+.timeline {
+  margin-top: 18px;
+}
+.timeline-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+.timeline-head strong {
+  font-size: 15px;
+}
+.timeline-bar {
+  position: relative;
+  height: 34px;
+  margin-bottom: 26px;
+  border-radius: 6px;
+  background: #eef1ea;
+}
+.seg {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 10px;
+  font-weight: 700;
+  color: white;
+  border-right: 2px solid white;
+}
+.seg-loaded {
+  background: #183d40;
+}
+.seg-empty {
+  background: repeating-linear-gradient(135deg, #c9d0d6 0 6px, #dfe4e8 6px 12px);
+}
+.seg-home {
+  background: repeating-linear-gradient(135deg, #cbb8ec 0 6px, #e4d9f5 6px 12px);
+}
+.seg .rest {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-style: normal;
+  font-size: 9px;
+  white-space: nowrap;
+  padding: 1px 5px;
+  border-radius: 8px;
+  background: #fff4cc;
+  color: #6b5200;
+}
+.seg-loaded span {
+  margin-bottom: 10px;
+}
+.midnight {
+  position: absolute;
+  top: 100%;
+  font-size: 10px;
+  font-weight: 400;
+  color: #6b7b8b;
+  padding-top: 4px;
+  border-left: 1px dashed #9aa5ae;
+  padding-left: 3px;
+  height: 18px;
+}
+
+/* This offer vs. the best run */
+.compare {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 18px;
+  align-items: stretch;
+}
+.compare > div {
+  border-radius: 8px;
+  padding: 16px;
+  background: #f5f6f1;
+}
+.compare > div.better {
+  background: #eef6e2;
+  outline: 2px solid #a8cf6a;
+}
+.compare strong {
+  display: block;
+  font-size: 30px;
+  letter-spacing: -1px;
+  margin: 6px 0;
+}
+.compare p {
+  font-size: 12px;
+  margin: 4px 0;
+}
+.compare .vs {
+  align-self: center;
+  font-weight: 700;
+  color: #6b7b8b;
+  background: none;
+  padding: 0;
+}
+.compare-verdict {
+  margin: 14px 0 0;
+  font-weight: 600;
+}
+@media (max-width: 700px) {
+  .compare {
+    grid-template-columns: 1fr;
+  }
+  .compare .vs {
+    justify-self: center;
+  }
+}
+/* Feature A: money on the map */
+.money-pin span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  font-size: 15px;
+  background: white;
+  border: 2px solid #1f8a4c;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px #0003;
+}
+.money-pin.money-red span {
+  border-color: #c03937;
+}
+.money-pin.money-bill.money-red span {
+  background: #c03937;
+  animation: money-pulse 1.4s ease-in-out infinite;
+}
+@keyframes money-pulse {
+  50% {
+    box-shadow: 0 0 0 8px #c0393744;
+  }
+}
+.money-legend .swatch {
+  display: inline-block;
+  width: 18px;
+  height: 5px;
+  margin-right: 4px;
+  vertical-align: middle;
+  border-radius: 3px;
+}
+.swatch.green {
+  background: #1f8a4c;
+}
+.swatch.amber {
+  background: #d98e04;
+}
+.swatch.red {
+  background: #c03937;
+}
+.balance-strip {
+  position: relative;
+  height: 8px;
+  margin: -18px 0 18px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #eef1ea;
+}
+.balance-strip div {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+/* Feature B: Capital One advance */
+.advance {
+  margin: 14px 0;
+  padding: 14px 16px;
+  border-radius: 7px;
+  font-size: 14px;
+}
+.advance p {
+  margin: 0 0 10px;
+}
+.advance-red {
+  background: #c039370f;
+  border: 1px solid #c0393766;
+}
+.advance-done {
+  background: #1f8a4c12;
+  border: 1px solid #1f8a4c66;
+}
+.advance-done p {
+  margin: 0;
+}
+.advance-confirm {
+  padding: 12px;
+  background: white;
+  border-radius: 6px;
+}
+.advance-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.money-legend .swatch:not(:first-child) {
+  margin-left: 12px;
 }
