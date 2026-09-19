@@ -102,7 +102,7 @@ trucker's bank account into a **map of the road ahead**. Full design: **`docs/CA
 ## Next steps (in order)
 1. ~~Decision 1~~ done. Merge `story/option-1` (trip-only cash flow, advance, $2,500 / truck payment on the 22nd).
    Live Nessie re-seeded Sat 3:45 PM (new customer, $2,500, truck payment the 22nd); fixture re-recorded. The old
-   customer's IDs are in the untracked `backend/data/nessie_ids.old.json`. Demo laptop `.env` has `NESSIE_API_KEY`.
+   customer's IDs are kept in `backend/data/nessie_ids.old.json` (unused). Demo laptop `.env` has `NESSIE_API_KEY`.
 2. **Feature A: money on the map** (issue #13). Demo-ready checkpoint.
 3. **Feature B: Capital One advance**: Nessie deposit + repayment bill + reset (#14).
 4. **Feature C: receipt photos**: Gemini read + Nessie purchase + food_per_day (#15).
