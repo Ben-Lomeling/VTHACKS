@@ -1,0 +1,76 @@
+{
+  "request": {
+    "chain": "<first item of POST_chains response>"
+  },
+  "response": {
+    "starting_balance": 3800.0,
+    "lowest_balance": -359.03,
+    "lowest_balance_date": "2026-10-15",
+    "shortfall": true,
+    "quick_pay_fixes_it": true,
+    "quick_pay_cost": 36.0,
+    "timeline": [
+      {
+        "date": "2026-09-21",
+        "label": "Checking balance today",
+        "amount": 0.0,
+        "balance": 3800.0
+      },
+      {
+        "date": "2026-09-21",
+        "label": "Diesel for L027",
+        "amount": -244.95,
+        "balance": 3555.05
+      },
+      {
+        "date": "2026-09-22",
+        "label": "Diesel for L058",
+        "amount": -417.59,
+        "balance": 3137.46
+      },
+      {
+        "date": "2026-09-23",
+        "label": "Diesel for L012",
+        "amount": -181.49,
+        "balance": 2955.97
+      },
+      {
+        "date": "2026-10-01",
+        "label": "Truck payment",
+        "amount": -2150.0,
+        "balance": 805.97
+      },
+      {
+        "date": "2026-10-05",
+        "label": "Truck insurance",
+        "amount": -1100.0,
+        "balance": -294.03
+      },
+      {
+        "date": "2026-10-15",
+        "label": "ELD / phone",
+        "amount": -65.0,
+        "balance": -359.03
+      },
+      {
+        "date": "2026-10-21",
+        "label": "Pay for L027 (Blue Ridge Logistics)",
+        "amount": 1080.0,
+        "balance": 720.97
+      },
+      {
+        "date": "2026-10-23",
+        "label": "Pay for L058 (Summit Carrier Services)",
+        "amount": 1530.0,
+        "balance": 2250.97
+      },
+      {
+        "date": "2026-10-23",
+        "label": "Pay for L012 (Piedmont Transport Group)",
+        "amount": 765.0,
+        "balance": 3015.97
+      }
+    ]
+  },
+  "status": 200
+}

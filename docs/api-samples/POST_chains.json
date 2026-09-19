@@ -1,0 +1,266 @@
+{
+  "request": {
+    "seed_load_ids": [
+      "DEMO-BAD"
+    ],
+    "include_board": true
+  },
+  "response": [
+    {
+      "loads": [
+        "L027",
+        "L058",
+        "L012"
+      ],
+      "legs": [
+        {
+          "load_id": "L027",
+          "deadhead_miles": 0.0,
+          "loaded_miles": 419.0,
+          "total_miles": 419.0,
+          "posted_rpm": 2.863961813842482,
+          "fuel_cost": 244.95384615384617,
+          "variable_cost": 83.80000000000001,
+          "fixed_cost": 209.5,
+          "dispatch_fee": 120.0,
+          "net_profit": 541.7461538461539,
+          "true_net_cpm": 1.2929502478428494,
+          "break_even_rate": 598.0598290598291,
+          "counter_offer_rate": 947.2264957264957,
+          "verdict": "take"
+        },
+        {
+          "load_id": "L058",
+          "deadhead_miles": 186.1053618331457,
+          "loaded_miles": 553.0,
+          "total_miles": 739.1053618331457,
+          "posted_rpm": 3.0741410488245933,
+          "fuel_cost": 417.5856910211015,
+          "variable_cost": 147.82107236662915,
+          "fixed_cost": 369.55268091657285,
+          "dispatch_fee": 170.0,
+          "net_profit": 595.0405556956966,
+          "true_net_cpm": 0.805082179650089,
+          "break_even_rate": 1038.8438270047818,
+          "counter_offer_rate": 1654.7649618657365,
+          "verdict": "take"
+        },
+        {
+          "load_id": "L012",
+          "deadhead_miles": 76.660657744115,
+          "loaded_miles": 244.0,
+          "total_miles": 320.660657744115,
+          "posted_rpm": 3.4836065573770494,
+          "fuel_cost": 181.4875537698388,
+          "variable_cost": 64.132131548823,
+          "fixed_cost": 160.3303288720575,
+          "dispatch_fee": 85.0,
+          "net_profit": 359.04998580928066,
+          "true_net_cpm": 1.1197194826931345,
+          "break_even_rate": 451.0555713230214,
+          "counter_offer_rate": 718.2727861097839,
+          "verdict": "take"
+        }
+      ],
+      "home_deadhead_miles": 0.0,
+      "home_deadhead_cost": 0.0,
+      "total_net_profit": 1495.8366953511313,
+      "total_miles": 1478.7660195772607,
+      "days": 2.6073050163194442,
+      "net_per_day": 573.7098981471307,
+      "ends_at": {
+        "city": "Roanoke, VA",
+        "lat": 37.271,
+        "lng": -79.9414
+      },
+      "feasible_notes": [
+        "Waited 1.0 h for pickup window at L027",
+        "10-h rest inserted before pickup of L058",
+        "10-h rest inserted while hauling L058"
+      ],
+      "schedule": [
+        {
+          "load_id": "L027",
+          "depart_at": "2026-09-21T06:00:00",
+          "pickup_at": "2026-09-21T07:00:00",
+          "delivered_at": "2026-09-21T19:22:48"
+        },
+        {
+          "load_id": "L058",
+          "depart_at": "2026-09-21T19:22:48",
+          "pickup_at": "2026-09-22T09:06:07.586052",
+          "delivered_at": "2026-09-23T10:09:43.586052"
+        },
+        {
+          "load_id": "L012",
+          "depart_at": "2026-09-23T10:09:43.586052",
+          "pickup_at": "2026-09-23T11:41:43.153410",
+          "delivered_at": "2026-09-23T20:34:31.153410"
+        }
+      ]
+    },
+    {
+      "loads": [
+        "L039",
+        "L058",
+        "L012"
+      ],
+      "legs": [
+        {
+          "load_id": "L039",
+          "deadhead_miles": 53.99543788915722,
+          "loaded_miles": 214.0,
+          "total_miles": 267.99543788915724,
+          "posted_rpm": 3.0373831775700935,
+          "fuel_cost": 152.4653808381986,
+          "variable_cost": 53.599087577831455,
+          "fixed_cost": 133.99771894457862,
+          "dispatch_fee": 65.0,
+          "net_profit": 244.9378126393913,
+          "true_net_cpm": 0.9139626202916836,
+          "break_even_rate": 377.84687484512074,
+          "counter_offer_rate": 601.1764064194184,
+          "verdict": "take"
+        },
+        {
+          "load_id": "L058",
+          "deadhead_miles": 216.2145221497416,
+          "loaded_miles": 553.0,
+          "total_miles": 769.2145221497416,
+          "posted_rpm": 3.0741410488245933,
+          "fuel_cost": 432.84099891484345,
+          "variable_cost": 153.84290442994833,
+          "fixed_cost": 384.6072610748708,
+          "dispatch_fee": 170.0,
+          "net_profit": 558.7088355803373,
+          "true_net_cpm": 0.7263368273637123,
+          "break_even_rate": 1079.2124049107363,
+          "counter_offer_rate": 1720.2245067021875,
+          "verdict": "negotiate"
+        },
+        {
+          "load_id": "L012",
+          "deadhead_miles": 76.660657744115,
+          "loaded_miles": 244.0,
+          "total_miles": 320.660657744115,
+          "posted_rpm": 3.4836065573770494,
+          "fuel_cost": 181.4875537698388,
+          "variable_cost": 64.132131548823,
+          "fixed_cost": 160.3303288720575,
+          "dispatch_fee": 85.0,
+          "net_profit": 359.04998580928066,
+          "true_net_cpm": 1.1197194826931345,
+          "break_even_rate": 451.0555713230214,
+          "counter_offer_rate": 718.2727861097839,
+          "verdict": "take"
+        }
+      ],
+      "home_deadhead_miles": 0.0,
+      "home_deadhead_cost": 0.0,
+      "total_net_profit": 1162.6966340290094,
+      "total_miles": 1357.8706177830138,
+      "days": 2.603050548125,
+      "net_per_day": 446.66694423837055,
+      "ends_at": {
+        "city": "Roanoke, VA",
+        "lat": 37.271,
+        "lng": -79.9414
+      },
+      "feasible_notes": [
+        "Waited 0.9 h for pickup window at L039",
+        "Waited 12.4 h for pickup window at L058",
+        "10-h rest inserted while hauling L058"
+      ],
+      "schedule": [
+        {
+          "load_id": "L039",
+          "depart_at": "2026-09-21T06:00:00",
+          "pickup_at": "2026-09-21T08:00:00",
+          "delivered_at": "2026-09-21T16:16:48"
+        },
+        {
+          "load_id": "L058",
+          "depart_at": "2026-09-21T16:16:48",
+          "pickup_at": "2026-09-22T09:00:00",
+          "delivered_at": "2026-09-23T10:03:36"
+        },
+        {
+          "load_id": "L012",
+          "depart_at": "2026-09-23T10:03:36",
+          "pickup_at": "2026-09-23T11:35:35.567358",
+          "delivered_at": "2026-09-23T20:28:23.567358"
+        }
+      ]
+    },
+    {
+      "loads": [
+        "L042",
+        "L012"
+      ],
+      "legs": [
+        {
+          "load_id": "L042",
+          "deadhead_miles": 142.3794750562608,
+          "loaded_miles": 274.0,
+          "total_miles": 416.3794750562608,
+          "posted_rpm": 2.7372262773722627,
+          "fuel_cost": 232.32354941312082,
+          "variable_cost": 83.27589501125216,
+          "fixed_cost": 208.1897375281304,
+          "dispatch_fee": 75.0,
+          "net_profit": 151.21081804749664,
+          "true_net_cpm": 0.3631562723572414,
+          "break_even_rate": 581.9879799472259,
+          "counter_offer_rate": 928.9708758274433,
+          "verdict": "skip"
+        },
+        {
+          "load_id": "L012",
+          "deadhead_miles": 0.0,
+          "loaded_miles": 244.0,
+          "total_miles": 244.0,
+          "posted_rpm": 3.4836065573770494,
+          "fuel_cost": 142.64615384615385,
+          "variable_cost": 48.800000000000004,
+          "fixed_cost": 122.0,
+          "dispatch_fee": 85.0,
+          "net_profit": 451.55384615384617,
+          "true_net_cpm": 1.8506305170239596,
+          "break_even_rate": 348.2735042735043,
+          "counter_offer_rate": 551.6068376068375,
+          "verdict": "take"
+        }
+      ],
+      "home_deadhead_miles": 0.0,
+      "home_deadhead_cost": 0.0,
+      "total_net_profit": 602.7646642013428,
+      "total_miles": 660.3794750562608,
+      "days": 2.5366666666666666,
+      "net_per_day": 237.6207611831838,
+      "ends_at": {
+        "city": "Roanoke, VA",
+        "lat": 37.271,
+        "lng": -79.9414
+      },
+      "feasible_notes": [
+        "Waited 22.2 h for pickup window at L042",
+        "Waited 17.5 h for pickup window at L012"
+      ],
+      "schedule": [
+        {
+          "load_id": "L042",
+          "depart_at": "2026-09-21T06:00:00",
+          "pickup_at": "2026-09-22T07:00:00",
+          "delivered_at": "2026-09-22T16:28:48"
+        },
+        {
+          "load_id": "L012",
+          "depart_at": "2026-09-22T16:28:48",
+          "pickup_at": "2026-09-23T10:00:00",
+          "delivered_at": "2026-09-23T18:52:48"
+        }
+      ]
+    }
+  ],
+  "status": 200
+}

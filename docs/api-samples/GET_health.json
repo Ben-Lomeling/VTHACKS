@@ -1,0 +1,17 @@
+{
+  "request": null,
+  "response": {
+    "modules": {
+      "profit": "live",
+      "geo": "live",
+      "optimizer": "live",
+      "cashflow": "live",
+      "gemini": "stub",
+      "nessie": "stub"
+    },
+    "demo_now": "2026-09-21T06:00:00",
+    "board_loads": 60,
+    "pasted_loads": 0
+  },
+  "status": 200
+}

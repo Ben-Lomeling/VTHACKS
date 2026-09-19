@@ -97,6 +97,52 @@ and ping Nischal in the group chat. Nischal merges. Keep PRs small, and merge at
 | GET | `/api/health` | which modules are live vs stub |
 
 Interactive docs: http://localhost:8000/docs
+Real example request/response for every route: [`docs/api-samples/`](docs/api-samples/)
+(regenerate with `python scripts/export_api_samples.py`). Frontend mocks should match these shapes.
+
+## Architecture
+```mermaid
+flowchart LR
+  UI["React frontend<br/>(Setup · Check a load · Plan my run)"] -->|JSON over HTTP| API["FastAPI<br/>main.py (routes only)"]
+  API --> GEM["gemini.py<br/>read offers · write explanations"]
+  API --> PROF["profit.py<br/>true $/mile · verdict · counter"]
+  API --> OPT["optimizer.py<br/>best 1-3 load runs"]
+  API --> CASH["cashflow.py<br/>can I afford this run?"]
+  API --> NES["nessie.py<br/>Capital One bank data"]
+  OPT --> PROF
+  OPT --> GEO["geo.py<br/>miles + city lookup"]
+  API --> GEO
+  GEO -.->|cache miss only| OSM[("OpenStreetMap<br/>Nominatim")]
+  GEM -.-> GAPI[("Gemini API")]
+  NES -.->|falls back to fixture| NAPI[("Nessie API")]
+```
+Solid arrows are pure Python. Dotted arrows leave the laptop, and each has an offline fallback
+(city cache, Nessie fixture, template text) so the demo runs with Wi-Fi off.
+
+## How the decision engine works (the 60-second version)
+1. **True profit (`profit.py`).** Rate minus the dispatcher's cut, fuel (empty and loaded mpg), maintenance per
+   mile, and fixed costs (truck payment, insurance) spread per mile, over *all* miles including the empty drive
+   to pickup. $1,200 for 500 mi looks like $2.40/mi; with 100 empty miles it's $0.53/mi in his pocket.
+   Verdict: **take** if he hits his target per mile, **negotiate** if the rate he'd need is within 20% of the
+   offer (we give him that number), otherwise **skip**.
+2. **Better runs (`optimizer.py`).** Depth-first search over every sequence of 1–3 loads. Each step runs a real
+   clock: drive empty, wait for the pickup window, 2 h to load, drive loaded, 2 h to unload, with a simplified
+   hours-of-service rule (10 h rest after 11 h driving). Branches die early if the pickup is over 250 empty
+   miles away, the window is missed, or the delivery would be late. Score = profit of every leg minus the
+   empty drive home. We show the top 3 that end near home, each starting with a different load. 60 loads take
+   a few milliseconds.
+3. **Cash flow (`cashflow.py`).** Starting from his real bank balance, diesel goes out on pickup day, bills on
+   their due dates, and pay comes in on delivery + the broker's payment terms. If he'd go negative before
+   he's paid, we find the fewest loads to switch to quick pay and what it costs.
+4. **Honest estimates.** Miles are straight-line × 1.2, driving is 50 mph, HOS is simplified. We say so.
+
+## Scripts
+| Script | What it does |
+|---|---|
+| `python scripts/demo_check.py` | Runs the demo flow against the API and prints PASS/FAIL per step, plus story checks. Run before every rehearsal. `--in-process` needs no server. |
+| `python scripts/prewarm_cities.py "City, ST" ...` | Caches city coordinates so the demo works offline. Commit `backend/data/cities.json` after. |
+| `python scripts/export_api_samples.py` | Refreshes `docs/api-samples/` from the current backend. |
+| `python scripts/seed_nessie.py` | Creates the demo bank customer in Nessie (Nessie teammate). |
 
 ## Repo layout
 ```
