@@ -14,6 +14,7 @@ import type {
 import { Field, PlaceFields } from "./components/Fields";
 import { LoadForm } from "./components/LoadForm";
 import { RouteMap } from "./components/RouteMap";
+import { RunTimeline } from "./components/RunTimeline";
 import {
   ResponsiveContainer,
   LineChart,
@@ -31,8 +32,11 @@ const money = (n: number) =>
     currency: "USD",
     maximumFractionDigits: 2,
   });
+// The demo's "bad load": looks like $2.43/mi on paper, keeps about $0.55/mi.
 const example =
-  "Roanoke, VA → Charlotte, NC. $1,200 total. 500 loaded miles. Dry van, 38,000 lbs of paper products. Pickup Sep 22, 8am–12pm. Deliver Sep 23 by 8am. Blue Ridge Logistics. Net 30.";
+  "Greensboro, NC → Jacksonville, FL. $1,200 flat. Dry van, 40,000 lbs. Coastal Brokerage. Pickup Mon, deliver Tue. Net 30.";
+// Add ?dev to the URL to see which backend modules are live vs stub.
+const DEV = new URLSearchParams(window.location.search).has("dev");
 type Screen = "Setup" | "Check a load" | "Plan my run";
 const profileNumbers: [keyof TruckProfile, string, string, number, number?][] =
   [
@@ -288,9 +292,11 @@ export default function App() {
               <span className="badge">DEMO DATA</span>
               {USE_MOCKS
                 ? "Mock mode · fixed example responses; your input is not analyzed."
-                : `Backend modules: ${Object.entries(health!.modules)
-                    .map(([k, v]) => `${k}: ${v}`)
-                    .join(" · ")}`}
+                : DEV
+                  ? `Backend modules: ${Object.entries(health!.modules)
+                      .map(([k, v]) => `${k}: ${v}`)
+                      .join(" · ")}`
+                  : "Simulated load board."}
               <span>Nessie bank data is sandbox data.</span>
             </div>
           )}
@@ -418,8 +424,9 @@ export default function App() {
                       </div>
                     </div>
                     <p>
-                      {result.loaded_miles} loaded + {result.deadhead_miles}{" "}
-                      empty = {result.total_miles} total miles
+                      {result.loaded_miles.toFixed(0)} loaded +{" "}
+                      {result.deadhead_miles.toFixed(0)} empty ={" "}
+                      {result.total_miles.toFixed(0)} total miles
                     </p>
                     <h3>Where the money goes</h3>
                     <p className="gross-pay">
@@ -540,6 +547,21 @@ export default function App() {
                         Explain this result
                       </button>
                     )}
+                    <div className="card-footer">
+                      <small>
+                        One load is one decision. See what a full run home pays.
+                      </small>
+                      <button
+                        className="primary"
+                        disabled={!!busy || !profile}
+                        onClick={() => {
+                          setScreen("Plan my run");
+                          void plan();
+                        }}
+                      >
+                        Find a better run →
+                      </button>
+                    </div>
                   </section>
                 )}
                 {offers.length > 0 && (
@@ -875,6 +897,13 @@ export default function App() {
                   {runExplanation}
                 </blockquote>
               )}
+              {result && chains[0] && (
+                <CompareCard
+                  offer={result}
+                  load={offers.find((l) => l.id === result.load_id)}
+                  best={chains[0]}
+                />
+              )}
               {!chains.length ? (
                 <div className="empty-state">
                   <span>↗</span>
@@ -959,6 +988,7 @@ export default function App() {
                         profile={profile}
                       />
                     )}
+                    {chain && <RunTimeline chain={chain} />}
                   </section>
                 </div>
               )}
@@ -1127,5 +1157,66 @@ export default function App() {
         </div>
       </main>
     </div>
+  );
+}
+
+// This offer on its own vs. the best run the optimizer found. Every number is
+// from the API; the frontend only subtracts and divides for display.
+function CompareCard({
+  offer,
+  load,
+  best,
+}: {
+  offer: LoadEconomics;
+  load?: Load;
+  best: Chain;
+}) {
+  const gain = best.total_net_profit - offer.net_profit;
+  const bestCpm = best.total_miles ? best.total_net_profit / best.total_miles : 0;
+  const inBest = best.loads.includes(offer.load_id);
+  return (
+    <section className="card">
+      <div className="section-heading">
+        <div>
+          <p className="eyebrow">THIS OFFER VS. YOUR BEST RUN</p>
+          <h2>Same truck. Very different week.</h2>
+        </div>
+      </div>
+      <div className="compare">
+        <div>
+          <span className="eyebrow">THIS OFFER</span>
+          <strong>{money(offer.net_profit)}</strong>
+          <p>
+            {load ? `${load.origin.city} → ${load.destination.city}` : offer.load_id}
+          </p>
+          <p>
+            {money(offer.true_net_cpm)}/mi net · {offer.total_miles.toFixed(0)} mi ·{" "}
+            <span className={`badge ${offer.verdict}`}>{offer.verdict}</span>
+          </p>
+          <p>{load ? `Leaves you in ${load.destination.city}.` : "Leaves you wherever it delivers."}</p>
+        </div>
+        <span className="vs">vs</span>
+        <div className={gain > 0 ? "better" : ""}>
+          <span className="eyebrow">BEST RUN</span>
+          <strong>{money(best.total_net_profit)}</strong>
+          <p>{best.loads.join(" → ")}</p>
+          <p>
+            {money(bestCpm)}/mi net · {best.total_miles.toFixed(0)} mi ·{" "}
+            {money(best.net_per_day)}/day
+          </p>
+          <p>
+            {best.days.toFixed(1)} days · ends {best.home_deadhead_miles.toFixed(0)} mi
+            from home
+          </p>
+        </div>
+      </div>
+      <p className="compare-verdict">
+        {inBest
+          ? `Your offer is part of the best run: it earns ${money(best.total_net_profit)} once the right loads are around it.`
+          : gain > 0
+            ? `The best run keeps ${money(gain)} more than this offer and gets you home.`
+            : "This offer beats every run we found. Take it."}
+      </p>
+    </section>
   );
 }

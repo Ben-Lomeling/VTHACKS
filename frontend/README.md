@@ -14,6 +14,8 @@ npm run dev
 
 Open http://localhost:5173. Start the API separately from `backend/` with `uvicorn app.main:app --reload`. Live API mode is the default. No API keys belong in frontend environment variables.
 
+Add `?dev` to the URL (http://127.0.0.1:5173/?dev) to show which backend modules are live vs stub; judges see only "Demo data".
+
 For the standalone fixture demo, copy `.env.example` to `.env` and set `VITE_USE_MOCKS=true`, then restart Vite. `VITE_API_BASE_URL` defaults to `http://localhost:8000`. Never silently fall back to mocks on API failure.
 
 ```sh
