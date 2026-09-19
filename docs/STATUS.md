@@ -65,6 +65,9 @@ Demo polish on `frontend/demo-polish` (stacked on review-fixes):
 asked to cache tiles or add a no-tile fallback. Not tested yet: counter message on a negotiate load (Gemini stub always
 extracts the TAKE example).
 
+## Ideas (not started)
+- Real data sources (EIA diesel, FMCSA broker check, OpenRouteService miles, USDA truck rates): see `docs/REAL_DATA_IDEAS.md`.
+
 ## Waiting on
 | Who | What |
 |---|---|
