@@ -64,6 +64,12 @@ const profileNumbers: [keyof TruckProfile, string, string, number, number?][] =
       "Your minimum after every cost",
       0,
     ],
+    [
+      "min_posted_cpm",
+      "My rule: minimum posted ($/mi)",
+      "What you won't go under on the board. 0 = no rule",
+      0,
+    ],
   ];
 export default function App() {
   const [screen, setScreen] = useState<Screen>("Check a load");
@@ -432,6 +438,12 @@ export default function App() {
                       <div>
                         <small>POSTED PER LOADED MILE</small>
                         <del>{money(result.posted_rpm)}</del>
+                        {result.meets_posted_rule != null && profile && (
+                          <em className={result.meets_posted_rule ? "rule-ok" : "rule-no"}>
+                            {result.meets_posted_rule ? "clears" : "below"} your{" "}
+                            {money(profile.min_posted_cpm)}/mi rule
+                          </em>
+                        )}
                       </div>
                       <span>→</span>
                       <div>
@@ -752,6 +764,27 @@ export default function App() {
                     >
                       <option value="manual">Manual</option>
                       <option value="nessie">Nessie</option>
+                    </select>
+                  </Field>
+                  <Field
+                    label="How you get paid"
+                    hint={
+                      draft.pays_weekly
+                        ? "Dispatcher pays weekly; he takes the share below"
+                        : "Brokers pay on each load's terms (often net 30–45)"
+                    }
+                  >
+                    <select
+                      value={draft.pays_weekly ? "weekly" : "broker"}
+                      onChange={(e) =>
+                        setDraft({
+                          ...draft,
+                          pays_weekly: e.target.value === "weekly",
+                        })
+                      }
+                    >
+                      <option value="broker">Direct with brokers</option>
+                      <option value="weekly">Through a dispatcher (weekly)</option>
                     </select>
                   </Field>
                   {profileNumbers.map(([key, label, hint, min, max]) => (

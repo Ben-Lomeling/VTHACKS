@@ -52,8 +52,11 @@ def _sorted(events: list[Event]) -> list[Event]:
 
 
 def _events(chain: Chain, loads_by_id: dict[str, Load], bills: list[dict], today: date,
-            advance: set[str]) -> tuple[list[Event], list[Event]]:
-    """(events inside the trip window, events after he's home). Only the first list moves the balance."""
+            advance: set[str], pay_days: int | None = None) -> tuple[list[Event], list[Event]]:
+    """(events inside the trip window, events after he's home). Only the first list moves the balance.
+
+    pay_days overrides each load's broker terms (a dispatcher who pays weekly = 7).
+    """
     home = home_date(chain, today)
     events: list[Event] = []
     later: list[Event] = []
@@ -63,7 +66,8 @@ def _events(chain: Chain, loads_by_id: dict[str, Load], bills: list[dict], today
         delivered = _as_datetime(stop["delivered_at"])
         take_home = load.rate_usd - leg.dispatch_fee
         who = f" ({load.broker})" if load.broker else ""
-        paid_on = _noon(delivered.date() + timedelta(days=load.payment_terms_days))
+        terms = load.payment_terms_days if pay_days is None else pay_days
+        paid_on = _noon(delivered.date() + timedelta(days=terms))
         pay = (paid_on, f"Pay for {leg.load_id}{who}", take_home, "pay")
         if leg.load_id in advance:
             fee = load.rate_usd * load.quick_pay_fee_pct
@@ -116,7 +120,7 @@ def _at(stretch, t: datetime) -> tuple[float, float]:
 
 def balance_along_route(chain: Chain, loads_by_id: dict[str, Load], start: Place, home: Place,
                         start_balance: float, bills: list[dict], today: date,
-                        advance: set[str] = frozenset()) -> tuple[list[dict], list[dict]]:
+                        advance: set[str] = frozenset(), pay_days: int | None = None) -> tuple[list[dict], list[dict]]:
     """(route, money_stops) for the map. Same events as the chart, walked in time order along the route.
 
     route: stretches cut at every money event, each with the balance while driving it.
@@ -126,7 +130,7 @@ def balance_along_route(chain: Chain, loads_by_id: dict[str, Load], start: Place
     if not stretches or any(p.lat is None or p.lng is None for s in stretches for p in (s[2], s[3])):
         return [], []
     t_start, t_end = stretches[0][0], stretches[-1][1]
-    events = sorted(_events(chain, loads_by_id, bills, today, set(advance))[0], key=lambda e: e[0])
+    events = sorted(_events(chain, loads_by_id, bills, today, set(advance), pay_days)[0], key=lambda e: e[0])
     clamp = lambda t: min(max(t, t_start), t_end)       # e.g. a bill due today before he leaves
 
     def where(t: datetime) -> tuple[float, float]:
@@ -154,10 +158,13 @@ def balance_along_route(chain: Chain, loads_by_id: dict[str, Load], start: Place
 
 
 def simulate(chain: Chain, loads_by_id: dict[str, Load], start_balance: float, bills: list[dict], today: date,
-             advance: set[str] = frozenset()) -> CashflowCheck:
-    """`advance` = loads he already took a Capital One advance on (they're in the timeline and the balance)."""
+             advance: set[str] = frozenset(), pay_days: int | None = None) -> CashflowCheck:
+    """`advance` = loads he already took a Capital One advance on (they're in the timeline and the balance).
+
+    `pay_days` overrides broker terms for every load (dispatcher pays weekly = 7).
+    """
     taken = set(advance) & set(chain.loads)
-    events, later = _events(chain, loads_by_id, bills, today, taken)
+    events, later = _events(chain, loads_by_id, bills, today, taken, pay_days)
     lowest, lowest_date, timeline = _run(start_balance, today, events)
     shortfall = lowest < 0
 
@@ -168,7 +175,7 @@ def simulate(chain: Chain, loads_by_id: dict[str, Load], start_balance: float, b
             if leg.load_id in chosen:
                 continue
             chosen.add(leg.load_id)
-            low, _, _ = _run(start_balance, today, _events(chain, loads_by_id, bills, today, chosen)[0])
+            low, _, _ = _run(start_balance, today, _events(chain, loads_by_id, bills, today, chosen, pay_days)[0])
             cost = sum(loads_by_id[i].rate_usd * loads_by_id[i].quick_pay_fee_pct for i in chosen - taken)
             if low >= 0:
                 fixes = True

@@ -27,6 +27,7 @@
           "true_net_cpm": 1.2929502478428494,
           "break_even_rate": 598.0598290598291,
           "counter_offer_rate": 947.2264957264957,
+          "meets_posted_rule": false,
           "verdict": "take"
         },
         {
@@ -43,6 +44,7 @@
           "true_net_cpm": 0.805082179650089,
           "break_even_rate": 1038.8438270047818,
           "counter_offer_rate": 1654.7649618657365,
+          "meets_posted_rule": true,
           "verdict": "take"
         },
         {
@@ -59,6 +61,7 @@
           "true_net_cpm": 1.1197194826931345,
           "break_even_rate": 451.0555713230214,
           "counter_offer_rate": 718.2727861097839,
+          "meets_posted_rule": true,
           "verdict": "take"
         }
       ],
@@ -122,6 +125,7 @@
           "true_net_cpm": 0.9139626202916836,
           "break_even_rate": 377.84687484512074,
           "counter_offer_rate": 601.1764064194184,
+          "meets_posted_rule": true,
           "verdict": "take"
         },
         {
@@ -138,6 +142,7 @@
           "true_net_cpm": 0.7263368273637123,
           "break_even_rate": 1079.2124049107363,
           "counter_offer_rate": 1720.2245067021875,
+          "meets_posted_rule": true,
           "verdict": "negotiate"
         },
         {
@@ -154,6 +159,7 @@
           "true_net_cpm": 1.1197194826931345,
           "break_even_rate": 451.0555713230214,
           "counter_offer_rate": 718.2727861097839,
+          "meets_posted_rule": true,
           "verdict": "take"
         }
       ],
@@ -216,6 +222,7 @@
           "true_net_cpm": 0.3631562723572414,
           "break_even_rate": 581.9879799472259,
           "counter_offer_rate": 928.9708758274433,
+          "meets_posted_rule": false,
           "verdict": "skip"
         },
         {
@@ -232,6 +239,7 @@
           "true_net_cpm": 1.8506305170239596,
           "break_even_rate": 348.2735042735043,
           "counter_offer_rate": 551.6068376068375,
+          "meets_posted_rule": true,
           "verdict": "take"
         }
       ],

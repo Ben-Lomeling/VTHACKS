@@ -179,3 +179,13 @@ def test_advance_on_a_load_not_on_this_run_is_ignored():
     chain, loads, bills = two_load_trip()
     cf = simulate(chain, loads, 2700.0, bills, TODAY, advance={"OTHER"})
     assert cf.shortfall is True and cf.advance_load_ids == ["L1"]
+
+
+def test_weekly_pay_brings_broker_money_forward():
+    chain, loads, bills = two_load_trip()
+    net30 = simulate(chain, loads, 2700.0, bills, TODAY)
+    weekly = simulate(chain, loads, 2700.0, bills, TODAY, pay_days=7)
+    assert [e["date"] for e in net30.later] == ["2026-10-23", "2026-10-25"]
+    assert [e["date"] for e in weekly.later] == ["2026-09-30", "2026-10-02"]
+    # he's home Sep 25, so the mid-trip dip is the same either way
+    assert weekly.lowest_balance == net30.lowest_balance

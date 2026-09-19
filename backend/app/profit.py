@@ -31,6 +31,10 @@ def evaluate_load(load: Load, profile: TruckProfile, deadhead_miles: float, load
     counter_offer_rate = (costs + p.target_net_cpm * total_miles) / keep_share
     true_net_cpm = net_profit / total_miles
 
+    # His own rule of thumb on the posted rate ("I only take loads over $3/mi"), kept separate from
+    # target_net_cpm, which is what he KEEPS after every cost.
+    meets_posted_rule = None if p.min_posted_cpm <= 0 else (rate / loaded_miles) >= p.min_posted_cpm
+
     if true_net_cpm >= p.target_net_cpm:
         verdict = "take"
     elif counter_offer_rate <= rate * 1.20:
@@ -53,4 +57,5 @@ def evaluate_load(load: Load, profile: TruckProfile, deadhead_miles: float, load
         break_even_rate=break_even_rate,
         counter_offer_rate=counter_offer_rate,
         verdict=verdict,
+        meets_posted_rule=meets_posted_rule,
     )

@@ -27,6 +27,8 @@ class TruckProfile(BaseModel):
     miles_per_month: float = 10000
     dispatch_pct: float = 0.10        # 0 if self-dispatched
     target_net_cpm: float = 0.75      # driver's minimum acceptable net $/mile
+    min_posted_cpm: float = 0         # his own rule on the POSTED rate ("I don't take under $3/mi"); 0 = no rule
+    pays_weekly: bool = False         # True = a dispatcher pays him weekly; False = brokers pay on their own terms
     cost_source: Literal["manual", "nessie"] = "manual"
 
 
@@ -68,6 +70,7 @@ class LoadEconomics(BaseModel):
     true_net_cpm: float        # net / total_miles  (what the driver actually keeps)
     break_even_rate: float
     counter_offer_rate: float  # rate needed to hit target_net_cpm
+    meets_posted_rule: bool | None = None   # against profile.min_posted_cpm; None when he has no rule
     verdict: Literal["take", "negotiate", "skip"]
 
 
