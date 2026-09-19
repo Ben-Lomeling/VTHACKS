@@ -95,13 +95,14 @@ trucker's bank account into a **map of the road ahead**. Full design: **`docs/CA
 |---|---|
 | Gemini teammate | Replace `gemini.py` stub (extract, explain + number check, counter message) → PR on `gemini/...` |
 | Nessie worker | Follow-ups on #11: cache live snapshot (slow Wi-Fi = up to 5 s per call), start STATUS as "fixture" until a live call works. Then Feature B/C Nessie writes (`create_deposit`, `create_purchase`, food/parking merchants) |
-| Nihal | `NESSIE_API_KEY` in root `.env` on the demo laptop; sign in to Render, Vercel, GoDaddy (MLH) for deploy |
+| Nihal | Sign in to Render, Vercel, GoDaddy (MLH) for deploy |
 | Frontend teammate | Pull `frontend/review-fixes` once merged; offline map tiles or no-tile fallback |
 | Ben | Protect `main` (message drafted in chat: require PR, 0 approvals, Code Owners review off, required check `backend`, no strict up-to-date) and add collaborators |
 
 ## Next steps (in order)
 1. ~~Decision 1~~ done. Merge `story/option-1` (trip-only cash flow, advance, $2,500 / truck payment on the 22nd).
-   Re-seed the live Nessie account (needs `NESSIE_API_KEY`; the live account still has $3,800 / the 1st).
+   Live Nessie re-seeded Sat 3:45 PM (new customer, $2,500, truck payment the 22nd); fixture re-recorded. The old
+   customer's IDs are in the untracked `backend/data/nessie_ids.old.json`. Demo laptop `.env` has `NESSIE_API_KEY`.
 2. **Feature A: money on the map** (issue #13). Demo-ready checkpoint.
 3. **Feature B: Capital One advance**: Nessie deposit + repayment bill + reset (#14).
 4. **Feature C: receipt photos**: Gemini read + Nessie purchase + food_per_day (#15).
