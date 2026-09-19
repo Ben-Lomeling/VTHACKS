@@ -1,4 +1,5 @@
 """Every route in SPEC.md's API table returns valid JSON of the right shape. No network."""
+import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
@@ -71,3 +72,19 @@ def test_costs_from_bank_shape():
 def test_health_lists_every_module():
     mods = client.get("/api/health").json()["modules"]
     assert set(mods) == {"profit", "geo", "optimizer", "cashflow", "gemini", "nessie"}
+
+
+def test_evaluate_computes_missing_loaded_miles_from_geo():
+    """No loaded_miles_est -> main.py resolves both cities and uses geo distance."""
+    load = {"id": "PX1", "origin": {"city": "Richmond, VA"}, "destination": {"city": "Charlotte, NC"},
+            "rate_usd": 1200, "source": "pasted"}
+    econ = client.post("/api/evaluate", json={"load": load}).json()
+    assert 290 < econ["loaded_miles"] < 305        # ~248 mi straight x 1.2 ~= 297
+    assert econ["posted_rpm"] == pytest.approx(1200 / econ["loaded_miles"])
+
+
+def test_evaluate_bad_rate_is_422_with_message():
+    load = {"id": "PX2", "origin": {"city": "Richmond, VA"}, "destination": {"city": "Charlotte, NC"},
+            "rate_usd": 0, "loaded_miles_est": 300, "source": "pasted"}
+    r = client.post("/api/evaluate", json={"load": load})
+    assert r.status_code == 422 and "rate_usd must be > 0" in r.json()["detail"]
