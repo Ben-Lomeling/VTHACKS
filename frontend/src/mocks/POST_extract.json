@@ -1,0 +1,46 @@
+{
+  "load": {
+    "id": "Ped67e8",
+    "origin": {
+      "city": "Greensboro, NC",
+      "lat": 36.0726,
+      "lng": -79.792
+    },
+    "destination": {
+      "city": "Jacksonville, FL",
+      "lat": 30.3322,
+      "lng": -81.6557
+    },
+    "pickup_window_start": null,
+    "pickup_window_end": null,
+    "delivery_by": null,
+    "rate_usd": 1200.0,
+    "loaded_miles_est": null,
+    "trailer_type": "dry_van",
+    "weight_lbs": 40000,
+    "commodity": null,
+    "broker": "Coastal Brokerage",
+    "payment_terms_days": 30,
+    "quick_pay_fee_pct": 0.03,
+    "source": "pasted"
+  },
+  "confidence": {
+    "origin": "high",
+    "destination": "high",
+    "pickup_window_start": "low",
+    "pickup_window_end": "low",
+    "delivery_by": "low",
+    "rate_usd": "high",
+    "loaded_miles_est": "low",
+    "trailer_type": "high",
+    "weight_lbs": "high",
+    "commodity": "high",
+    "broker": "high",
+    "payment_terms_days": "high",
+    "quick_pay_fee_pct": "high"
+  },
+  "warnings": [
+    "Loaded miles not stated in the offer; estimated",
+    "Pickup and delivery times are vague (\"Mon\", \"Tue\"); check them"
+  ]
+}

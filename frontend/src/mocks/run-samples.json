@@ -1,0 +1,3011 @@
+{
+  "profile": {
+    "home": {
+      "city": "Roanoke, VA",
+      "lat": 37.271,
+      "lng": -79.9414
+    },
+    "current_location": {
+      "city": "Roanoke, VA",
+      "lat": 37.271,
+      "lng": -79.9414
+    },
+    "trailer_type": "dry_van",
+    "mpg_loaded": 6.5,
+    "mpg_empty": 7.5,
+    "fuel_price": 3.8,
+    "variable_cpm": 0.2,
+    "fixed_monthly": 5000.0,
+    "miles_per_month": 10000.0,
+    "dispatch_pct": 0.1,
+    "target_net_cpm": 0.75,
+    "cost_source": "manual"
+  },
+  "boardCount": 60,
+  "loads": [
+    {
+      "id": "L001",
+      "origin": {
+        "city": "Charlotte, NC",
+        "lat": 35.2271,
+        "lng": -80.8431
+      },
+      "destination": {
+        "city": "Knoxville, TN",
+        "lat": 35.9606,
+        "lng": -83.9207
+      },
+      "pickup_window_start": "2026-09-22T08:00:00",
+      "pickup_window_end": "2026-09-22T12:00:00",
+      "delivery_by": "2026-09-22T22:00:00",
+      "rate_usd": 550.0,
+      "loaded_miles_est": 216.0,
+      "trailer_type": "flatbed",
+      "weight_lbs": 20000,
+      "commodity": "plastics",
+      "broker": "Piedmont Transport Group",
+      "payment_terms_days": 15,
+      "quick_pay_fee_pct": 0.035,
+      "source": "simulated"
+    },
+    {
+      "id": "L002",
+      "origin": {
+        "city": "Cincinnati, OH",
+        "lat": 39.1031,
+        "lng": -84.512
+      },
+      "destination": {
+        "city": "Greensboro, NC",
+        "lat": 36.0726,
+        "lng": -79.792
+      },
+      "pickup_window_start": "2026-09-22T08:00:00",
+      "pickup_window_end": "2026-09-22T12:00:00",
+      "delivery_by": "2026-09-23T01:00:00",
+      "rate_usd": 850.0,
+      "loaded_miles_est": 399.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 29500,
+      "commodity": "building materials",
+      "broker": "Atlantic Freight Brokers",
+      "payment_terms_days": 45,
+      "quick_pay_fee_pct": 0.035,
+      "source": "simulated"
+    },
+    {
+      "id": "L003",
+      "origin": {
+        "city": "Chattanooga, TN",
+        "lat": 35.0456,
+        "lng": -85.3097
+      },
+      "destination": {
+        "city": "Columbia, SC",
+        "lat": 34.0007,
+        "lng": -81.0348
+      },
+      "pickup_window_start": "2026-09-21T06:00:00",
+      "pickup_window_end": "2026-09-21T10:00:00",
+      "delivery_by": "2026-09-22T00:00:00",
+      "rate_usd": 525.0,
+      "loaded_miles_est": 305.0,
+      "trailer_type": "reefer",
+      "weight_lbs": 28500,
+      "commodity": "paper products",
+      "broker": "Blue Ridge Logistics",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.02,
+      "source": "simulated"
+    },
+    {
+      "id": "L004",
+      "origin": {
+        "city": "Columbus, OH",
+        "lat": 39.9612,
+        "lng": -82.9988
+      },
+      "destination": {
+        "city": "Cincinnati, OH",
+        "lat": 39.1031,
+        "lng": -84.512
+      },
+      "pickup_window_start": "2026-09-22T10:00:00",
+      "pickup_window_end": "2026-09-22T14:00:00",
+      "delivery_by": "2026-09-23T02:00:00",
+      "rate_usd": 350.0,
+      "loaded_miles_est": 120.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 38500,
+      "commodity": "beverages",
+      "broker": "Summit Carrier Services",
+      "payment_terms_days": 45,
+      "quick_pay_fee_pct": 0.035,
+      "source": "simulated"
+    },
+    {
+      "id": "L005",
+      "origin": {
+        "city": "Philadelphia, PA",
+        "lat": 39.9526,
+        "lng": -75.1652
+      },
+      "destination": {
+        "city": "Greenville, SC",
+        "lat": 34.8526,
+        "lng": -82.394
+      },
+      "pickup_window_start": "2026-09-24T14:00:00",
+      "pickup_window_end": "2026-09-24T18:00:00",
+      "delivery_by": "2026-09-25T21:00:00",
+      "rate_usd": 1850.0,
+      "loaded_miles_est": 636.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 34000,
+      "commodity": "auto parts",
+      "broker": "Piedmont Transport Group",
+      "payment_terms_days": 15,
+      "quick_pay_fee_pct": 0.035,
+      "source": "simulated"
+    },
+    {
+      "id": "L006",
+      "origin": {
+        "city": "Atlanta, GA",
+        "lat": 33.749,
+        "lng": -84.388
+      },
+      "destination": {
+        "city": "Birmingham, AL",
+        "lat": 33.5186,
+        "lng": -86.8104
+      },
+      "pickup_window_start": "2026-09-23T08:00:00",
+      "pickup_window_end": "2026-09-23T12:00:00",
+      "delivery_by": "2026-09-23T20:00:00",
+      "rate_usd": 550.0,
+      "loaded_miles_est": 168.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 21500,
+      "commodity": "beverages",
+      "broker": "Piedmont Transport Group",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.02,
+      "source": "simulated"
+    },
+    {
+      "id": "L007",
+      "origin": {
+        "city": "Roanoke, VA",
+        "lat": 37.271,
+        "lng": -79.9414
+      },
+      "destination": {
+        "city": "Columbia, SC",
+        "lat": 34.0007,
+        "lng": -81.0348
+      },
+      "pickup_window_start": "2026-09-21T12:00:00",
+      "pickup_window_end": "2026-09-21T16:00:00",
+      "delivery_by": "2026-09-22T07:00:00",
+      "rate_usd": 775.0,
+      "loaded_miles_est": 281.0,
+      "trailer_type": "reefer",
+      "weight_lbs": 36500,
+      "commodity": "beverages",
+      "broker": "Keystone Load Partners",
+      "payment_terms_days": 15,
+      "quick_pay_fee_pct": 0.035,
+      "source": "simulated"
+    },
+    {
+      "id": "L008",
+      "origin": {
+        "city": "Columbia, SC",
+        "lat": 34.0007,
+        "lng": -81.0348
+      },
+      "destination": {
+        "city": "Columbus, OH",
+        "lat": 39.9612,
+        "lng": -82.9988
+      },
+      "pickup_window_start": "2026-09-22T09:00:00",
+      "pickup_window_end": "2026-09-22T13:00:00",
+      "delivery_by": "2026-09-23T07:00:00",
+      "rate_usd": 1200.0,
+      "loaded_miles_est": 511.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 31000,
+      "commodity": "beverages",
+      "broker": "Piedmont Transport Group",
+      "payment_terms_days": 15,
+      "quick_pay_fee_pct": 0.03,
+      "source": "simulated"
+    },
+    {
+      "id": "L009",
+      "origin": {
+        "city": "Knoxville, TN",
+        "lat": 35.9606,
+        "lng": -83.9207
+      },
+      "destination": {
+        "city": "Lexington, KY",
+        "lat": 38.0406,
+        "lng": -84.5037
+      },
+      "pickup_window_start": "2026-09-22T06:00:00",
+      "pickup_window_end": "2026-09-22T10:00:00",
+      "delivery_by": "2026-09-22T19:00:00",
+      "rate_usd": 600.0,
+      "loaded_miles_est": 177.0,
+      "trailer_type": "reefer",
+      "weight_lbs": 22500,
+      "commodity": "plastics",
+      "broker": "Coastal Cargo Brokerage",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.035,
+      "source": "simulated"
+    },
+    {
+      "id": "L010",
+      "origin": {
+        "city": "Lexington, KY",
+        "lat": 38.0406,
+        "lng": -84.5037
+      },
+      "destination": {
+        "city": "Roanoke, VA",
+        "lat": 37.271,
+        "lng": -79.9414
+      },
+      "pickup_window_start": "2026-09-22T09:00:00",
+      "pickup_window_end": "2026-09-22T13:00:00",
+      "delivery_by": "2026-09-23T01:00:00",
+      "rate_usd": 875.0,
+      "loaded_miles_est": 306.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 29000,
+      "commodity": "retail freight",
+      "broker": "Keystone Load Partners",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.03,
+      "source": "simulated"
+    },
+    {
+      "id": "L011",
+      "origin": {
+        "city": "Hagerstown, MD",
+        "lat": 39.6418,
+        "lng": -77.72
+      },
+      "destination": {
+        "city": "Charleston, SC",
+        "lat": 32.7765,
+        "lng": -79.9311
+      },
+      "pickup_window_start": "2026-09-23T09:00:00",
+      "pickup_window_end": "2026-09-23T13:00:00",
+      "delivery_by": "2026-09-24T20:00:00",
+      "rate_usd": 1075.0,
+      "loaded_miles_est": 588.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 21000,
+      "commodity": "furniture",
+      "broker": "Blue Ridge Logistics",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.02,
+      "source": "simulated"
+    },
+    {
+      "id": "L012",
+      "origin": {
+        "city": "Hagerstown, MD",
+        "lat": 39.6418,
+        "lng": -77.72
+      },
+      "destination": {
+        "city": "Roanoke, VA",
+        "lat": 37.271,
+        "lng": -79.9414
+      },
+      "pickup_window_start": "2026-09-23T10:00:00",
+      "pickup_window_end": "2026-09-23T14:00:00",
+      "delivery_by": "2026-09-24T04:00:00",
+      "rate_usd": 850.0,
+      "loaded_miles_est": 244.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 34500,
+      "commodity": "retail freight",
+      "broker": "Piedmont Transport Group",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.02,
+      "source": "simulated"
+    },
+    {
+      "id": "L013",
+      "origin": {
+        "city": "Wilmington, NC",
+        "lat": 34.2257,
+        "lng": -77.9447
+      },
+      "destination": {
+        "city": "Charleston, SC",
+        "lat": 32.7765,
+        "lng": -79.9311
+      },
+      "pickup_window_start": "2026-09-22T14:00:00",
+      "pickup_window_end": "2026-09-22T18:00:00",
+      "delivery_by": "2026-09-23T07:00:00",
+      "rate_usd": 400.0,
+      "loaded_miles_est": 182.0,
+      "trailer_type": "reefer",
+      "weight_lbs": 26000,
+      "commodity": "building materials",
+      "broker": "Atlantic Freight Brokers",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.035,
+      "source": "simulated"
+    },
+    {
+      "id": "L014",
+      "origin": {
+        "city": "Allentown, PA",
+        "lat": 40.6023,
+        "lng": -75.4714
+      },
+      "destination": {
+        "city": "Baltimore, MD",
+        "lat": 39.2904,
+        "lng": -76.6122
+      },
+      "pickup_window_start": "2026-09-22T06:00:00",
+      "pickup_window_end": "2026-09-22T10:00:00",
+      "delivery_by": "2026-09-22T18:00:00",
+      "rate_usd": 425.0,
+      "loaded_miles_est": 131.0,
+      "trailer_type": "reefer",
+      "weight_lbs": 37000,
+      "commodity": "building materials",
+      "broker": "Summit Carrier Services",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.03,
+      "source": "simulated"
+    },
+    {
+      "id": "L015",
+      "origin": {
+        "city": "Birmingham, AL",
+        "lat": 33.5186,
+        "lng": -86.8104
+      },
+      "destination": {
+        "city": "Columbus, OH",
+        "lat": 39.9612,
+        "lng": -82.9988
+      },
+      "pickup_window_start": "2026-09-22T10:00:00",
+      "pickup_window_end": "2026-09-22T14:00:00",
+      "delivery_by": "2026-09-23T17:00:00",
+      "rate_usd": 1225.0,
+      "loaded_miles_est": 591.0,
+      "trailer_type": "reefer",
+      "weight_lbs": 42500,
+      "commodity": "retail freight",
+      "broker": "Keystone Load Partners",
+      "payment_terms_days": 45,
+      "quick_pay_fee_pct": 0.02,
+      "source": "simulated"
+    },
+    {
+      "id": "L016",
+      "origin": {
+        "city": "Knoxville, TN",
+        "lat": 35.9606,
+        "lng": -83.9207
+      },
+      "destination": {
+        "city": "Louisville, KY",
+        "lat": 38.2527,
+        "lng": -85.7585
+      },
+      "pickup_window_start": "2026-09-22T06:00:00",
+      "pickup_window_end": "2026-09-22T10:00:00",
+      "delivery_by": "2026-09-22T20:00:00",
+      "rate_usd": 650.0,
+      "loaded_miles_est": 226.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 43500,
+      "commodity": "beverages",
+      "broker": "Atlantic Freight Brokers",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.02,
+      "source": "simulated"
+    },
+    {
+      "id": "L017",
+      "origin": {
+        "city": "Wilmington, NC",
+        "lat": 34.2257,
+        "lng": -77.9447
+      },
+      "destination": {
+        "city": "Atlanta, GA",
+        "lat": 33.749,
+        "lng": -84.388
+      },
+      "pickup_window_start": "2026-09-22T07:00:00",
+      "pickup_window_end": "2026-09-22T11:00:00",
+      "delivery_by": "2026-09-23T05:00:00",
+      "rate_usd": 925.0,
+      "loaded_miles_est": 445.0,
+      "trailer_type": "reefer",
+      "weight_lbs": 30000,
+      "commodity": "paper products",
+      "broker": "Blue Ridge Logistics",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.035,
+      "source": "simulated"
+    },
+    {
+      "id": "L018",
+      "origin": {
+        "city": "Philadelphia, PA",
+        "lat": 39.9526,
+        "lng": -75.1652
+      },
+      "destination": {
+        "city": "Louisville, KY",
+        "lat": 38.2527,
+        "lng": -85.7585
+      },
+      "pickup_window_start": "2026-09-22T07:00:00",
+      "pickup_window_end": "2026-09-22T11:00:00",
+      "delivery_by": "2026-09-23T15:00:00",
+      "rate_usd": 1600.0,
+      "loaded_miles_est": 696.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 22500,
+      "commodity": "building materials",
+      "broker": "Atlantic Freight Brokers",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.035,
+      "source": "simulated"
+    },
+    {
+      "id": "L019",
+      "origin": {
+        "city": "Savannah, GA",
+        "lat": 32.0809,
+        "lng": -81.0912
+      },
+      "destination": {
+        "city": "Pittsburgh, PA",
+        "lat": 40.4406,
+        "lng": -79.9959
+      },
+      "pickup_window_start": "2026-09-23T12:00:00",
+      "pickup_window_end": "2026-09-23T16:00:00",
+      "delivery_by": "2026-09-24T20:00:00",
+      "rate_usd": 2150.0,
+      "loaded_miles_est": 697.0,
+      "trailer_type": "reefer",
+      "weight_lbs": 40500,
+      "commodity": "paper products",
+      "broker": "Summit Carrier Services",
+      "payment_terms_days": 15,
+      "quick_pay_fee_pct": 0.03,
+      "source": "simulated"
+    },
+    {
+      "id": "L020",
+      "origin": {
+        "city": "Chattanooga, TN",
+        "lat": 35.0456,
+        "lng": -85.3097
+      },
+      "destination": {
+        "city": "Jacksonville, FL",
+        "lat": 30.3322,
+        "lng": -81.6557
+      },
+      "pickup_window_start": "2026-09-21T14:00:00",
+      "pickup_window_end": "2026-09-21T18:00:00",
+      "delivery_by": "2026-09-22T09:00:00",
+      "rate_usd": 1025.0,
+      "loaded_miles_est": 467.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 19500,
+      "commodity": "beverages",
+      "broker": "Blue Ridge Logistics",
+      "payment_terms_days": 15,
+      "quick_pay_fee_pct": 0.02,
+      "source": "simulated"
+    },
+    {
+      "id": "L021",
+      "origin": {
+        "city": "Harrisonburg, VA",
+        "lat": 38.4496,
+        "lng": -78.8689
+      },
+      "destination": {
+        "city": "Columbia, SC",
+        "lat": 34.0007,
+        "lng": -81.0348
+      },
+      "pickup_window_start": "2026-09-24T08:00:00",
+      "pickup_window_end": "2026-09-24T12:00:00",
+      "delivery_by": "2026-09-25T00:00:00",
+      "rate_usd": 725.0,
+      "loaded_miles_est": 396.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 22000,
+      "commodity": "furniture",
+      "broker": "Summit Carrier Services",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.02,
+      "source": "simulated"
+    },
+    {
+      "id": "L022",
+      "origin": {
+        "city": "Lexington, KY",
+        "lat": 38.0406,
+        "lng": -84.5037
+      },
+      "destination": {
+        "city": "Newark, NJ",
+        "lat": 40.7357,
+        "lng": -74.1724
+      },
+      "pickup_window_start": "2026-09-22T12:00:00",
+      "pickup_window_end": "2026-09-22T16:00:00",
+      "delivery_by": "2026-09-23T23:00:00",
+      "rate_usd": 1950.0,
+      "loaded_miles_est": 698.0,
+      "trailer_type": "reefer",
+      "weight_lbs": 18500,
+      "commodity": "canned goods",
+      "broker": "Blue Ridge Logistics",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.02,
+      "source": "simulated"
+    },
+    {
+      "id": "L023",
+      "origin": {
+        "city": "Baltimore, MD",
+        "lat": 39.2904,
+        "lng": -76.6122
+      },
+      "destination": {
+        "city": "Richmond, VA",
+        "lat": 37.5407,
+        "lng": -77.436
+      },
+      "pickup_window_start": "2026-09-21T12:00:00",
+      "pickup_window_end": "2026-09-21T16:00:00",
+      "delivery_by": "2026-09-22T00:00:00",
+      "rate_usd": 450.0,
+      "loaded_miles_est": 155.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 29000,
+      "commodity": "beverages",
+      "broker": "Blue Ridge Logistics",
+      "payment_terms_days": 15,
+      "quick_pay_fee_pct": 0.03,
+      "source": "simulated"
+    },
+    {
+      "id": "L024",
+      "origin": {
+        "city": "Lexington, KY",
+        "lat": 38.0406,
+        "lng": -84.5037
+      },
+      "destination": {
+        "city": "Baltimore, MD",
+        "lat": 39.2904,
+        "lng": -76.6122
+      },
+      "pickup_window_start": "2026-09-22T06:00:00",
+      "pickup_window_end": "2026-09-22T10:00:00",
+      "delivery_by": "2026-09-23T04:00:00",
+      "rate_usd": 1150.0,
+      "loaded_miles_est": 521.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 22000,
+      "commodity": "canned goods",
+      "broker": "Summit Carrier Services",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.02,
+      "source": "simulated"
+    },
+    {
+      "id": "L025",
+      "origin": {
+        "city": "Lexington, KY",
+        "lat": 38.0406,
+        "lng": -84.5037
+      },
+      "destination": {
+        "city": "Roanoke, VA",
+        "lat": 37.271,
+        "lng": -79.9414
+      },
+      "pickup_window_start": "2026-09-21T09:00:00",
+      "pickup_window_end": "2026-09-21T13:00:00",
+      "delivery_by": "2026-09-22T05:00:00",
+      "rate_usd": 900.0,
+      "loaded_miles_est": 306.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 36000,
+      "commodity": "furniture",
+      "broker": "Summit Carrier Services",
+      "payment_terms_days": 15,
+      "quick_pay_fee_pct": 0.03,
+      "source": "simulated"
+    },
+    {
+      "id": "L026",
+      "origin": {
+        "city": "Charleston, WV",
+        "lat": 38.3498,
+        "lng": -81.6326
+      },
+      "destination": {
+        "city": "Charleston, SC",
+        "lat": 32.7765,
+        "lng": -79.9311
+      },
+      "pickup_window_start": "2026-09-22T14:00:00",
+      "pickup_window_end": "2026-09-22T18:00:00",
+      "delivery_by": "2026-09-23T13:00:00",
+      "rate_usd": 1325.0,
+      "loaded_miles_est": 476.0,
+      "trailer_type": "flatbed",
+      "weight_lbs": 33000,
+      "commodity": "auto parts",
+      "broker": "Keystone Load Partners",
+      "payment_terms_days": 45,
+      "quick_pay_fee_pct": 0.02,
+      "source": "simulated"
+    },
+    {
+      "id": "L027",
+      "origin": {
+        "city": "Roanoke, VA",
+        "lat": 37.271,
+        "lng": -79.9414
+      },
+      "destination": {
+        "city": "Atlanta, GA",
+        "lat": 33.749,
+        "lng": -84.388
+      },
+      "pickup_window_start": "2026-09-21T07:00:00",
+      "pickup_window_end": "2026-09-21T10:00:00",
+      "delivery_by": "2026-09-22T06:00:00",
+      "rate_usd": 1200.0,
+      "loaded_miles_est": 419.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 41000,
+      "commodity": "flooring",
+      "broker": "Blue Ridge Logistics",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.03,
+      "source": "simulated"
+    },
+    {
+      "id": "L028",
+      "origin": {
+        "city": "Baltimore, MD",
+        "lat": 39.2904,
+        "lng": -76.6122
+      },
+      "destination": {
+        "city": "Louisville, KY",
+        "lat": 38.2527,
+        "lng": -85.7585
+      },
+      "pickup_window_start": "2026-09-24T06:00:00",
+      "pickup_window_end": "2026-09-24T10:00:00",
+      "delivery_by": "2026-09-25T17:00:00",
+      "rate_usd": 1425.0,
+      "loaded_miles_est": 597.0,
+      "trailer_type": "flatbed",
+      "weight_lbs": 20000,
+      "commodity": "building materials",
+      "broker": "Coastal Cargo Brokerage",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.03,
+      "source": "simulated"
+    },
+    {
+      "id": "L029",
+      "origin": {
+        "city": "Charleston, SC",
+        "lat": 32.7765,
+        "lng": -79.9311
+      },
+      "destination": {
+        "city": "Columbus, OH",
+        "lat": 39.9612,
+        "lng": -82.9988
+      },
+      "pickup_window_start": "2026-09-22T09:00:00",
+      "pickup_window_end": "2026-09-22T13:00:00",
+      "delivery_by": "2026-09-23T21:00:00",
+      "rate_usd": 1200.0,
+      "loaded_miles_est": 630.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 42000,
+      "commodity": "retail freight",
+      "broker": "Piedmont Transport Group",
+      "payment_terms_days": 15,
+      "quick_pay_fee_pct": 0.035,
+      "source": "simulated"
+    },
+    {
+      "id": "L030",
+      "origin": {
+        "city": "Hagerstown, MD",
+        "lat": 39.6418,
+        "lng": -77.72
+      },
+      "destination": {
+        "city": "Harrisonburg, VA",
+        "lat": 38.4496,
+        "lng": -78.8689
+      },
+      "pickup_window_start": "2026-09-24T09:00:00",
+      "pickup_window_end": "2026-09-24T13:00:00",
+      "delivery_by": "2026-09-24T21:00:00",
+      "rate_usd": 300.0,
+      "loaded_miles_est": 123.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 44000,
+      "commodity": "canned goods",
+      "broker": "Keystone Load Partners",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.035,
+      "source": "simulated"
+    },
+    {
+      "id": "L031",
+      "origin": {
+        "city": "Harrisonburg, VA",
+        "lat": 38.4496,
+        "lng": -78.8689
+      },
+      "destination": {
+        "city": "Wilmington, NC",
+        "lat": 34.2257,
+        "lng": -77.9447
+      },
+      "pickup_window_start": "2026-09-21T12:00:00",
+      "pickup_window_end": "2026-09-21T16:00:00",
+      "delivery_by": "2026-09-22T07:00:00",
+      "rate_usd": 650.0,
+      "loaded_miles_est": 356.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 33500,
+      "commodity": "retail freight",
+      "broker": "Coastal Cargo Brokerage",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.03,
+      "source": "simulated"
+    },
+    {
+      "id": "L032",
+      "origin": {
+        "city": "Greenville, SC",
+        "lat": 34.8526,
+        "lng": -82.394
+      },
+      "destination": {
+        "city": "Raleigh, NC",
+        "lat": 35.7796,
+        "lng": -78.6382
+      },
+      "pickup_window_start": "2026-09-21T07:00:00",
+      "pickup_window_end": "2026-09-21T11:00:00",
+      "delivery_by": "2026-09-21T21:00:00",
+      "rate_usd": 750.0,
+      "loaded_miles_est": 265.0,
+      "trailer_type": "reefer",
+      "weight_lbs": 42500,
+      "commodity": "beverages",
+      "broker": "Atlantic Freight Brokers",
+      "payment_terms_days": 45,
+      "quick_pay_fee_pct": 0.02,
+      "source": "simulated"
+    },
+    {
+      "id": "L033",
+      "origin": {
+        "city": "Hagerstown, MD",
+        "lat": 39.6418,
+        "lng": -77.72
+      },
+      "destination": {
+        "city": "Cincinnati, OH",
+        "lat": 39.1031,
+        "lng": -84.512
+      },
+      "pickup_window_start": "2026-09-23T14:00:00",
+      "pickup_window_end": "2026-09-23T18:00:00",
+      "delivery_by": "2026-09-24T07:00:00",
+      "rate_usd": 1125.0,
+      "loaded_miles_est": 438.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 23500,
+      "commodity": "retail freight",
+      "broker": "Atlantic Freight Brokers",
+      "payment_terms_days": 45,
+      "quick_pay_fee_pct": 0.035,
+      "source": "simulated"
+    },
+    {
+      "id": "L034",
+      "origin": {
+        "city": "Pittsburgh, PA",
+        "lat": 40.4406,
+        "lng": -79.9959
+      },
+      "destination": {
+        "city": "Allentown, PA",
+        "lat": 40.6023,
+        "lng": -75.4714
+      },
+      "pickup_window_start": "2026-09-22T06:00:00",
+      "pickup_window_end": "2026-09-22T10:00:00",
+      "delivery_by": "2026-09-22T21:00:00",
+      "rate_usd": 825.0,
+      "loaded_miles_est": 285.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 19000,
+      "commodity": "canned goods",
+      "broker": "Piedmont Transport Group",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.03,
+      "source": "simulated"
+    },
+    {
+      "id": "L035",
+      "origin": {
+        "city": "Charleston, SC",
+        "lat": 32.7765,
+        "lng": -79.9311
+      },
+      "destination": {
+        "city": "Greensboro, NC",
+        "lat": 36.0726,
+        "lng": -79.792
+      },
+      "pickup_window_start": "2026-09-24T07:00:00",
+      "pickup_window_end": "2026-09-24T11:00:00",
+      "delivery_by": "2026-09-25T02:00:00",
+      "rate_usd": 675.0,
+      "loaded_miles_est": 273.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 27000,
+      "commodity": "plastics",
+      "broker": "Blue Ridge Logistics",
+      "payment_terms_days": 15,
+      "quick_pay_fee_pct": 0.02,
+      "source": "simulated"
+    },
+    {
+      "id": "L036",
+      "origin": {
+        "city": "Lexington, KY",
+        "lat": 38.0406,
+        "lng": -84.5037
+      },
+      "destination": {
+        "city": "Lynchburg, VA",
+        "lat": 37.4138,
+        "lng": -79.1422
+      },
+      "pickup_window_start": "2026-09-23T14:00:00",
+      "pickup_window_end": "2026-09-23T18:00:00",
+      "delivery_by": "2026-09-24T07:00:00",
+      "rate_usd": 950.0,
+      "loaded_miles_est": 355.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 19500,
+      "commodity": "auto parts",
+      "broker": "Summit Carrier Services",
+      "payment_terms_days": 45,
+      "quick_pay_fee_pct": 0.035,
+      "source": "simulated"
+    },
+    {
+      "id": "L037",
+      "origin": {
+        "city": "Columbus, OH",
+        "lat": 39.9612,
+        "lng": -82.9988
+      },
+      "destination": {
+        "city": "Charleston, SC",
+        "lat": 32.7765,
+        "lng": -79.9311
+      },
+      "pickup_window_start": "2026-09-21T08:00:00",
+      "pickup_window_end": "2026-09-21T12:00:00",
+      "delivery_by": "2026-09-22T18:00:00",
+      "rate_usd": 1550.0,
+      "loaded_miles_est": 630.0,
+      "trailer_type": "flatbed",
+      "weight_lbs": 33000,
+      "commodity": "beverages",
+      "broker": "Blue Ridge Logistics",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.035,
+      "source": "simulated"
+    },
+    {
+      "id": "L038",
+      "origin": {
+        "city": "Savannah, GA",
+        "lat": 32.0809,
+        "lng": -81.0912
+      },
+      "destination": {
+        "city": "Charlotte, NC",
+        "lat": 35.2271,
+        "lng": -80.8431
+      },
+      "pickup_window_start": "2026-09-23T09:00:00",
+      "pickup_window_end": "2026-09-23T13:00:00",
+      "delivery_by": "2026-09-24T04:00:00",
+      "rate_usd": 500.0,
+      "loaded_miles_est": 261.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 30000,
+      "commodity": "beverages",
+      "broker": "Coastal Cargo Brokerage",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.02,
+      "source": "simulated"
+    },
+    {
+      "id": "L039",
+      "origin": {
+        "city": "Lynchburg, VA",
+        "lat": 37.4138,
+        "lng": -79.1422
+      },
+      "destination": {
+        "city": "Charlotte, NC",
+        "lat": 35.2271,
+        "lng": -80.8431
+      },
+      "pickup_window_start": "2026-09-21T08:00:00",
+      "pickup_window_end": "2026-09-21T12:00:00",
+      "delivery_by": "2026-09-21T20:00:00",
+      "rate_usd": 650.0,
+      "loaded_miles_est": 214.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 36000,
+      "commodity": "paper products",
+      "broker": "Peachtree Freight",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.03,
+      "source": "simulated"
+    },
+    {
+      "id": "L040",
+      "origin": {
+        "city": "Charleston, SC",
+        "lat": 32.7765,
+        "lng": -79.9311
+      },
+      "destination": {
+        "city": "Knoxville, TN",
+        "lat": 35.9606,
+        "lng": -83.9207
+      },
+      "pickup_window_start": "2026-09-22T10:00:00",
+      "pickup_window_end": "2026-09-22T14:00:00",
+      "delivery_by": "2026-09-23T07:00:00",
+      "rate_usd": 950.0,
+      "loaded_miles_est": 380.0,
+      "trailer_type": "flatbed",
+      "weight_lbs": 43000,
+      "commodity": "building materials",
+      "broker": "Piedmont Transport Group",
+      "payment_terms_days": 15,
+      "quick_pay_fee_pct": 0.02,
+      "source": "simulated"
+    },
+    {
+      "id": "L041",
+      "origin": {
+        "city": "Greenville, SC",
+        "lat": 34.8526,
+        "lng": -82.394
+      },
+      "destination": {
+        "city": "Lynchburg, VA",
+        "lat": 37.4138,
+        "lng": -79.1422
+      },
+      "pickup_window_start": "2026-09-22T09:00:00",
+      "pickup_window_end": "2026-09-22T13:00:00",
+      "delivery_by": "2026-09-23T05:00:00",
+      "rate_usd": 700.0,
+      "loaded_miles_est": 304.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 35500,
+      "commodity": "furniture",
+      "broker": "Atlantic Freight Brokers",
+      "payment_terms_days": 45,
+      "quick_pay_fee_pct": 0.035,
+      "source": "simulated"
+    },
+    {
+      "id": "L042",
+      "origin": {
+        "city": "Charleston, WV",
+        "lat": 38.3498,
+        "lng": -81.6326
+      },
+      "destination": {
+        "city": "Hagerstown, MD",
+        "lat": 39.6418,
+        "lng": -77.72
+      },
+      "pickup_window_start": "2026-09-22T07:00:00",
+      "pickup_window_end": "2026-09-22T11:00:00",
+      "delivery_by": "2026-09-23T00:00:00",
+      "rate_usd": 750.0,
+      "loaded_miles_est": 274.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 40000,
+      "commodity": "beverages",
+      "broker": "Piedmont Transport Group",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.035,
+      "source": "simulated"
+    },
+    {
+      "id": "L043",
+      "origin": {
+        "city": "Harrisonburg, VA",
+        "lat": 38.4496,
+        "lng": -78.8689
+      },
+      "destination": {
+        "city": "Atlanta, GA",
+        "lat": 33.749,
+        "lng": -84.388
+      },
+      "pickup_window_start": "2026-09-22T08:00:00",
+      "pickup_window_end": "2026-09-22T12:00:00",
+      "delivery_by": "2026-09-23T08:00:00",
+      "rate_usd": 1050.0,
+      "loaded_miles_est": 537.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 25000,
+      "commodity": "auto parts",
+      "broker": "Blue Ridge Logistics",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.035,
+      "source": "simulated"
+    },
+    {
+      "id": "L044",
+      "origin": {
+        "city": "Hagerstown, MD",
+        "lat": 39.6418,
+        "lng": -77.72
+      },
+      "destination": {
+        "city": "Norfolk, VA",
+        "lat": 36.8508,
+        "lng": -76.2859
+      },
+      "pickup_window_start": "2026-09-23T07:00:00",
+      "pickup_window_end": "2026-09-23T11:00:00",
+      "delivery_by": "2026-09-23T22:00:00",
+      "rate_usd": 850.0,
+      "loaded_miles_est": 250.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 28500,
+      "commodity": "building materials",
+      "broker": "Atlantic Freight Brokers",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.03,
+      "source": "simulated"
+    },
+    {
+      "id": "L045",
+      "origin": {
+        "city": "Greenville, SC",
+        "lat": 34.8526,
+        "lng": -82.394
+      },
+      "destination": {
+        "city": "Richmond, VA",
+        "lat": 37.5407,
+        "lng": -77.436
+      },
+      "pickup_window_start": "2026-09-22T12:00:00",
+      "pickup_window_end": "2026-09-22T16:00:00",
+      "delivery_by": "2026-09-23T08:00:00",
+      "rate_usd": 1000.0,
+      "loaded_miles_est": 400.0,
+      "trailer_type": "reefer",
+      "weight_lbs": 26500,
+      "commodity": "plastics",
+      "broker": "Keystone Load Partners",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.035,
+      "source": "simulated"
+    },
+    {
+      "id": "L046",
+      "origin": {
+        "city": "Harrisonburg, VA",
+        "lat": 38.4496,
+        "lng": -78.8689
+      },
+      "destination": {
+        "city": "Birmingham, AL",
+        "lat": 33.5186,
+        "lng": -86.8104
+      },
+      "pickup_window_start": "2026-09-22T07:00:00",
+      "pickup_window_end": "2026-09-22T11:00:00",
+      "delivery_by": "2026-09-23T15:00:00",
+      "rate_usd": 1975.0,
+      "loaded_miles_est": 671.0,
+      "trailer_type": "flatbed",
+      "weight_lbs": 41000,
+      "commodity": "canned goods",
+      "broker": "Atlantic Freight Brokers",
+      "payment_terms_days": 45,
+      "quick_pay_fee_pct": 0.035,
+      "source": "simulated"
+    },
+    {
+      "id": "L047",
+      "origin": {
+        "city": "Hagerstown, MD",
+        "lat": 39.6418,
+        "lng": -77.72
+      },
+      "destination": {
+        "city": "Greensboro, NC",
+        "lat": 36.0726,
+        "lng": -79.792
+      },
+      "pickup_window_start": "2026-09-22T06:00:00",
+      "pickup_window_end": "2026-09-22T10:00:00",
+      "delivery_by": "2026-09-23T00:00:00",
+      "rate_usd": 775.0,
+      "loaded_miles_est": 326.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 35000,
+      "commodity": "retail freight",
+      "broker": "Keystone Load Partners",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.03,
+      "source": "simulated"
+    },
+    {
+      "id": "L048",
+      "origin": {
+        "city": "Harrisburg, PA",
+        "lat": 40.2732,
+        "lng": -76.8867
+      },
+      "destination": {
+        "city": "Lynchburg, VA",
+        "lat": 37.4138,
+        "lng": -79.1422
+      },
+      "pickup_window_start": "2026-09-21T08:00:00",
+      "pickup_window_end": "2026-09-21T12:00:00",
+      "delivery_by": "2026-09-21T23:00:00",
+      "rate_usd": 800.0,
+      "loaded_miles_est": 278.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 25500,
+      "commodity": "building materials",
+      "broker": "Atlantic Freight Brokers",
+      "payment_terms_days": 15,
+      "quick_pay_fee_pct": 0.03,
+      "source": "simulated"
+    },
+    {
+      "id": "L049",
+      "origin": {
+        "city": "Lexington, KY",
+        "lat": 38.0406,
+        "lng": -84.5037
+      },
+      "destination": {
+        "city": "Birmingham, AL",
+        "lat": 33.5186,
+        "lng": -86.8104
+      },
+      "pickup_window_start": "2026-09-22T14:00:00",
+      "pickup_window_end": "2026-09-22T18:00:00",
+      "delivery_by": "2026-09-23T10:00:00",
+      "rate_usd": 1225.0,
+      "loaded_miles_est": 406.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 18000,
+      "commodity": "furniture",
+      "broker": "Summit Carrier Services",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.035,
+      "source": "simulated"
+    },
+    {
+      "id": "L050",
+      "origin": {
+        "city": "Lynchburg, VA",
+        "lat": 37.4138,
+        "lng": -79.1422
+      },
+      "destination": {
+        "city": "Baltimore, MD",
+        "lat": 39.2904,
+        "lng": -76.6122
+      },
+      "pickup_window_start": "2026-09-23T10:00:00",
+      "pickup_window_end": "2026-09-23T14:00:00",
+      "delivery_by": "2026-09-23T23:00:00",
+      "rate_usd": 525.0,
+      "loaded_miles_est": 226.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 42500,
+      "commodity": "plastics",
+      "broker": "Keystone Load Partners",
+      "payment_terms_days": 15,
+      "quick_pay_fee_pct": 0.03,
+      "source": "simulated"
+    },
+    {
+      "id": "L051",
+      "origin": {
+        "city": "Philadelphia, PA",
+        "lat": 39.9526,
+        "lng": -75.1652
+      },
+      "destination": {
+        "city": "Columbus, OH",
+        "lat": 39.9612,
+        "lng": -82.9988
+      },
+      "pickup_window_start": "2026-09-22T12:00:00",
+      "pickup_window_end": "2026-09-22T16:00:00",
+      "delivery_by": "2026-09-23T07:00:00",
+      "rate_usd": 1450.0,
+      "loaded_miles_est": 498.0,
+      "trailer_type": "flatbed",
+      "weight_lbs": 26000,
+      "commodity": "furniture",
+      "broker": "Piedmont Transport Group",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.02,
+      "source": "simulated"
+    },
+    {
+      "id": "L052",
+      "origin": {
+        "city": "Roanoke, VA",
+        "lat": 37.271,
+        "lng": -79.9414
+      },
+      "destination": {
+        "city": "Raleigh, NC",
+        "lat": 35.7796,
+        "lng": -78.6382
+      },
+      "pickup_window_start": "2026-09-22T06:00:00",
+      "pickup_window_end": "2026-09-22T10:00:00",
+      "delivery_by": "2026-09-22T21:00:00",
+      "rate_usd": 475.0,
+      "loaded_miles_est": 151.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 44000,
+      "commodity": "plastics",
+      "broker": "Coastal Cargo Brokerage",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.02,
+      "source": "simulated"
+    },
+    {
+      "id": "L053",
+      "origin": {
+        "city": "Jacksonville, FL",
+        "lat": 30.3322,
+        "lng": -81.6557
+      },
+      "destination": {
+        "city": "Roanoke, VA",
+        "lat": 37.271,
+        "lng": -79.9414
+      },
+      "pickup_window_start": "2026-09-22T12:00:00",
+      "pickup_window_end": "2026-09-22T16:00:00",
+      "delivery_by": "2026-09-23T21:00:00",
+      "rate_usd": 1075.0,
+      "loaded_miles_est": 587.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 37000,
+      "commodity": "auto parts",
+      "broker": "Coastal Cargo Brokerage",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.03,
+      "source": "simulated"
+    },
+    {
+      "id": "L054",
+      "origin": {
+        "city": "Norfolk, VA",
+        "lat": 36.8508,
+        "lng": -76.2859
+      },
+      "destination": {
+        "city": "Atlanta, GA",
+        "lat": 33.749,
+        "lng": -84.388
+      },
+      "pickup_window_start": "2026-09-21T08:00:00",
+      "pickup_window_end": "2026-09-21T12:00:00",
+      "delivery_by": "2026-09-22T15:00:00",
+      "rate_usd": 1300.0,
+      "loaded_miles_est": 605.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 20000,
+      "commodity": "auto parts",
+      "broker": "Blue Ridge Logistics",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.035,
+      "source": "simulated"
+    },
+    {
+      "id": "L055",
+      "origin": {
+        "city": "Winchester, VA",
+        "lat": 39.1857,
+        "lng": -78.1633
+      },
+      "destination": {
+        "city": "Richmond, VA",
+        "lat": 37.5407,
+        "lng": -77.436
+      },
+      "pickup_window_start": "2026-09-23T09:00:00",
+      "pickup_window_end": "2026-09-23T13:00:00",
+      "delivery_by": "2026-09-23T20:00:00",
+      "rate_usd": 475.0,
+      "loaded_miles_est": 144.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 19500,
+      "commodity": "retail freight",
+      "broker": "Piedmont Transport Group",
+      "payment_terms_days": 45,
+      "quick_pay_fee_pct": 0.035,
+      "source": "simulated"
+    },
+    {
+      "id": "L056",
+      "origin": {
+        "city": "Charleston, WV",
+        "lat": 38.3498,
+        "lng": -81.6326
+      },
+      "destination": {
+        "city": "Roanoke, VA",
+        "lat": 37.271,
+        "lng": -79.9414
+      },
+      "pickup_window_start": "2026-09-22T06:00:00",
+      "pickup_window_end": "2026-09-22T10:00:00",
+      "delivery_by": "2026-09-22T22:00:00",
+      "rate_usd": 425.0,
+      "loaded_miles_est": 142.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 18500,
+      "commodity": "beverages",
+      "broker": "Coastal Cargo Brokerage",
+      "payment_terms_days": 15,
+      "quick_pay_fee_pct": 0.02,
+      "source": "simulated"
+    },
+    {
+      "id": "L057",
+      "origin": {
+        "city": "Richmond, VA",
+        "lat": 37.5407,
+        "lng": -77.436
+      },
+      "destination": {
+        "city": "Raleigh, NC",
+        "lat": 35.7796,
+        "lng": -78.6382
+      },
+      "pickup_window_start": "2026-09-22T06:00:00",
+      "pickup_window_end": "2026-09-22T10:00:00",
+      "delivery_by": "2026-09-22T23:00:00",
+      "rate_usd": 400.0,
+      "loaded_miles_est": 166.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 35000,
+      "commodity": "auto parts",
+      "broker": "Keystone Load Partners",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.02,
+      "source": "simulated"
+    },
+    {
+      "id": "L058",
+      "origin": {
+        "city": "Knoxville, TN",
+        "lat": 35.9606,
+        "lng": -83.9207
+      },
+      "destination": {
+        "city": "Baltimore, MD",
+        "lat": 39.2904,
+        "lng": -76.6122
+      },
+      "pickup_window_start": "2026-09-22T09:00:00",
+      "pickup_window_end": "2026-09-22T13:00:00",
+      "delivery_by": "2026-09-23T15:00:00",
+      "rate_usd": 1700.0,
+      "loaded_miles_est": 553.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 33500,
+      "commodity": "auto parts",
+      "broker": "Summit Carrier Services",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.035,
+      "source": "simulated"
+    },
+    {
+      "id": "L059",
+      "origin": {
+        "city": "Charlotte, NC",
+        "lat": 35.2271,
+        "lng": -80.8431
+      },
+      "destination": {
+        "city": "Roanoke, VA",
+        "lat": 37.271,
+        "lng": -79.9414
+      },
+      "pickup_window_start": "2026-09-21T18:00:00",
+      "pickup_window_end": "2026-09-22T09:00:00",
+      "delivery_by": "2026-09-22T18:00:00",
+      "rate_usd": 600.0,
+      "loaded_miles_est": 180.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 30000,
+      "commodity": "auto parts",
+      "broker": "Carolina Carriers",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.03,
+      "source": "simulated"
+    },
+    {
+      "id": "L060",
+      "origin": {
+        "city": "Greenville, SC",
+        "lat": 34.8526,
+        "lng": -82.394
+      },
+      "destination": {
+        "city": "Louisville, KY",
+        "lat": 38.2527,
+        "lng": -85.7585
+      },
+      "pickup_window_start": "2026-09-22T09:00:00",
+      "pickup_window_end": "2026-09-22T13:00:00",
+      "delivery_by": "2026-09-23T01:00:00",
+      "rate_usd": 775.0,
+      "loaded_miles_est": 360.0,
+      "trailer_type": "reefer",
+      "weight_lbs": 28500,
+      "commodity": "paper products",
+      "broker": "Blue Ridge Logistics",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.02,
+      "source": "simulated"
+    }
+  ],
+  "runs": [
+    {
+      "chain": {
+        "loads": [
+          "L027",
+          "L058",
+          "L012"
+        ],
+        "legs": [
+          {
+            "load_id": "L027",
+            "deadhead_miles": 0.0,
+            "loaded_miles": 419.0,
+            "total_miles": 419.0,
+            "posted_rpm": 2.863961813842482,
+            "fuel_cost": 244.95384615384617,
+            "variable_cost": 83.80000000000001,
+            "fixed_cost": 209.5,
+            "dispatch_fee": 120.0,
+            "net_profit": 541.7461538461539,
+            "true_net_cpm": 1.2929502478428494,
+            "break_even_rate": 598.0598290598291,
+            "counter_offer_rate": 947.2264957264957,
+            "verdict": "take"
+          },
+          {
+            "load_id": "L058",
+            "deadhead_miles": 186.1053618331457,
+            "loaded_miles": 553.0,
+            "total_miles": 739.1053618331457,
+            "posted_rpm": 3.0741410488245933,
+            "fuel_cost": 417.5856910211015,
+            "variable_cost": 147.82107236662915,
+            "fixed_cost": 369.55268091657285,
+            "dispatch_fee": 170.0,
+            "net_profit": 595.0405556956966,
+            "true_net_cpm": 0.805082179650089,
+            "break_even_rate": 1038.8438270047818,
+            "counter_offer_rate": 1654.7649618657365,
+            "verdict": "take"
+          },
+          {
+            "load_id": "L012",
+            "deadhead_miles": 76.660657744115,
+            "loaded_miles": 244.0,
+            "total_miles": 320.660657744115,
+            "posted_rpm": 3.4836065573770494,
+            "fuel_cost": 181.4875537698388,
+            "variable_cost": 64.132131548823,
+            "fixed_cost": 160.3303288720575,
+            "dispatch_fee": 85.0,
+            "net_profit": 359.04998580928066,
+            "true_net_cpm": 1.1197194826931345,
+            "break_even_rate": 451.0555713230214,
+            "counter_offer_rate": 718.2727861097839,
+            "verdict": "take"
+          }
+        ],
+        "home_deadhead_miles": 0.0,
+        "home_deadhead_cost": 0.0,
+        "total_net_profit": 1495.8366953511313,
+        "total_miles": 1478.7660195772607,
+        "days": 2.6073050163194442,
+        "net_per_day": 573.7098981471307,
+        "ends_at": {
+          "city": "Roanoke, VA",
+          "lat": 37.271,
+          "lng": -79.9414
+        },
+        "feasible_notes": [
+          "Waited 1.0 h for pickup window at L027",
+          "10-h rest inserted before pickup of L058",
+          "10-h rest inserted while hauling L058"
+        ],
+        "schedule": [
+          {
+            "load_id": "L027",
+            "depart_at": "2026-09-21T06:00:00",
+            "pickup_at": "2026-09-21T07:00:00",
+            "delivered_at": "2026-09-21T19:22:48"
+          },
+          {
+            "load_id": "L058",
+            "depart_at": "2026-09-21T19:22:48",
+            "pickup_at": "2026-09-22T09:06:07.586052",
+            "delivered_at": "2026-09-23T10:09:43.586052"
+          },
+          {
+            "load_id": "L012",
+            "depart_at": "2026-09-23T10:09:43.586052",
+            "pickup_at": "2026-09-23T11:41:43.153410",
+            "delivered_at": "2026-09-23T20:34:31.153410"
+          }
+        ],
+        "losing": false,
+        "losing_reason": null
+      },
+      "cash": {
+        "starting_balance": 2500.0,
+        "lowest_balance": -494.03,
+        "lowest_balance_date": "2026-09-23",
+        "shortfall": true,
+        "quick_pay_fixes_it": true,
+        "quick_pay_cost": 36.0,
+        "timeline": [
+          {
+            "date": "2026-09-21",
+            "label": "Checking balance today",
+            "amount": 0.0,
+            "balance": 2500
+          },
+          {
+            "date": "2026-09-21",
+            "label": "Diesel for L027",
+            "amount": -244.95,
+            "balance": 2255.05
+          },
+          {
+            "date": "2026-09-22",
+            "label": "Diesel for L058",
+            "amount": -417.59,
+            "balance": 1837.46
+          },
+          {
+            "date": "2026-09-22",
+            "label": "Truck payment",
+            "amount": -2150.0,
+            "balance": -312.54
+          },
+          {
+            "date": "2026-09-23",
+            "label": "Diesel for L012",
+            "amount": -181.49,
+            "balance": -494.03
+          }
+        ],
+        "later": [
+          {
+            "date": "2026-10-21",
+            "label": "Pay for L027 (Blue Ridge Logistics)",
+            "amount": 1080.0
+          },
+          {
+            "date": "2026-10-23",
+            "label": "Pay for L058 (Summit Carrier Services)",
+            "amount": 1530.0
+          },
+          {
+            "date": "2026-10-23",
+            "label": "Pay for L012 (Piedmont Transport Group)",
+            "amount": 765.0
+          }
+        ],
+        "route": [
+          {
+            "from": [
+              37.271,
+              -79.9414
+            ],
+            "to": [
+              37.271,
+              -79.9414
+            ],
+            "start": "2026-09-21T06:00:00",
+            "end": "2026-09-21T07:00:00",
+            "balance": 2500,
+            "loaded": false
+          },
+          {
+            "from": [
+              37.271,
+              -79.9414
+            ],
+            "to": [
+              33.749,
+              -84.388
+            ],
+            "start": "2026-09-21T07:00:00",
+            "end": "2026-09-21T19:22:48",
+            "balance": 2255.05,
+            "loaded": true
+          },
+          {
+            "from": [
+              33.749,
+              -84.388
+            ],
+            "to": [
+              35.9606,
+              -83.9207
+            ],
+            "start": "2026-09-21T19:22:48",
+            "end": "2026-09-22T09:06:07.586052",
+            "balance": 2255.05,
+            "loaded": false
+          },
+          {
+            "from": [
+              35.9606,
+              -83.9207
+            ],
+            "to": [
+              36.34565200811442,
+              -83.07555836948038
+            ],
+            "start": "2026-09-22T09:06:07.586052",
+            "end": "2026-09-22T12:00:00",
+            "balance": 1837.46,
+            "loaded": true
+          },
+          {
+            "from": [
+              36.34565200811442,
+              -83.07555836948038
+            ],
+            "to": [
+              39.2904,
+              -76.6122
+            ],
+            "start": "2026-09-22T12:00:00",
+            "end": "2026-09-23T10:09:43.586052",
+            "balance": -312.54,
+            "loaded": true
+          },
+          {
+            "from": [
+              39.2904,
+              -76.6122
+            ],
+            "to": [
+              39.6418,
+              -77.72
+            ],
+            "start": "2026-09-23T10:09:43.586052",
+            "end": "2026-09-23T11:41:43.153410",
+            "balance": -312.54,
+            "loaded": false
+          },
+          {
+            "from": [
+              39.6418,
+              -77.72
+            ],
+            "to": [
+              37.271,
+              -79.9414
+            ],
+            "start": "2026-09-23T11:41:43.153410",
+            "end": "2026-09-23T20:34:31.153410",
+            "balance": -494.03,
+            "loaded": true
+          }
+        ],
+        "money_stops": [
+          {
+            "at": "2026-09-21T07:00:00",
+            "lat": 37.271,
+            "lng": -79.9414,
+            "label": "Diesel for L027",
+            "amount": -244.95,
+            "balance": 2255.05,
+            "kind": "fuel"
+          },
+          {
+            "at": "2026-09-22T09:06:07.586052",
+            "lat": 35.9606,
+            "lng": -83.9207,
+            "label": "Diesel for L058",
+            "amount": -417.59,
+            "balance": 1837.46,
+            "kind": "fuel"
+          },
+          {
+            "at": "2026-09-22T12:00:00",
+            "lat": 36.34565,
+            "lng": -83.07556,
+            "label": "Truck payment",
+            "amount": -2150.0,
+            "balance": -312.54,
+            "kind": "bill"
+          },
+          {
+            "at": "2026-09-23T11:41:43.153410",
+            "lat": 39.6418,
+            "lng": -77.72,
+            "label": "Diesel for L012",
+            "amount": -181.49,
+            "balance": -494.03,
+            "kind": "fuel"
+          }
+        ],
+        "advance_load_ids": [
+          "L027"
+        ],
+        "advances": [],
+        "advance_offer": {
+          "load_id": "L027",
+          "amount": 1044.0,
+          "fee": 36.0,
+          "on": "2026-09-21",
+          "repay_amount": 1080.0,
+          "repay_on": "2026-10-21",
+          "broker": "Blue Ridge Logistics"
+        }
+      },
+      "success": {
+        "starting_balance": 2500.0,
+        "lowest_balance": 549.97,
+        "lowest_balance_date": "2026-09-23",
+        "shortfall": false,
+        "quick_pay_fixes_it": false,
+        "quick_pay_cost": 0.0,
+        "timeline": [
+          {
+            "date": "2026-09-21",
+            "label": "Checking balance today",
+            "amount": 0.0,
+            "balance": 2500
+          },
+          {
+            "date": "2026-09-21",
+            "label": "Diesel for L027",
+            "amount": -244.95,
+            "balance": 2255.05
+          },
+          {
+            "date": "2026-09-21",
+            "label": "Capital One advance on L027",
+            "amount": 1044.0,
+            "balance": 3299.05
+          },
+          {
+            "date": "2026-09-22",
+            "label": "Diesel for L058",
+            "amount": -417.59,
+            "balance": 2881.46
+          },
+          {
+            "date": "2026-09-22",
+            "label": "Truck payment",
+            "amount": -2150.0,
+            "balance": 731.46
+          },
+          {
+            "date": "2026-09-23",
+            "label": "Diesel for L012",
+            "amount": -181.49,
+            "balance": 549.97
+          }
+        ],
+        "later": [
+          {
+            "date": "2026-10-21",
+            "label": "Advance on L027 repaid",
+            "amount": -1080.0
+          },
+          {
+            "date": "2026-10-21",
+            "label": "Pay for L027 (Blue Ridge Logistics)",
+            "amount": 1080.0
+          },
+          {
+            "date": "2026-10-23",
+            "label": "Pay for L058 (Summit Carrier Services)",
+            "amount": 1530.0
+          },
+          {
+            "date": "2026-10-23",
+            "label": "Pay for L012 (Piedmont Transport Group)",
+            "amount": 765.0
+          }
+        ],
+        "route": [
+          {
+            "from": [
+              37.271,
+              -79.9414
+            ],
+            "to": [
+              37.271,
+              -79.9414
+            ],
+            "start": "2026-09-21T06:00:00",
+            "end": "2026-09-21T07:00:00",
+            "balance": 2500,
+            "loaded": false
+          },
+          {
+            "from": [
+              37.271,
+              -79.9414
+            ],
+            "to": [
+              33.749,
+              -84.388
+            ],
+            "start": "2026-09-21T07:00:00",
+            "end": "2026-09-21T19:22:48",
+            "balance": 2255.05,
+            "loaded": true
+          },
+          {
+            "from": [
+              33.749,
+              -84.388
+            ],
+            "to": [
+              35.9606,
+              -83.9207
+            ],
+            "start": "2026-09-21T19:22:48",
+            "end": "2026-09-22T09:06:07.586052",
+            "balance": 3299.05,
+            "loaded": false
+          },
+          {
+            "from": [
+              35.9606,
+              -83.9207
+            ],
+            "to": [
+              36.34565200811442,
+              -83.07555836948038
+            ],
+            "start": "2026-09-22T09:06:07.586052",
+            "end": "2026-09-22T12:00:00",
+            "balance": 2881.46,
+            "loaded": true
+          },
+          {
+            "from": [
+              36.34565200811442,
+              -83.07555836948038
+            ],
+            "to": [
+              39.2904,
+              -76.6122
+            ],
+            "start": "2026-09-22T12:00:00",
+            "end": "2026-09-23T10:09:43.586052",
+            "balance": 731.46,
+            "loaded": true
+          },
+          {
+            "from": [
+              39.2904,
+              -76.6122
+            ],
+            "to": [
+              39.6418,
+              -77.72
+            ],
+            "start": "2026-09-23T10:09:43.586052",
+            "end": "2026-09-23T11:41:43.153410",
+            "balance": 731.46,
+            "loaded": false
+          },
+          {
+            "from": [
+              39.6418,
+              -77.72
+            ],
+            "to": [
+              37.271,
+              -79.9414
+            ],
+            "start": "2026-09-23T11:41:43.153410",
+            "end": "2026-09-23T20:34:31.153410",
+            "balance": 549.97,
+            "loaded": true
+          }
+        ],
+        "money_stops": [
+          {
+            "at": "2026-09-21T07:00:00",
+            "lat": 37.271,
+            "lng": -79.9414,
+            "label": "Diesel for L027",
+            "amount": -244.95,
+            "balance": 2255.05,
+            "kind": "fuel"
+          },
+          {
+            "at": "2026-09-21T19:22:48",
+            "lat": 33.749,
+            "lng": -84.388,
+            "label": "Capital One advance on L027",
+            "amount": 1044.0,
+            "balance": 3299.05,
+            "kind": "advance"
+          },
+          {
+            "at": "2026-09-22T09:06:07.586052",
+            "lat": 35.9606,
+            "lng": -83.9207,
+            "label": "Diesel for L058",
+            "amount": -417.59,
+            "balance": 2881.46,
+            "kind": "fuel"
+          },
+          {
+            "at": "2026-09-22T12:00:00",
+            "lat": 36.34565,
+            "lng": -83.07556,
+            "label": "Truck payment",
+            "amount": -2150.0,
+            "balance": 731.46,
+            "kind": "bill"
+          },
+          {
+            "at": "2026-09-23T11:41:43.153410",
+            "lat": 39.6418,
+            "lng": -77.72,
+            "label": "Diesel for L012",
+            "amount": -181.49,
+            "balance": 549.97,
+            "kind": "fuel"
+          }
+        ],
+        "advance_load_ids": [],
+        "advances": [
+          {
+            "load_id": "L027",
+            "amount": 1044.0,
+            "on": "2026-09-21",
+            "repay_amount": 1080.0,
+            "repay_on": "2026-10-21",
+            "deposit_id": "preview-only",
+            "bill_id": "preview-only",
+            "source": "fixture"
+          }
+        ],
+        "advance_offer": null
+      }
+    },
+    {
+      "chain": {
+        "loads": [
+          "L039",
+          "L058",
+          "L012"
+        ],
+        "legs": [
+          {
+            "load_id": "L039",
+            "deadhead_miles": 53.99543788915722,
+            "loaded_miles": 214.0,
+            "total_miles": 267.99543788915724,
+            "posted_rpm": 3.0373831775700935,
+            "fuel_cost": 152.4653808381986,
+            "variable_cost": 53.599087577831455,
+            "fixed_cost": 133.99771894457862,
+            "dispatch_fee": 65.0,
+            "net_profit": 244.9378126393913,
+            "true_net_cpm": 0.9139626202916836,
+            "break_even_rate": 377.84687484512074,
+            "counter_offer_rate": 601.1764064194184,
+            "verdict": "take"
+          },
+          {
+            "load_id": "L058",
+            "deadhead_miles": 216.2145221497416,
+            "loaded_miles": 553.0,
+            "total_miles": 769.2145221497416,
+            "posted_rpm": 3.0741410488245933,
+            "fuel_cost": 432.84099891484345,
+            "variable_cost": 153.84290442994833,
+            "fixed_cost": 384.6072610748708,
+            "dispatch_fee": 170.0,
+            "net_profit": 558.7088355803373,
+            "true_net_cpm": 0.7263368273637123,
+            "break_even_rate": 1079.2124049107363,
+            "counter_offer_rate": 1720.2245067021875,
+            "verdict": "negotiate"
+          },
+          {
+            "load_id": "L012",
+            "deadhead_miles": 76.660657744115,
+            "loaded_miles": 244.0,
+            "total_miles": 320.660657744115,
+            "posted_rpm": 3.4836065573770494,
+            "fuel_cost": 181.4875537698388,
+            "variable_cost": 64.132131548823,
+            "fixed_cost": 160.3303288720575,
+            "dispatch_fee": 85.0,
+            "net_profit": 359.04998580928066,
+            "true_net_cpm": 1.1197194826931345,
+            "break_even_rate": 451.0555713230214,
+            "counter_offer_rate": 718.2727861097839,
+            "verdict": "take"
+          }
+        ],
+        "home_deadhead_miles": 0.0,
+        "home_deadhead_cost": 0.0,
+        "total_net_profit": 1162.6966340290094,
+        "total_miles": 1357.8706177830138,
+        "days": 2.603050548125,
+        "net_per_day": 446.66694423837055,
+        "ends_at": {
+          "city": "Roanoke, VA",
+          "lat": 37.271,
+          "lng": -79.9414
+        },
+        "feasible_notes": [
+          "Waited 0.9 h for pickup window at L039",
+          "Waited 12.4 h for pickup window at L058",
+          "10-h rest inserted while hauling L058"
+        ],
+        "schedule": [
+          {
+            "load_id": "L039",
+            "depart_at": "2026-09-21T06:00:00",
+            "pickup_at": "2026-09-21T08:00:00",
+            "delivered_at": "2026-09-21T16:16:48"
+          },
+          {
+            "load_id": "L058",
+            "depart_at": "2026-09-21T16:16:48",
+            "pickup_at": "2026-09-22T09:00:00",
+            "delivered_at": "2026-09-23T10:03:36"
+          },
+          {
+            "load_id": "L012",
+            "depart_at": "2026-09-23T10:03:36",
+            "pickup_at": "2026-09-23T11:35:35.567358",
+            "delivered_at": "2026-09-23T20:28:23.567358"
+          }
+        ],
+        "losing": false,
+        "losing_reason": null
+      },
+      "cash": {
+        "starting_balance": 2500.0,
+        "lowest_balance": -416.79,
+        "lowest_balance_date": "2026-09-23",
+        "shortfall": true,
+        "quick_pay_fixes_it": true,
+        "quick_pay_cost": 19.5,
+        "timeline": [
+          {
+            "date": "2026-09-21",
+            "label": "Checking balance today",
+            "amount": 0.0,
+            "balance": 2500
+          },
+          {
+            "date": "2026-09-21",
+            "label": "Diesel for L039",
+            "amount": -152.47,
+            "balance": 2347.53
+          },
+          {
+            "date": "2026-09-22",
+            "label": "Diesel for L058",
+            "amount": -432.84,
+            "balance": 1914.69
+          },
+          {
+            "date": "2026-09-22",
+            "label": "Truck payment",
+            "amount": -2150.0,
+            "balance": -235.31
+          },
+          {
+            "date": "2026-09-23",
+            "label": "Diesel for L012",
+            "amount": -181.49,
+            "balance": -416.79
+          }
+        ],
+        "later": [
+          {
+            "date": "2026-10-21",
+            "label": "Pay for L039 (Peachtree Freight)",
+            "amount": 585.0
+          },
+          {
+            "date": "2026-10-23",
+            "label": "Pay for L058 (Summit Carrier Services)",
+            "amount": 1530.0
+          },
+          {
+            "date": "2026-10-23",
+            "label": "Pay for L012 (Piedmont Transport Group)",
+            "amount": 765.0
+          }
+        ],
+        "route": [
+          {
+            "from": [
+              37.271,
+              -79.9414
+            ],
+            "to": [
+              37.4138,
+              -79.1422
+            ],
+            "start": "2026-09-21T06:00:00",
+            "end": "2026-09-21T08:00:00",
+            "balance": 2500,
+            "loaded": false
+          },
+          {
+            "from": [
+              37.4138,
+              -79.1422
+            ],
+            "to": [
+              35.2271,
+              -80.8431
+            ],
+            "start": "2026-09-21T08:00:00",
+            "end": "2026-09-21T16:16:48",
+            "balance": 2347.53,
+            "loaded": true
+          },
+          {
+            "from": [
+              35.2271,
+              -80.8431
+            ],
+            "to": [
+              35.9606,
+              -83.9207
+            ],
+            "start": "2026-09-21T16:16:48",
+            "end": "2026-09-22T09:00:00",
+            "balance": 2347.53,
+            "loaded": false
+          },
+          {
+            "from": [
+              35.9606,
+              -83.9207
+            ],
+            "to": [
+              36.359219313647245,
+              -83.0457798084597
+            ],
+            "start": "2026-09-22T09:00:00",
+            "end": "2026-09-22T12:00:00",
+            "balance": 1914.69,
+            "loaded": true
+          },
+          {
+            "from": [
+              36.359219313647245,
+              -83.0457798084597
+            ],
+            "to": [
+              39.2904,
+              -76.6122
+            ],
+            "start": "2026-09-22T12:00:00",
+            "end": "2026-09-23T10:03:36",
+            "balance": -235.31,
+            "loaded": true
+          },
+          {
+            "from": [
+              39.2904,
+              -76.6122
+            ],
+            "to": [
+              39.6418,
+              -77.72
+            ],
+            "start": "2026-09-23T10:03:36",
+            "end": "2026-09-23T11:35:35.567358",
+            "balance": -235.31,
+            "loaded": false
+          },
+          {
+            "from": [
+              39.6418,
+              -77.72
+            ],
+            "to": [
+              37.271,
+              -79.9414
+            ],
+            "start": "2026-09-23T11:35:35.567358",
+            "end": "2026-09-23T20:28:23.567358",
+            "balance": -416.79,
+            "loaded": true
+          }
+        ],
+        "money_stops": [
+          {
+            "at": "2026-09-21T08:00:00",
+            "lat": 37.4138,
+            "lng": -79.1422,
+            "label": "Diesel for L039",
+            "amount": -152.47,
+            "balance": 2347.53,
+            "kind": "fuel"
+          },
+          {
+            "at": "2026-09-22T09:00:00",
+            "lat": 35.9606,
+            "lng": -83.9207,
+            "label": "Diesel for L058",
+            "amount": -432.84,
+            "balance": 1914.69,
+            "kind": "fuel"
+          },
+          {
+            "at": "2026-09-22T12:00:00",
+            "lat": 36.35922,
+            "lng": -83.04578,
+            "label": "Truck payment",
+            "amount": -2150.0,
+            "balance": -235.31,
+            "kind": "bill"
+          },
+          {
+            "at": "2026-09-23T11:35:35.567358",
+            "lat": 39.6418,
+            "lng": -77.72,
+            "label": "Diesel for L012",
+            "amount": -181.49,
+            "balance": -416.79,
+            "kind": "fuel"
+          }
+        ],
+        "advance_load_ids": [
+          "L039"
+        ],
+        "advances": [],
+        "advance_offer": {
+          "load_id": "L039",
+          "amount": 565.5,
+          "fee": 19.5,
+          "on": "2026-09-21",
+          "repay_amount": 585.0,
+          "repay_on": "2026-10-21",
+          "broker": "Peachtree Freight"
+        }
+      },
+      "success": {
+        "starting_balance": 2500.0,
+        "lowest_balance": 148.71,
+        "lowest_balance_date": "2026-09-23",
+        "shortfall": false,
+        "quick_pay_fixes_it": false,
+        "quick_pay_cost": 0.0,
+        "timeline": [
+          {
+            "date": "2026-09-21",
+            "label": "Checking balance today",
+            "amount": 0.0,
+            "balance": 2500
+          },
+          {
+            "date": "2026-09-21",
+            "label": "Diesel for L039",
+            "amount": -152.47,
+            "balance": 2347.53
+          },
+          {
+            "date": "2026-09-21",
+            "label": "Capital One advance on L039",
+            "amount": 565.5,
+            "balance": 2913.03
+          },
+          {
+            "date": "2026-09-22",
+            "label": "Diesel for L058",
+            "amount": -432.84,
+            "balance": 2480.19
+          },
+          {
+            "date": "2026-09-22",
+            "label": "Truck payment",
+            "amount": -2150.0,
+            "balance": 330.19
+          },
+          {
+            "date": "2026-09-23",
+            "label": "Diesel for L012",
+            "amount": -181.49,
+            "balance": 148.71
+          }
+        ],
+        "later": [
+          {
+            "date": "2026-10-21",
+            "label": "Advance on L039 repaid",
+            "amount": -585.0
+          },
+          {
+            "date": "2026-10-21",
+            "label": "Pay for L039 (Peachtree Freight)",
+            "amount": 585.0
+          },
+          {
+            "date": "2026-10-23",
+            "label": "Pay for L058 (Summit Carrier Services)",
+            "amount": 1530.0
+          },
+          {
+            "date": "2026-10-23",
+            "label": "Pay for L012 (Piedmont Transport Group)",
+            "amount": 765.0
+          }
+        ],
+        "route": [
+          {
+            "from": [
+              37.271,
+              -79.9414
+            ],
+            "to": [
+              37.4138,
+              -79.1422
+            ],
+            "start": "2026-09-21T06:00:00",
+            "end": "2026-09-21T08:00:00",
+            "balance": 2500,
+            "loaded": false
+          },
+          {
+            "from": [
+              37.4138,
+              -79.1422
+            ],
+            "to": [
+              35.2271,
+              -80.8431
+            ],
+            "start": "2026-09-21T08:00:00",
+            "end": "2026-09-21T16:16:48",
+            "balance": 2347.53,
+            "loaded": true
+          },
+          {
+            "from": [
+              35.2271,
+              -80.8431
+            ],
+            "to": [
+              35.9606,
+              -83.9207
+            ],
+            "start": "2026-09-21T16:16:48",
+            "end": "2026-09-22T09:00:00",
+            "balance": 2913.03,
+            "loaded": false
+          },
+          {
+            "from": [
+              35.9606,
+              -83.9207
+            ],
+            "to": [
+              36.359219313647245,
+              -83.0457798084597
+            ],
+            "start": "2026-09-22T09:00:00",
+            "end": "2026-09-22T12:00:00",
+            "balance": 2480.19,
+            "loaded": true
+          },
+          {
+            "from": [
+              36.359219313647245,
+              -83.0457798084597
+            ],
+            "to": [
+              39.2904,
+              -76.6122
+            ],
+            "start": "2026-09-22T12:00:00",
+            "end": "2026-09-23T10:03:36",
+            "balance": 330.19,
+            "loaded": true
+          },
+          {
+            "from": [
+              39.2904,
+              -76.6122
+            ],
+            "to": [
+              39.6418,
+              -77.72
+            ],
+            "start": "2026-09-23T10:03:36",
+            "end": "2026-09-23T11:35:35.567358",
+            "balance": 330.19,
+            "loaded": false
+          },
+          {
+            "from": [
+              39.6418,
+              -77.72
+            ],
+            "to": [
+              37.271,
+              -79.9414
+            ],
+            "start": "2026-09-23T11:35:35.567358",
+            "end": "2026-09-23T20:28:23.567358",
+            "balance": 148.71,
+            "loaded": true
+          }
+        ],
+        "money_stops": [
+          {
+            "at": "2026-09-21T08:00:00",
+            "lat": 37.4138,
+            "lng": -79.1422,
+            "label": "Diesel for L039",
+            "amount": -152.47,
+            "balance": 2347.53,
+            "kind": "fuel"
+          },
+          {
+            "at": "2026-09-21T16:16:48",
+            "lat": 35.2271,
+            "lng": -80.8431,
+            "label": "Capital One advance on L039",
+            "amount": 565.5,
+            "balance": 2913.03,
+            "kind": "advance"
+          },
+          {
+            "at": "2026-09-22T09:00:00",
+            "lat": 35.9606,
+            "lng": -83.9207,
+            "label": "Diesel for L058",
+            "amount": -432.84,
+            "balance": 2480.19,
+            "kind": "fuel"
+          },
+          {
+            "at": "2026-09-22T12:00:00",
+            "lat": 36.35922,
+            "lng": -83.04578,
+            "label": "Truck payment",
+            "amount": -2150.0,
+            "balance": 330.19,
+            "kind": "bill"
+          },
+          {
+            "at": "2026-09-23T11:35:35.567358",
+            "lat": 39.6418,
+            "lng": -77.72,
+            "label": "Diesel for L012",
+            "amount": -181.49,
+            "balance": 148.71,
+            "kind": "fuel"
+          }
+        ],
+        "advance_load_ids": [],
+        "advances": [
+          {
+            "load_id": "L039",
+            "amount": 565.5,
+            "on": "2026-09-21",
+            "repay_amount": 585.0,
+            "repay_on": "2026-10-21",
+            "deposit_id": "preview-only",
+            "bill_id": "preview-only",
+            "source": "fixture"
+          }
+        ],
+        "advance_offer": null
+      }
+    },
+    {
+      "chain": {
+        "loads": [
+          "L042",
+          "L012"
+        ],
+        "legs": [
+          {
+            "load_id": "L042",
+            "deadhead_miles": 142.3794750562608,
+            "loaded_miles": 274.0,
+            "total_miles": 416.3794750562608,
+            "posted_rpm": 2.7372262773722627,
+            "fuel_cost": 232.32354941312082,
+            "variable_cost": 83.27589501125216,
+            "fixed_cost": 208.1897375281304,
+            "dispatch_fee": 75.0,
+            "net_profit": 151.21081804749664,
+            "true_net_cpm": 0.3631562723572414,
+            "break_even_rate": 581.9879799472259,
+            "counter_offer_rate": 928.9708758274433,
+            "verdict": "skip"
+          },
+          {
+            "load_id": "L012",
+            "deadhead_miles": 0.0,
+            "loaded_miles": 244.0,
+            "total_miles": 244.0,
+            "posted_rpm": 3.4836065573770494,
+            "fuel_cost": 142.64615384615385,
+            "variable_cost": 48.800000000000004,
+            "fixed_cost": 122.0,
+            "dispatch_fee": 85.0,
+            "net_profit": 451.55384615384617,
+            "true_net_cpm": 1.8506305170239596,
+            "break_even_rate": 348.2735042735043,
+            "counter_offer_rate": 551.6068376068375,
+            "verdict": "take"
+          }
+        ],
+        "home_deadhead_miles": 0.0,
+        "home_deadhead_cost": 0.0,
+        "total_net_profit": 602.7646642013428,
+        "total_miles": 660.3794750562608,
+        "days": 2.5366666666666666,
+        "net_per_day": 237.6207611831838,
+        "ends_at": {
+          "city": "Roanoke, VA",
+          "lat": 37.271,
+          "lng": -79.9414
+        },
+        "feasible_notes": [
+          "Waited 22.2 h for pickup window at L042",
+          "Waited 17.5 h for pickup window at L012"
+        ],
+        "schedule": [
+          {
+            "load_id": "L042",
+            "depart_at": "2026-09-21T06:00:00",
+            "pickup_at": "2026-09-22T07:00:00",
+            "delivered_at": "2026-09-22T16:28:48"
+          },
+          {
+            "load_id": "L012",
+            "depart_at": "2026-09-22T16:28:48",
+            "pickup_at": "2026-09-23T10:00:00",
+            "delivered_at": "2026-09-23T18:52:48"
+          }
+        ],
+        "losing": false,
+        "losing_reason": null
+      },
+      "cash": {
+        "starting_balance": 2500.0,
+        "lowest_balance": -24.97,
+        "lowest_balance_date": "2026-09-23",
+        "shortfall": true,
+        "quick_pay_fixes_it": true,
+        "quick_pay_cost": 26.25,
+        "timeline": [
+          {
+            "date": "2026-09-21",
+            "label": "Checking balance today",
+            "amount": 0.0,
+            "balance": 2500
+          },
+          {
+            "date": "2026-09-22",
+            "label": "Diesel for L042",
+            "amount": -232.32,
+            "balance": 2267.68
+          },
+          {
+            "date": "2026-09-22",
+            "label": "Truck payment",
+            "amount": -2150.0,
+            "balance": 117.68
+          },
+          {
+            "date": "2026-09-23",
+            "label": "Diesel for L012",
+            "amount": -142.65,
+            "balance": -24.97
+          }
+        ],
+        "later": [
+          {
+            "date": "2026-10-22",
+            "label": "Pay for L042 (Piedmont Transport Group)",
+            "amount": 675.0
+          },
+          {
+            "date": "2026-10-23",
+            "label": "Pay for L012 (Piedmont Transport Group)",
+            "amount": 765.0
+          }
+        ],
+        "route": [
+          {
+            "from": [
+              37.271,
+              -79.9414
+            ],
+            "to": [
+              38.3498,
+              -81.6326
+            ],
+            "start": "2026-09-21T06:00:00",
+            "end": "2026-09-22T07:00:00",
+            "balance": 2500,
+            "loaded": false
+          },
+          {
+            "from": [
+              38.3498,
+              -81.6326
+            ],
+            "to": [
+              39.03123459915612,
+              -79.56899240506328
+            ],
+            "start": "2026-09-22T07:00:00",
+            "end": "2026-09-22T12:00:00",
+            "balance": 2267.68,
+            "loaded": true
+          },
+          {
+            "from": [
+              39.03123459915612,
+              -79.56899240506328
+            ],
+            "to": [
+              39.6418,
+              -77.72
+            ],
+            "start": "2026-09-22T12:00:00",
+            "end": "2026-09-22T16:28:48",
+            "balance": 117.68,
+            "loaded": true
+          },
+          {
+            "from": [
+              39.6418,
+              -77.72
+            ],
+            "to": [
+              39.6418,
+              -77.72
+            ],
+            "start": "2026-09-22T16:28:48",
+            "end": "2026-09-23T10:00:00",
+            "balance": 117.68,
+            "loaded": false
+          },
+          {
+            "from": [
+              39.6418,
+              -77.72
+            ],
+            "to": [
+              37.271,
+              -79.9414
+            ],
+            "start": "2026-09-23T10:00:00",
+            "end": "2026-09-23T18:52:48",
+            "balance": -24.97,
+            "loaded": true
+          }
+        ],
+        "money_stops": [
+          {
+            "at": "2026-09-22T07:00:00",
+            "lat": 38.3498,
+            "lng": -81.6326,
+            "label": "Diesel for L042",
+            "amount": -232.32,
+            "balance": 2267.68,
+            "kind": "fuel"
+          },
+          {
+            "at": "2026-09-22T12:00:00",
+            "lat": 39.03123,
+            "lng": -79.56899,
+            "label": "Truck payment",
+            "amount": -2150.0,
+            "balance": 117.68,
+            "kind": "bill"
+          },
+          {
+            "at": "2026-09-23T10:00:00",
+            "lat": 39.6418,
+            "lng": -77.72,
+            "label": "Diesel for L012",
+            "amount": -142.65,
+            "balance": -24.97,
+            "kind": "fuel"
+          }
+        ],
+        "advance_load_ids": [
+          "L042"
+        ],
+        "advances": [],
+        "advance_offer": {
+          "load_id": "L042",
+          "amount": 648.75,
+          "fee": 26.25,
+          "on": "2026-09-22",
+          "repay_amount": 675.0,
+          "repay_on": "2026-10-22",
+          "broker": "Piedmont Transport Group"
+        }
+      },
+      "success": {
+        "starting_balance": 2500.0,
+        "lowest_balance": 117.68,
+        "lowest_balance_date": "2026-09-22",
+        "shortfall": false,
+        "quick_pay_fixes_it": false,
+        "quick_pay_cost": 0.0,
+        "timeline": [
+          {
+            "date": "2026-09-21",
+            "label": "Checking balance today",
+            "amount": 0.0,
+            "balance": 2500
+          },
+          {
+            "date": "2026-09-22",
+            "label": "Diesel for L042",
+            "amount": -232.32,
+            "balance": 2267.68
+          },
+          {
+            "date": "2026-09-22",
+            "label": "Truck payment",
+            "amount": -2150.0,
+            "balance": 117.68
+          },
+          {
+            "date": "2026-09-22",
+            "label": "Capital One advance on L042",
+            "amount": 648.75,
+            "balance": 766.43
+          },
+          {
+            "date": "2026-09-23",
+            "label": "Diesel for L012",
+            "amount": -142.65,
+            "balance": 623.78
+          }
+        ],
+        "later": [
+          {
+            "date": "2026-10-22",
+            "label": "Advance on L042 repaid",
+            "amount": -675.0
+          },
+          {
+            "date": "2026-10-22",
+            "label": "Pay for L042 (Piedmont Transport Group)",
+            "amount": 675.0
+          },
+          {
+            "date": "2026-10-23",
+            "label": "Pay for L012 (Piedmont Transport Group)",
+            "amount": 765.0
+          }
+        ],
+        "route": [
+          {
+            "from": [
+              37.271,
+              -79.9414
+            ],
+            "to": [
+              38.3498,
+              -81.6326
+            ],
+            "start": "2026-09-21T06:00:00",
+            "end": "2026-09-22T07:00:00",
+            "balance": 2500,
+            "loaded": false
+          },
+          {
+            "from": [
+              38.3498,
+              -81.6326
+            ],
+            "to": [
+              39.03123459915612,
+              -79.56899240506328
+            ],
+            "start": "2026-09-22T07:00:00",
+            "end": "2026-09-22T12:00:00",
+            "balance": 2267.68,
+            "loaded": true
+          },
+          {
+            "from": [
+              39.03123459915612,
+              -79.56899240506328
+            ],
+            "to": [
+              39.6418,
+              -77.72
+            ],
+            "start": "2026-09-22T12:00:00",
+            "end": "2026-09-22T16:28:48",
+            "balance": 117.68,
+            "loaded": true
+          },
+          {
+            "from": [
+              39.6418,
+              -77.72
+            ],
+            "to": [
+              39.6418,
+              -77.72
+            ],
+            "start": "2026-09-22T16:28:48",
+            "end": "2026-09-23T10:00:00",
+            "balance": 766.43,
+            "loaded": false
+          },
+          {
+            "from": [
+              39.6418,
+              -77.72
+            ],
+            "to": [
+              37.271,
+              -79.9414
+            ],
+            "start": "2026-09-23T10:00:00",
+            "end": "2026-09-23T18:52:48",
+            "balance": 623.78,
+            "loaded": true
+          }
+        ],
+        "money_stops": [
+          {
+            "at": "2026-09-22T07:00:00",
+            "lat": 38.3498,
+            "lng": -81.6326,
+            "label": "Diesel for L042",
+            "amount": -232.32,
+            "balance": 2267.68,
+            "kind": "fuel"
+          },
+          {
+            "at": "2026-09-22T12:00:00",
+            "lat": 39.03123,
+            "lng": -79.56899,
+            "label": "Truck payment",
+            "amount": -2150.0,
+            "balance": 117.68,
+            "kind": "bill"
+          },
+          {
+            "at": "2026-09-22T16:28:48",
+            "lat": 39.6418,
+            "lng": -77.72,
+            "label": "Capital One advance on L042",
+            "amount": 648.75,
+            "balance": 766.43,
+            "kind": "advance"
+          },
+          {
+            "at": "2026-09-23T10:00:00",
+            "lat": 39.6418,
+            "lng": -77.72,
+            "label": "Diesel for L012",
+            "amount": -142.65,
+            "balance": 623.78,
+            "kind": "fuel"
+          }
+        ],
+        "advance_load_ids": [],
+        "advances": [
+          {
+            "load_id": "L042",
+            "amount": 648.75,
+            "on": "2026-09-22",
+            "repay_amount": 675.0,
+            "repay_on": "2026-10-22",
+            "deposit_id": "preview-only",
+            "bill_id": "preview-only",
+            "source": "fixture"
+          }
+        ],
+        "advance_offer": null
+      }
+    }
+  ]
+}

@@ -1,9 +1,9 @@
-import { useEffect } from "react";
+import { MapTiles } from "./MapTiles";
+import { useEffect, useState } from "react";
 import type { CashflowCheck, Chain, Load, Place, TruckProfile } from "../types";
 import { BUFFER, MONEY_ICONS, balanceColor } from "../money";
 import {
   MapContainer,
-  TileLayer,
   Polyline,
   Marker,
   Popup,
@@ -31,6 +31,7 @@ export function RouteMap({
   profile: TruckProfile;
   cash?: CashflowCheck;
 }) {
+  const [offline, setOffline] = useState(!navigator.onLine);
   // Feature A: when the cash flow is in, the line is colored by his projected balance.
   const route = cash?.route ?? [];
   const stops = cash?.money_stops ?? [];
@@ -74,19 +75,24 @@ export function RouteMap({
   function Fit() {
     const map = useMap();
     useEffect(() => {
-      if (points.length)
-        map.fitBounds(latLngBounds(points), { padding: [45, 45], maxZoom: 9 });
+      const fit = () => {
+        if (points.length) map.fitBounds(latLngBounds(points), {
+          paddingTopLeft: matchMedia('(max-width:700px)').matches ? [35,150] : [440,60],
+          paddingBottomRight: matchMedia('(max-width:700px)').matches ? [35,250] : [70,100], maxZoom: 9, animate: false,
+        });
+      };
+      fit();
+      map.on('resize', fit);
+      return () => { map.off('resize', fit); };
     }, [map, chain, profile]);
     return null;
   }
   return (
     <>
+      <div className="map-mode"><span role="status">{offline ? "Offline map · city locations and estimated route" : "Online map"}</span><button type="button" onClick={() => setOffline(!offline)}>{offline ? "Retry map tiles" : "Use offline map"}</button></div>
       <div className="map">
-        <MapContainer center={[37, -80]} zoom={6} scrollWheelZoom={false}>
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
+        <MapContainer center={[37, -80]} zoom={6} scrollWheelZoom={false} zoomAnimation={false} fadeAnimation={false} markerZoomAnimation={false}>
+          <MapTiles offline={offline} onOffline={() => setOffline(true)} />
           {route.map((r, i) => (
             <Polyline
               key={`m${i}`}
@@ -112,7 +118,7 @@ export function RouteMap({
               icon={divIcon({
                 className: `money-pin money-${m.kind}${m.balance < 0 ? " money-red" : ""}`,
                 html: `<span>${MONEY_ICONS[m.kind]}</span>`,
-                iconSize: [28, 28],
+                iconSize: [44, 44],
                 // sit just above-left of the spot so city pins (1P, 2D…) stay readable
                 iconAnchor: [30, 30],
               })}
@@ -148,10 +154,10 @@ export function RouteMap({
               icon={divIcon({
                 className: "map-pin",
                 html: `<span>${pin.label}</span>`,
-                iconSize: [32, 32],
+                iconSize: [44, 44],
               })}
             >
-              <Popup>{pin.text}</Popup>
+              <Tooltip permanent direction="bottom">{pin.text}</Tooltip><Popup>{pin.text}</Popup>
             </Marker>
           ))}
           <Fit />
