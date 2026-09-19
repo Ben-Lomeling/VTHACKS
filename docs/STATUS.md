@@ -1,15 +1,21 @@
 # LoadCheck: status and handoff
 
-_Last updated: Sat Sep 19, 2026 (morning). Deadline: submit Sun 7:15 AM ET (hard stop 8:00)._
+_Last updated: Sat Sep 19, 2026 (afternoon, after the Capital One judges). Deadline: submit Sun 7:15 AM ET (hard stop 8:00)._
 
 Read this first when picking the work back up. It records what's done, what decisions were made (so nobody
 re-asks), what's waiting on whom, and what to do next.
 
 ## Where things are
-- Repo: https://github.com/Ben-Lomeling/VTHACKS (Ben is admin; Nischal merges). Local: `~/Documents/CS/VTHACKS`.
-- `main` @ `e109eb9` (frontend PR #7 merged). Open: `frontend/review-fixes` (review fixes + this file). CI (`tests / backend`) runs pytest on every PR and push to main.
-- Health: **56 tests pass**, `python scripts/demo_check.py --in-process` → **15/15**.
-- `/api/health`: profit, geo, optimizer, cashflow = **live**; gemini, nessie = **stub**.
+- Repo **moved** to https://github.com/VTHACKATHON/VTHACKS (old `Ben-Lomeling/VTHACKS` URL redirects). Local:
+  `~/Documents/CS/VTHACKS`. Update the remote once: `git remote set-url origin https://github.com/VTHACKATHON/VTHACKS.git`.
+- `main` @ `e109eb9` (PR #7). CI (`tests / backend`) runs pytest on every PR and push to main.
+- **Open PRs, merge in this order** (Nihal merges; the assistant is not allowed to merge):
+  **#8** review fixes + this file → **#12** demo polish + ideas docs (stacked on #8; retargets to main when #8's branch is
+  deleted) → **#9** Nessie seed → **#10** Nessie fixture → **#11** Nessie client (its CI is red alone only because it needs
+  #10's fixture; all three merged together: **82 tests pass, demo_check 15/15**, bank $3.92/gal, $0.27/mi, $3,315/mo).
+- On `main` today: 56 tests / 15/15; gemini + nessie = stub. After the merges: 82 tests, nessie = live (fixture fallback).
+- **Capital One (Nessie) is the main prize focus.** Also enter MLH *Best Use of Gemini API* and *GoDaddy domain*.
+  Deloitte's challenge (campus AI agent) doesn't fit; skip.
 
 ## Done (merged PRs)
 | PR | What |
@@ -65,6 +71,15 @@ Demo polish on `frontend/demo-polish` (stacked on review-fixes):
 asked to cache tiles or add a no-tile fallback. Not tested yet: counter message on a negotiate load (Gemini stub always
 extracts the TAKE example).
 
+## Capital One judges' feedback (Sat afternoon) → next features
+They **don't want an average banking/finance app**; they want a **creative, meaningful use of Nessie**. Plan: turn the
+trucker's bank account into a **map of the road ahead**. Full design: **`docs/CAPITAL_ONE_FEATURES.md`**. Build order:
+1. **A: Money on the map**: route colored green/amber/red by projected balance; money markers.
+2. **B: Get paid early**: tap on a red stretch → **creates a Nessie deposit** → route turns green.
+3. **C: Receipt photos**: Gemini reads a receipt → confirm → **saved as a Nessie purchase** → real spending profile (fuel $/mi, food $/day).
+**Decision 1 must be made first** (in that doc): with today's data the route never turns red (the dip is Oct 5, after
+the trip). Recommended: truck payment due the 22nd, start balance $2,500, instant pay on delivery.
+
 ## Ideas (not started)
 - Real data sources (EIA diesel, FMCSA broker check, OpenRouteService miles, USDA truck rates): see `docs/REAL_DATA_IDEAS.md`.
 
@@ -73,23 +88,34 @@ extracts the TAKE example).
 |---|---|
 | Dad | The bad load (offer text, pickup/delivery, where he was, rate, terms, what he actually made), real costs (home city, trailer, MPG, diesel, truck payment, insurance, maintenance, dispatcher %, miles/month, target $/mi), 5 offers + 2 screenshots, 15–20 s video; and whether he needs runs to end near home |
 | Gemini teammate | Replace `gemini.py` stub (extract, explain + number check, counter message) → PR on `gemini/...` |
-| Nessie teammate | Seed script working, fixture recorded, `nessie.py` live → PR on `nessie/...`; Capital One challenge statement |
+| Nessie worker | Follow-ups on #11: cache live snapshot (slow Wi-Fi = up to 5 s per call), start STATUS as "fixture" until a live call works. Then Feature B/C Nessie writes (`create_deposit`, `create_purchase`, food/parking merchants) |
+| Nihal | Merge #8 → #12 → #9 → #10 → #11; `NESSIE_API_KEY` in root `.env` on the demo laptop; Decision 1 |
 | Frontend teammate | Pull `frontend/review-fixes` once merged; offline map tiles or no-tile fallback |
 | Ben | Protect `main` (message drafted in chat: require PR, 0 approvals, Code Owners review off, required check `backend`, no strict up-to-date) and add collaborators |
 
 ## Next steps (in order)
-1. ~~Install Node, run the frontend against the real backend~~ done Sat AM. Merge `frontend/review-fixes`.
-2. Review + merge Gemini and Nessie PRs as they arrive; re-run the frontend against them.
-3. Phase 4: full flow `/extract → /evaluate → /chains → /cashflow → /explain` on live modules; `demo_check` must stay 15/15.
-4. Dad's data: update `profile.json`, run `python scripts/prewarm_cities.py "<his cities>"`, swap `BAD_LOAD` in `demo_check.py` and the demo text for his real offer, re-tune the board (data only, keep `source: simulated`) so it lands near $0.50/mi.
-5. After Nessie is live: re-check the cash-flow pitch line numbers (they depend on the real balance and bills).
-6. Sat 12 PM checkpoint: paste → confirm → result on the real backend. Sat 4 PM: every MVP feature on real data. **Sat 6 PM: feature freeze.**
-7. Sat evening: backup demo video, README GIF, timed 4-minute rehearsal. Sun 6 AM: Wi-Fi-off run-through. Sun 7:15 AM: submit.
+1. Nihal merges #8 → #12 → #9 → #10 → #11. Pull `main`; `pytest -q` (82), `demo_check` (15/15), `npm run build`; click through.
+2. Decision 1 (docs/CAPITAL_ONE_FEATURES.md), then **Feature A: money on the map**. Demo-ready checkpoint.
+3. **Feature B: get paid early** (Nessie deposit write + reset).
+4. **Feature C: receipt photos** (Gemini read + Nessie purchase + food_per_day).
+5. Dad's data swap: `profile.json`, prewarm his cities, `BAD_LOAD`, board re-tune (keep `source: simulated`).
+6. Gemini PR when it lands (extract/explain/counter; explain the whole run; format negatives as -$0.02).
+7. Deploy + free MLH domain (one permanent link for friends + Devpost "Try it"). Needs Nihal to sign in to the hosts.
+   A Cloudflare quick tunnel was tried and blocked by the permission classifier; needs Nihal's explicit OK.
+8. Sat evening: backup demo video, README GIF, timed 4-minute rehearsal. Sun 6 AM: Wi-Fi-off run-through (map tiles
+   need internet; Nessie + cities fall back offline). Sun 7:15 AM: submit on Devpost (tag Capital One, Gemini, GoDaddy).
+
+## Done today (Sat Sep 19)
+- Frontend verified on the live backend; fixes (#8); demo polish (#12): bad-load example, stub list hidden (`?dev`),
+  "Find a better run", offer-vs-best-run card, run timeline, `/extract` resolves coordinates.
+- Nessie PRs #9–#11 reviewed (see above). Real-data ideas: `docs/REAL_DATA_IDEAS.md`. Sponsor research (Capital One =
+  focus). Judge cheat sheet + Capital One questions given to Nihal in chat. Node 26, gh (logged in as pradhannihal),
+  cloudflared installed via brew.
 
 ## Useful commands
 ```bash
 cd ~/Documents/CS/VTHACKS/backend && source .venv/bin/activate
-pytest -q                                   # 56 should pass
+pytest -q                                   # 56 on main today; 82 after the Nessie PRs
 uvicorn app.main:app --reload               # API on :8000, docs at /docs
 cd .. && python scripts/demo_check.py --in-process   # 15/15
 python scripts/prewarm_cities.py "City, ST"          # cache cities for offline
