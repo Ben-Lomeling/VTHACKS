@@ -155,3 +155,8 @@ def test_real_board_runs_under_one_second():
         chains = best_chains(prof, prof.current_location, datetime(2026, 9, 21, 6), board)
         assert time.perf_counter() - started < 1.0
         assert len(chains) <= 3
+
+
+def test_money_losing_runs_are_never_returned():
+    bad = mk("M1", HOME, HOME, 50, loaded_miles_est=300)
+    assert best_chains(profile(), HOME, T0, [bad]) == []

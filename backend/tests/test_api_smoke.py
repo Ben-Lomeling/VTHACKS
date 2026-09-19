@@ -88,3 +88,20 @@ def test_evaluate_bad_rate_is_422_with_message():
             "rate_usd": 0, "loaded_miles_est": 300, "source": "pasted"}
     r = client.post("/api/evaluate", json={"load": load})
     assert r.status_code == 422 and "rate_usd must be > 0" in r.json()["detail"]
+
+
+def test_profile_accepts_any_cached_city_without_coords():
+    p = client.get("/api/profile").json()
+    p["home"] = {"city": "Atlanta, GA"}
+    p["current_location"] = {"city": "Richmond, VA"}
+    out = client.put("/api/profile", json=p).json()
+    assert out["home"]["lat"] is not None and out["current_location"]["lng"] is not None
+    client.put("/api/profile", json=client.get("/api/profile").json() | {
+        "home": {"city": "Roanoke, VA"}, "current_location": {"city": "Roanoke, VA"}})
+
+
+def test_profile_rejects_city_without_state():
+    p = client.get("/api/profile").json()
+    p["home"] = {"city": "Springfield"}
+    r = client.put("/api/profile", json=p)
+    assert r.status_code == 422 and "State missing" in r.json()["detail"]

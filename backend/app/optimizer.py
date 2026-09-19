@@ -12,6 +12,7 @@ How it works (the 30-second version for judges):
   5. Score = sum of each leg's net profit (profit.py) minus the cost of the empty drive home.
      We keep runs that end within 150 mi of home, and return the top 3 that each start with a
      different load, so the driver sees three real alternatives, not one run three ways.
+     Runs that lose money are never returned (an empty list means "nothing profitable from here").
   With 60 loads, depth 3 and the 250-mile prune this is a few thousand steps: well under a second.
 
 Pure: no network, no files. Places must already have lat/lng (main.py resolves them first).
@@ -157,6 +158,7 @@ def best_chains(profile: TruckProfile, start: Place, start_time: datetime, loads
 
     dfs(start, Clock(start_time), [], set())
 
+    runs = [c for c in runs if c.total_net_profit > 0]          # never suggest a run that loses money
     near_home = [c for c in runs if c.home_deadhead_miles <= HOME_RADIUS_MI]
     pool = near_home or runs
     pool.sort(key=lambda c: (-c.total_net_profit, c.loads))
