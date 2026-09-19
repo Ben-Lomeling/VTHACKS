@@ -1,5 +1,4 @@
 """All Nessie tests use recorded data or MockTransport, never the network."""
-import copy
 import json
 from datetime import date
 
@@ -174,3 +173,51 @@ def test_errors_do_not_log_key(monkeypatch, caplog):
     with caplog.at_level('INFO'):
         assert nessie.get_checking_balance() == 3800
     assert 'SECRET' not in caplog.text
+
+
+def _script(name):
+    from importlib.util import module_from_spec, spec_from_file_location
+    spec = spec_from_file_location(name, nessie.ROOT / 'scripts' / f'{name}.py')
+    module = module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_seed_history_targets():
+    module = _script('seed_nessie')
+    purchases, deposits = module.history(date(2026, 9, 21))
+    assert len(purchases) == 58 and len(deposits) == 15
+    assert sum(p['amount'] for p in purchases if p['merchant_index'] < 3) == 16505
+    assert sum(p['amount'] for p in purchases if p['merchant_index'] >= 3) == 8100
+    assert all(p['amount'] == int(p['amount']) for p in purchases)
+
+
+def test_seed_refuses_duplicate_before_request(tmp_path):
+    module = _script('seed_nessie')
+    out = tmp_path / 'ids.json'
+    out.write_text('{}')
+    with pytest.raises(FileExistsError):
+        module.seed(None, date(2026, 9, 21), out)
+    assert out.read_text() == '{}'
+
+
+def test_recorder_atomic_success_and_failure(tmp_path, bank):
+    module = _script('record_fixture')
+    output = tmp_path / 'fixture.json'
+    ids = {'account_id': bank['account']['_id'], 'merchants': {}}
+    def handler(request):
+        path = request.url.path
+        if path.startswith('/merchants/'):
+            value = next(m for m in bank['merchants'] if path.endswith(m['_id']))
+        else:
+            value = bank.get(path.rsplit('/', 1)[-1], bank['account'])
+        return httpx.Response(200, json=value)
+    with httpx.Client(base_url=module.BASE, transport=httpx.MockTransport(handler)) as client:
+        result = module.record(client, ids, output)
+    assert json.loads(output.read_text()) == result
+    assert result['account'] == bank['account']
+    before = output.read_bytes()
+    with httpx.Client(base_url=module.BASE, transport=httpx.MockTransport(lambda request: httpx.Response(503))) as client:
+        with pytest.raises(RuntimeError):
+            module.record(client, ids, output)
+    assert output.read_bytes() == before
