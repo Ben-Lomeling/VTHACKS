@@ -53,6 +53,14 @@ Fixed on `frontend/review-fixes` (told the frontend teammate):
 - Same-city map stops merge into one pin ("H · ● · 1P · 3D"); map card is sticky instead of stretched.
 - `frontend/README.md` refreshed (live modules, 56 tests, demo_check 15/15).
 
+Demo polish on `frontend/demo-polish` (stacked on review-fixes):
+- "Try an example" = the story's bad load (Greensboro -> Jacksonville, $2.43 -> $0.55/mi, negotiate). The Gemini stub
+  returns that load when the text mentions Greensboro; the real Gemini replaces it.
+- `/api/extract` now places origin/destination with `geo.resolve` (Gemini gives city names, not coordinates); +1 test.
+- Module "stub/live" strip hidden unless `?dev`; "Find a better run ->" button; "This offer vs. your best run" card;
+  run timeline (loaded / empty / 10-h rests / home) under the map; miles line rounded.
+- For Gemini teammate: the run explanation on Plan explains leg 1 ("take, $1.29/mi"), not the run; format negatives as -$0.02.
+
 **Still open:** map tiles come from OpenStreetMap over the internet -> blank in a Wi-Fi-off demo. Frontend teammate
 asked to cache tiles or add a no-tile fallback. Not tested yet: counter message on a negotiate load (Gemini stub always
 extracts the TAKE example).
