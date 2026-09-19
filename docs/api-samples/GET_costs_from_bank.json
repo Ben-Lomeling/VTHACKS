@@ -1,0 +1,75 @@
+{
+  "request": null,
+  "response": {
+    "current": {
+      "home": {
+        "city": "Roanoke, VA",
+        "lat": 37.271,
+        "lng": -79.9414
+      },
+      "current_location": {
+        "city": "Roanoke, VA",
+        "lat": 37.271,
+        "lng": -79.9414
+      },
+      "trailer_type": "dry_van",
+      "mpg_loaded": 6.5,
+      "mpg_empty": 7.5,
+      "fuel_price": 3.8,
+      "variable_cpm": 0.2,
+      "fixed_monthly": 5000.0,
+      "miles_per_month": 10000.0,
+      "dispatch_pct": 0.1,
+      "target_net_cpm": 0.75,
+      "cost_source": "manual"
+    },
+    "proposed": {
+      "home": {
+        "city": "Roanoke, VA",
+        "lat": 37.271,
+        "lng": -79.9414
+      },
+      "current_location": {
+        "city": "Roanoke, VA",
+        "lat": 37.271,
+        "lng": -79.9414
+      },
+      "trailer_type": "dry_van",
+      "mpg_loaded": 6.5,
+      "mpg_empty": 7.5,
+      "fuel_price": 3.92,
+      "variable_cpm": 0.27,
+      "fixed_monthly": 3315.0,
+      "miles_per_month": 10000.0,
+      "dispatch_pct": 0.1,
+      "target_net_cpm": 0.75,
+      "cost_source": "nessie"
+    },
+    "evidence": {
+      "fuel_gallons": 4210.5,
+      "fuel_spend": 16505.16,
+      "maintenance_spend": 8100.0,
+      "bills": [
+        {
+          "payee": "Truck payment",
+          "amount": 2150.0,
+          "day_of_month": 1
+        },
+        {
+          "payee": "Truck insurance",
+          "amount": 1100.0,
+          "day_of_month": 5
+        },
+        {
+          "payee": "ELD / phone",
+          "amount": 65.0,
+          "day_of_month": 15
+        }
+      ],
+      "unparsed_count": 0,
+      "window_days": 90,
+      "source": "stub"
+    }
+  },
+  "status": 200
+}

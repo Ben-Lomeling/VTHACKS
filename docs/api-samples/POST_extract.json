@@ -1,0 +1,51 @@
+{
+  "request": {
+    "text": "GREENSBORO NC -> JACKSONVILLE FL $1200 all in"
+  },
+  "response": {
+    "load": {
+      "id": "P5dc66a",
+      "origin": {
+        "city": "Roanoke, VA",
+        "lat": 37.271,
+        "lng": -79.9414
+      },
+      "destination": {
+        "city": "Charlotte, NC",
+        "lat": 35.2271,
+        "lng": -80.8431
+      },
+      "pickup_window_start": "2026-09-22T08:00:00",
+      "pickup_window_end": "2026-09-22T12:00:00",
+      "delivery_by": "2026-09-23T08:00:00",
+      "rate_usd": 1200.0,
+      "loaded_miles_est": 500.0,
+      "trailer_type": "dry_van",
+      "weight_lbs": 38000,
+      "commodity": "paper products",
+      "broker": "Blue Ridge Logistics",
+      "payment_terms_days": 30,
+      "quick_pay_fee_pct": 0.03,
+      "source": "pasted"
+    },
+    "confidence": {
+      "origin": "high",
+      "destination": "high",
+      "pickup_window_start": "high",
+      "pickup_window_end": "high",
+      "delivery_by": "high",
+      "rate_usd": "high",
+      "loaded_miles_est": "low",
+      "trailer_type": "high",
+      "weight_lbs": "high",
+      "commodity": "high",
+      "broker": "high",
+      "payment_terms_days": "high",
+      "quick_pay_fee_pct": "high"
+    },
+    "warnings": [
+      "Loaded miles not stated in the offer; estimated"
+    ]
+  },
+  "status": 200
+}

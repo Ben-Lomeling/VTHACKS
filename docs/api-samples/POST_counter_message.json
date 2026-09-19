@@ -1,0 +1,9 @@
+{
+  "request": {
+    "economics": "<POST_evaluate response>"
+  },
+  "response": {
+    "text": "Hi Coastal Brokerage, thanks for the offer on this load. I can run it for $1,350 all in. Let me know."
+  },
+  "status": 200
+}

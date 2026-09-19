@@ -1,0 +1,11 @@
+{
+  "request": {
+    "economics": "...",
+    "chain": "...",
+    "cashflow": "..."
+  },
+  "response": {
+    "text": "Verdict: negotiate. After the empty miles and your costs, you keep about $0.55 a mile."
+  },
+  "status": 200
+}

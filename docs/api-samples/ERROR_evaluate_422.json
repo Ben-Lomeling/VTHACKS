@@ -1,0 +1,7 @@
+{
+  "request": "rate_usd = 0",
+  "response": {
+    "detail": "rate_usd must be > 0 for load DEMO-BAD, got 0.0"
+  },
+  "status": 422
+}
