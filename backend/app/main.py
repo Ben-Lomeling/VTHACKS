@@ -45,7 +45,10 @@ PASTED: dict[str, Load] = {}   # pasted/screenshot loads seen by /evaluate or /o
 app = FastAPI(title="LoadCheck API")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    # ALLOWED_ORIGINS on the host (comma-separated) adds the deployed site; local dev always works.
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173",
+                   *[o.strip() for o in os.getenv("ALLOWED_ORIGINS", "").split(",") if o.strip()]],
+    allow_origin_regex=r"https://.*\.vercel\.app",      # Vercel preview builds
     allow_methods=["*"],
     allow_headers=["*"],
 )
