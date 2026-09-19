@@ -1,0 +1,12 @@
+# Replace the @TODO-* placeholders with real GitHub usernames (Settings -> Collaborators first).
+# The last matching line wins. Nischal reviews everything by default.
+*                               @TODO-nischal
+/backend/app/gemini.py          @TODO-gemini @TODO-nischal
+/backend/tests/fixtures/        @TODO-gemini @TODO-nischal
+/scripts/eval_extraction.py     @TODO-gemini @TODO-nischal
+/backend/app/nessie.py          @TODO-nessie @TODO-nischal
+/scripts/seed_nessie.py         @TODO-nessie @TODO-nischal
+/scripts/record_fixture.py      @TODO-nessie @TODO-nischal
+/frontend/                      @TODO-frontend @TODO-nischal
+/SPEC.md                        @TODO-nischal
+/backend/app/models.py          @TODO-nischal
