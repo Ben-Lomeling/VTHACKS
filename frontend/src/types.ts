@@ -67,6 +67,8 @@ export interface Chain {
   ends_at: Place;
   feasible_notes: string[];
   schedule: Record<string, unknown>[];
+  losing?: boolean;
+  losing_reason?: string | null;
 }
 export interface CashflowCheck {
   starting_balance: number;

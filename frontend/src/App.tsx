@@ -904,7 +904,9 @@ export default function App() {
                       >
                         <span className="eyebrow">
                           OPTION 0{i + 1}
-                          {i === 0 ? " · HIGHEST TOTAL NET" : ""}
+                          {c.losing || c.total_net_profit <= 0
+                            ? " · NO PROFIT"
+                            : i === 0 ? " · HIGHEST TOTAL NET" : ""}
                         </span>
                         <strong>
                           {money(c.total_net_profit)}
@@ -919,6 +921,11 @@ export default function App() {
                           {c.ends_at.city}
                         </small>
                         <div>
+                          {(c.losing || c.total_net_profit <= 0) && (
+                            <p className="notice">
+                              {c.losing_reason || "This run does not earn a profit after costs."}
+                            </p>
+                          )}
                           {c.feasible_notes.map((n, j) => (
                             <span className="note-chip" key={j}>
                               {n}
