@@ -257,6 +257,9 @@ Input: chain + today's date. Simulate day by day:
   (paid 2 days after delivery, minus `rate × quick_pay_fee_pct`) on the fewest loads needed (earliest delivery
   first) and report whether that fixes it and what it costs. `timeline` is the ORIGINAL run (it shows the dip);
   the quick-pay result is reported in `quick_pay_fixes_it` / `quick_pay_cost`.
+- Timeline details: the first entry is `{date: today, label: "Checking balance today", amount: 0, balance}`;
+  money out is booked before money in on the same day; bills count only if due between today and the run's
+  last payment. If quick pay can't fix it, `quick_pay_cost` is the cost of quick pay on every load.
 Demo moment: "Best run makes $1,940, but your balance goes to −$312 on Oct 1 when the truck payment
 hits. Quick pay on the Richmond load costs $36 and keeps you positive."
 
