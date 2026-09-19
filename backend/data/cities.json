@@ -1,0 +1,126 @@
+{
+  "Allentown, PA": {
+    "lat": 40.6023,
+    "lng": -75.4714
+  },
+  "Atlanta, GA": {
+    "lat": 33.749,
+    "lng": -84.388
+  },
+  "Baltimore, MD": {
+    "lat": 39.2904,
+    "lng": -76.6122
+  },
+  "Birmingham, AL": {
+    "lat": 33.5186,
+    "lng": -86.8104
+  },
+  "Charleston, SC": {
+    "lat": 32.7765,
+    "lng": -79.9311
+  },
+  "Charleston, WV": {
+    "lat": 38.3498,
+    "lng": -81.6326
+  },
+  "Charlotte, NC": {
+    "lat": 35.2271,
+    "lng": -80.8431
+  },
+  "Chattanooga, TN": {
+    "lat": 35.0456,
+    "lng": -85.3097
+  },
+  "Cincinnati, OH": {
+    "lat": 39.1031,
+    "lng": -84.512
+  },
+  "Columbia, SC": {
+    "lat": 34.0007,
+    "lng": -81.0348
+  },
+  "Columbus, OH": {
+    "lat": 39.9612,
+    "lng": -82.9988
+  },
+  "Greensboro, NC": {
+    "lat": 36.0726,
+    "lng": -79.792
+  },
+  "Greenville, SC": {
+    "lat": 34.8526,
+    "lng": -82.394
+  },
+  "Hagerstown, MD": {
+    "lat": 39.6418,
+    "lng": -77.72
+  },
+  "Harrisburg, PA": {
+    "lat": 40.2732,
+    "lng": -76.8867
+  },
+  "Harrisonburg, VA": {
+    "lat": 38.4496,
+    "lng": -78.8689
+  },
+  "Jacksonville, FL": {
+    "lat": 30.3322,
+    "lng": -81.6557
+  },
+  "Knoxville, TN": {
+    "lat": 35.9606,
+    "lng": -83.9207
+  },
+  "Lexington, KY": {
+    "lat": 38.0406,
+    "lng": -84.5037
+  },
+  "Louisville, KY": {
+    "lat": 38.2527,
+    "lng": -85.7585
+  },
+  "Lynchburg, VA": {
+    "lat": 37.4138,
+    "lng": -79.1422
+  },
+  "Newark, NJ": {
+    "lat": 40.7357,
+    "lng": -74.1724
+  },
+  "Norfolk, VA": {
+    "lat": 36.8508,
+    "lng": -76.2859
+  },
+  "Philadelphia, PA": {
+    "lat": 39.9526,
+    "lng": -75.1652
+  },
+  "Pittsburgh, PA": {
+    "lat": 40.4406,
+    "lng": -79.9959
+  },
+  "Raleigh, NC": {
+    "lat": 35.7796,
+    "lng": -78.6382
+  },
+  "Richmond, VA": {
+    "lat": 37.5407,
+    "lng": -77.436
+  },
+  "Roanoke, VA": {
+    "lat": 37.271,
+    "lng": -79.9414
+  },
+  "Savannah, GA": {
+    "lat": 32.0809,
+    "lng": -81.0912
+  },
+  "Wilmington, NC": {
+    "lat": 34.2257,
+    "lng": -77.9447
+  },
+  "Winchester, VA": {
+    "lat": 39.1857,
+    "lng": -78.1633
+  }
+}

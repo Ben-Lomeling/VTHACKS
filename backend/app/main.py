@@ -59,9 +59,9 @@ def _evaluate(load: Load) -> LoadEconomics:
     here, _ = geo.resolve(PROFILE.current_location)
     origin, _ = geo.resolve(load.origin)
     dest, _ = geo.resolve(load.destination)
-    loaded = load.loaded_miles_est or geo.distance_miles(origin, dest)
-    deadhead = geo.distance_miles(here, origin)
     try:
+        loaded = load.loaded_miles_est or geo.distance_miles(origin, dest)
+        deadhead = geo.distance_miles(here, origin)
         return profit.evaluate_load(load, PROFILE, deadhead, loaded)
     except ValueError as e:
         raise HTTPException(status_code=422, detail=str(e))
