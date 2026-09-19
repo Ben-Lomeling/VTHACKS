@@ -133,7 +133,11 @@ def chains(req: ChainsRequest) -> list[Chain]:
     if req.include_board:
         pool.update(BOARD)
     start, _ = geo.resolve(PROFILE.current_location)
-    return optimizer.best_chains(PROFILE, start, demo_now(), list(pool.values()), top_k=3)
+    resolved = [
+        l.model_copy(update={"origin": geo.resolve(l.origin)[0], "destination": geo.resolve(l.destination)[0]})
+        for l in pool.values()
+    ]
+    return optimizer.best_chains(PROFILE, start, demo_now(), resolved, top_k=3)
 
 
 @app.get("/api/board", response_model=list[Load])
