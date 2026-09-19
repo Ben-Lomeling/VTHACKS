@@ -20,7 +20,10 @@ from app.models import (  # noqa: E402
     CashflowCheck, Chain, CostsFromBank, ExtractionResult, Load, LoadEconomics, TruckProfile,
 )
 
-DEMO_TEXT = "RICHMOND VA -> CHARLOTTE NC  PU 9/22 0800  $1200 all in  500 mi  dry van 38k lbs"
+DEMO_TEXT = "GREENSBORO NC -> JACKSONVILLE FL  PU 9/21 0800  $1200 all in  dry van 38k lbs"
+# The demo's "bad load" (stand-in until Dad's real text): 100 empty mi from Roanoke + ~493 loaded mi, $1,200 flat.
+BAD_LOAD = {"id": "DEMO-BAD", "origin": {"city": "Greensboro, NC"}, "destination": {"city": "Jacksonville, FL"},
+            "rate_usd": 1200, "trailer_type": "dry_van", "broker": "Coastal Brokerage", "source": "pasted"}
 GREEN, RED, DIM, END = "\033[32m", "\033[31m", "\033[2m", "\033[0m"
 
 
@@ -124,6 +127,28 @@ def main() -> int:
         return (f"variable ${b.current.variable_cpm:.2f} -> ${b.proposed.variable_cpm:.2f}/mi, "
                 f"source={b.evidence.get('source')}")
 
+    # ---- story checks: does the data still tell the demo story? ----
+    def story_bad_load():
+        e = LoadEconomics.model_validate(ok(c.post("/api/evaluate", json={"load": BAD_LOAD})))
+        ctx["bad"] = e
+        assert 0.45 <= e.true_net_cpm <= 0.60, f"true net ${e.true_net_cpm:.2f}/mi, want ~$0.50"
+        assert e.verdict != "take", "bad load should not be a 'take'"
+        return f"${e.posted_rpm:.2f}/mi on paper -> ${e.true_net_cpm:.2f}/mi, net ${e.net_profit:,.0f}, {e.verdict}"
+
+    def story_better_run():
+        runs = [Chain.model_validate(x) for x in ok(c.post("/api/chains", json={"seed_load_ids": ["DEMO-BAD"], "include_board": True}))]
+        best = runs[0]
+        ctx["story_chain"] = best
+        assert best.total_net_profit >= 3 * ctx["bad"].net_profit, "best run should clearly beat the bad load"
+        assert best.home_deadhead_miles <= 150, "best run should end near home"
+        assert any("rest" in n for n in best.feasible_notes), "want at least one visible rest stop"
+        return f"{'>'.join(best.loads)} ${best.total_net_profit:,.0f} vs bad ${ctx['bad'].net_profit:,.0f}"
+
+    def story_cashflow():
+        cf = CashflowCheck.model_validate(ok(c.post("/api/cashflow", json={"chain": ctx["story_chain"].model_dump(mode="json")})))
+        assert cf.shortfall and cf.quick_pay_fixes_it, "want: dips below zero, quick pay fixes it"
+        return f"dips to ${cf.lowest_balance:,.0f} on {cf.lowest_balance_date}; quick pay fixes it for ${cf.quick_pay_cost:,.0f}"
+
     print(f"LoadCheck demo check -> {'in-process' if args.in_process else args.base_url}\n")
     for name, fn in [
         ("health", health), ("setup: profile", profile), ("setup: costs from bank", bank),
@@ -131,10 +156,13 @@ def main() -> int:
         ("check: explain load", explain_load), ("check: counter message", counter),
         ("plan: simulated board", board), ("plan: chains", chains), ("plan: cash flow", cashflow),
         ("plan: explain run", explain_run),
+        ("story: bad load ~ $0.50/mi", story_bad_load), ("story: better run, near home, rest", story_better_run),
+        ("story: cash-flow dip + quick pay", story_cashflow),
     ]:
         needs = {"check: evaluate": "load", "check: rank offers": "load", "check: counter message": "econ",
                  "check: explain load": "econ", "plan: chains": "load", "plan: cash flow": "chain",
-                 "plan: explain run": "cashflow"}.get(name)
+                 "plan: explain run": "cashflow", "story: better run, near home, rest": "bad",
+                 "story: cash-flow dip + quick pay": "story_chain"}.get(name)
         if needs and needs not in ctx:
             print(f"{RED}SKIP{END}  {name:<34} (an earlier step failed)")
             results.append(False)
