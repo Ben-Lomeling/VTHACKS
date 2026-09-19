@@ -1183,3 +1183,57 @@ footer span:last-child {
     justify-self: center;
   }
 }
+/* Feature A: money on the map */
+.money-pin span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  font-size: 15px;
+  background: white;
+  border: 2px solid #1f8a4c;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px #0003;
+}
+.money-pin.money-red span {
+  border-color: #c03937;
+}
+.money-pin.money-bill.money-red span {
+  background: #c03937;
+  animation: money-pulse 1.4s ease-in-out infinite;
+}
+@keyframes money-pulse {
+  50% {
+    box-shadow: 0 0 0 8px #c0393744;
+  }
+}
+.money-legend .swatch {
+  display: inline-block;
+  width: 18px;
+  height: 5px;
+  margin-right: 4px;
+  vertical-align: middle;
+  border-radius: 3px;
+}
+.swatch.green {
+  background: #1f8a4c;
+}
+.swatch.amber {
+  background: #d98e04;
+}
+.swatch.red {
+  background: #c03937;
+}
+.balance-strip {
+  position: relative;
+  height: 8px;
+  margin: -18px 0 18px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #eef1ea;
+}
+.balance-strip div {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}

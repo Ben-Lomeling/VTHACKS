@@ -96,6 +96,8 @@ class CashflowCheck(BaseModel):
     quick_pay_cost: float
     timeline: list[dict]          # [{date, label, amount, balance}] for the chart (this trip only)
     later: list[dict] = []        # [{date, label, amount}] money after he's home (broker pay, advance repayment); not in balance
+    route: list[dict] = []        # [{from: [lat, lng], to: [lat, lng], start, end, balance, loaded}] trip stretches, one balance each
+    money_stops: list[dict] = []  # [{at, lat, lng, label, amount, balance, kind: fuel|bill|pay|advance}] where money moves on the trip
 
 
 # ---- Request / response bodies for the API table ----

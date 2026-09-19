@@ -164,6 +164,8 @@ export async function mockRequest(
           { date: "2026-10-23", label: "Pay for L058 (Summit Carrier Services)", amount: 1530 },
           { date: "2026-10-23", label: "Pay for L012 (Piedmont Transport Group)", amount: 765 },
         ],
+        route: [],
+        money_stops: [],
       };
     case "explain": {
       const { economics: e } = body as ExplainRequest;
