@@ -60,3 +60,29 @@ def test_warns_when_pickup_is_after_delivery():
     assert "Pickup time is after delivery time" in result.warnings
     assert result.confidence["pickup_window_start"] == "low"
     assert result.confidence["delivery_by"] == "low"
+
+
+def test_destination_is_checked_on_its_own():
+    ok_dest = validate_extracted_load({"origin": "Springfield", "destination": "Richmond, VA", "rate_usd": 1200}, "pasted")
+    assert ok_dest.confidence["destination"] == "high"
+    missing = validate_extracted_load({"origin": "Richmond, VA", "destination": None, "rate_usd": 1200}, "pasted")
+    assert "Destination is missing" in missing.warnings and missing.confidence["destination"] == "low"
+    no_state = validate_extracted_load({"origin": None, "destination": "Charlotte", "rate_usd": 1200}, "pasted")
+    assert "State missing for Charlotte" in no_state.warnings and no_state.confidence["destination"] == "low"
+
+
+def test_times_with_a_utc_offset_do_not_crash():
+    result = validate_extracted_load({
+        "origin": "Richmond, VA", "destination": "Charlotte, NC", "rate_usd": 1200,
+        "pickup_window_start": "2026-09-22T08:00:00-04:00", "delivery_by": "2026-09-23T08:00:00",
+    }, "pasted")
+    assert result.load.pickup_window_start.tzinfo is None
+    assert result.load.pickup_window_start.hour == 8
+    assert "Pickup time is after delivery time" not in result.warnings
+
+
+def test_unreadable_time_is_flagged_not_fatal():
+    result = validate_extracted_load({
+        "origin": "Richmond, VA", "destination": "Charlotte, NC", "rate_usd": 1200, "delivery_by": "Tuesday-ish",
+    }, "pasted")
+    assert result.load.delivery_by is None and result.confidence["delivery_by"] == "low"

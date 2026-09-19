@@ -7,6 +7,7 @@ import json
 import math
 import os
 import uuid
+from datetime import datetime
 
 
 from dotenv import load_dotenv
@@ -249,12 +250,23 @@ def validate_extracted_load(data: dict, source: str) -> ExtractionResult:
         warnings.append(f"State missing for {origin_city}")
         low_confidence.add("origin")
 
-        if not destination_city:
-            warnings.append("Destination is missing")
+    if not destination_city:
+        warnings.append("Destination is missing")
         low_confidence.add("destination")
     elif "," not in destination_city:
         warnings.append(f"State missing for {destination_city}")
         low_confidence.add("destination")
+
+    # Gemini sometimes adds a UTC offset ("...-04:00"); the rest of the app uses local, offset-free times.
+    times = {}
+    for field in ("pickup_window_start", "pickup_window_end", "delivery_by"):
+        raw = data.get(field)
+        try:
+            times[field] = datetime.fromisoformat(str(raw)).replace(tzinfo=None) if raw else None
+        except ValueError:
+            times[field] = None
+            warnings.append(f"Couldn't read {field.replace('_', ' ')}: {raw}")
+            low_confidence.add(field)
 
     raw_rate = data.get("rate_usd")
     raw_miles = data.get("loaded_miles_est")
@@ -291,9 +303,9 @@ def validate_extracted_load(data: dict, source: str) -> ExtractionResult:
         "id": "P" + uuid.uuid4().hex[:6],
         "origin": Place(city=origin_city),
         "destination": Place(city=destination_city),
-        "pickup_window_start": data.get("pickup_window_start"),
-        "pickup_window_end": data.get("pickup_window_end"),
-        "delivery_by": data.get("delivery_by"),
+        "pickup_window_start": times["pickup_window_start"],
+        "pickup_window_end": times["pickup_window_end"],
+        "delivery_by": times["delivery_by"],
         "rate_usd": rate,
         "loaded_miles_est": miles,
         "trailer_type": data.get("trailer_type"),
