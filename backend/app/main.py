@@ -81,7 +81,10 @@ def health() -> dict:
     return {
         "modules": {
             "profit": profit.STATUS, "geo": geo.STATUS, "optimizer": optimizer.STATUS,
-            "cashflow": cashflow.STATUS, "gemini": gemini.STATUS, "nessie": nessie.STATUS,
+            "cashflow": cashflow.STATUS, "gemini": gemini.STATUS,
+            # ask the bank, don't report the last-seen value: nessie.STATUS starts "fixture"
+            # and only flips once something reads the account (the read is cached for 60 s)
+            "nessie": nessie.data_source(),
         },
         "demo_now": demo_now().isoformat(),
         "board_loads": len(BOARD),
