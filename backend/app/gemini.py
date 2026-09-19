@@ -18,7 +18,7 @@ from app.models import ExtractionResult, Load, LoadEconomics, Place
 
 load_dotenv()
 
-STATUS = "stub"
+STATUS = "live"
 
 def _demo_bad_load() -> ExtractionResult:
     """Return the bad-load example used by the frontend demo."""
