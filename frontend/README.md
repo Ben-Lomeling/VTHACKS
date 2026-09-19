@@ -51,3 +51,27 @@ Backend: `cd backend && pytest -q` — 56 passed, including the golden profit te
 Frontend: `npm run build` (TypeScript + Vite) passes. Verified in the browser against the live API with mock mode off: example → confirm → economics, chain planning + map, cash-flow chart and table, and the bank comparison.
 
 Judge explanation: “The frontend asks the API to read the offer, makes the driver confirm every field, and displays the code's economics. It compares runs on a map and shows when bank bills hit. Gemini writes words; backend code supplies the numbers.”
+
+## Maps + Wallet workspace (local redesign)
+
+The app now opens on Runs without planning automatically. Desktop uses a floating trip panel;
+phones use an Expand/Collapse dialog with Escape and focus return. Check a load and Truck settings
+retain their existing API calls and confirmations. Location forms accept city/state only.
+
+Map tile errors remove the tile layer and keep the route and labeled cities. **Use offline map**
+lets you rehearse that fallback without turning off the computer's connection. **Retry map tiles**
+restores the tile layer. Financial colors, money markers, and bill events still come from the API.
+
+Advances require inline confirmation. The response controls the success state, and live sandbox
+receipts show deposit/bill IDs; fixture responses explicitly say no Nessie deposit was created.
+Bank-cost acceptance still requires two steps. Reset still calls the bank-reset route and restores
+the default profile. Reduced motion removes transitions; no money markers pulse.
+
+For a different local frontend port, use `VITE_API_BASE_URL=/` and optionally set
+`LOADCHECK_API_TARGET=http://127.0.0.1:8001` when starting Vite. Its development proxy defaults to
+port 8000. No secrets belong in frontend variables. `/preview.html` remains the isolated sample screen.
+
+Mock mode uses recorded backend run/cash-flow responses and has an in-memory advance/reset flow;
+it never calls Nessie and does not recalculate values when inputs change. Live API mode remains the
+default and never silently substitutes mock results. The proposed follow-up-question routes in
+`docs/FRONTEND_NOTES.md` are not in the merged contract, so that optional UI remains pending.
