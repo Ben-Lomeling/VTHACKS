@@ -1,0 +1,56 @@
+{
+  "request": {
+    "seed_load_ids": [
+      "DEMO-LOWBALL"
+    ],
+    "include_board": false
+  },
+  "response": [
+    {
+      "loads": [
+        "DEMO-LOWBALL"
+      ],
+      "legs": [
+        {
+          "load_id": "DEMO-LOWBALL",
+          "deadhead_miles": 53.99543788915722,
+          "loaded_miles": 53.99543788915722,
+          "total_miles": 107.99087577831445,
+          "posted_rpm": 1.1112049896357734,
+          "fuel_cost": 58.92425221955208,
+          "variable_cost": 21.59817515566289,
+          "fixed_cost": 53.99543788915722,
+          "dispatch_fee": 6.0,
+          "net_profit": -80.51786526437219,
+          "true_net_cpm": -0.7455987803049275,
+          "break_even_rate": 149.46429473819134,
+          "counter_offer_rate": 239.45669122012004,
+          "verdict": "skip"
+        }
+      ],
+      "home_deadhead_miles": 0.0,
+      "home_deadhead_cost": 0.0,
+      "total_net_profit": -80.51786526437219,
+      "total_miles": 107.99087577831445,
+      "days": 0.2566590631481482,
+      "net_per_day": -313.7152620941963,
+      "ends_at": {
+        "city": "Roanoke, VA",
+        "lat": 37.271,
+        "lng": -79.9414
+      },
+      "feasible_notes": [],
+      "schedule": [
+        {
+          "load_id": "DEMO-LOWBALL",
+          "depart_at": "2026-09-21T06:00:00",
+          "pickup_at": "2026-09-21T07:04:47.671528",
+          "delivered_at": "2026-09-21T12:09:35.343056"
+        }
+      ],
+      "losing": true,
+      "losing_reason": "Loses $81: 54 empty miles to pickup"
+    }
+  ],
+  "status": 200
+}

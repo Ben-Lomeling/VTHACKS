@@ -120,6 +120,8 @@ class Chain(BaseModel):
     feasible_notes: list[str]     # e.g. "10-hr rest inserted before L014"
     schedule: list[dict]          # [{load_id, depart_at, pickup_at, delivered_at}] ISO strings; cashflow uses delivered_at
                                   # delivered_at = arrival at destination + 2 h unload
+    losing: bool = False          # true only when total_net_profit <= 0
+    losing_reason: str | None = None  # one line, e.g. "Loses $345: 142 empty miles to pickup"
 
 class CashflowCheck(BaseModel):
     starting_balance: float
@@ -196,8 +198,15 @@ Rules for adding load L after current position P at time T:
 
 Score each chain: `total_net_profit` = sum of leg net profits − cost of deadhead home
 (home deadhead costed with empty mpg + variable + fixed per mile).
-Return the top 3 by `total_net_profit`, plus `net_per_day`. Runs with `total_net_profit ≤ 0` are never returned
-(an empty list means nothing profitable from here). Exclude chains that end more than
+Return the top 3 by `total_net_profit`, plus `net_per_day`.
+Every returned run includes `days` and `net_per_day` (ranking stays by `total_net_profit`).
+
+**Losing runs fill leftover slots.** Profitable runs are chosen first (with the 150-mi rule and its fallback
+above). If fewer than 3 were found, runs with `total_net_profit ≤ 0` that still end ≤ 150 mi from home fill
+the remaining slots (smallest loss first, still one per first load), with `losing: true` and a
+`losing_reason` naming the biggest cause: empty miles to pickup, empty miles overall (≥ 25% of the run),
+or low pay per loaded mile. Losing runs never outrank a profitable one. An empty list means nothing
+feasible ends near home. Exclude chains that end more than
 **150 mi from home** unless nothing else exists; if so, add a note.
 
 60 loads, depth 3, with the 250-mi prune runs in well under a second. Don't optimize further.
@@ -260,8 +269,11 @@ Input: chain + today's date. Simulate day by day:
 - Timeline details: the first entry is `{date: today, label: "Checking balance today", amount: 0, balance}`;
   money out is booked before money in on the same day; bills count only if due between today and the run's
   last payment. If quick pay can't fix it, `quick_pay_cost` is the cost of quick pay on every load.
-Demo moment: "Best run makes $1,940, but your balance goes to −$312 on Oct 1 when the truck payment
-hits. Quick pay on the Richmond load costs $36 and keeps you positive."
+Demo moment: "Best run makes $1,496, but your balance goes negative on Oct 5 when the $1,100 insurance
+hits, and bottoms out at −$359 on Oct 15, before the first broker pays on Oct 21. Quick pay on the Atlanta
+load costs $36 and keeps you positive the whole way."
+(Numbers from the current simulated board with a $3,800 starting balance; `scripts/demo_check.py` prints
+the live values. Re-check this line whenever the board, the profile or the Nessie data changes.)
 
 ## Module interfaces (frozen: everyone codes against these signatures)
 ```python

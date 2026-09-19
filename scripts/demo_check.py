@@ -108,8 +108,9 @@ def main() -> int:
         ctx["chain"] = runs[0]
         best = runs[0]
         rests = sum("rest" in n for n in best.feasible_notes)
-        return (f"{len(runs)} runs; best {'>'.join(best.loads)} ${best.total_net_profit:,.0f} "
-                f"in {best.days:.1f} d, ends {best.home_deadhead_miles:.0f} mi from home, {rests} rest(s)")
+        losing = sum(r.losing for r in runs)
+        return (f"{len(runs)} runs ({losing} losing); best {'>'.join(best.loads)} ${best.total_net_profit:,.0f} "
+                f"in {best.days:.1f} d (${best.net_per_day:,.0f}/day), ends {best.home_deadhead_miles:.0f} mi from home, {rests} rest(s)")
 
     def cashflow():
         cf = CashflowCheck.model_validate(ok(c.post("/api/cashflow", json={"chain": ctx["chain"].model_dump(mode="json")})))
@@ -139,6 +140,7 @@ def main() -> int:
         runs = [Chain.model_validate(x) for x in ok(c.post("/api/chains", json={"seed_load_ids": ["DEMO-BAD"], "include_board": True}))]
         best = runs[0]
         ctx["story_chain"] = best
+        assert not best.losing, "best run should make money"
         assert best.total_net_profit >= 3 * ctx["bad"].net_profit, "best run should clearly beat the bad load"
         assert best.home_deadhead_miles <= 150, "best run should end near home"
         assert any("rest" in n for n in best.feasible_notes), "want at least one visible rest stop"

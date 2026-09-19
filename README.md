@@ -136,6 +136,24 @@ Solid arrows are pure Python. Dotted arrows leave the laptop, and each has an of
    he's paid, we find the fewest loads to switch to quick pay and what it costs.
 4. **Honest estimates.** Miles are straight-line × 1.2, driving is 50 mph, HOS is simplified. We say so.
 
+## Known simplifications
+**Hours of service.** We model only the **11-hour driving limit followed by a 10-hour rest** (a 10 h+ wait also
+counts as rest). We do **not** model:
+
+| Not modeled | What we'd add next |
+|---|---|
+| 14-hour on-duty window | Track on-duty time (driving + loading + waiting) since the last rest, and end the day at 14 h even if driving hours remain. |
+| 30-minute break after 8 hours of driving | Insert a 30-min stop once 8 cumulative driving hours pass without a break. |
+| 70-hour / 8-day cap (and the 34-hour restart) | Carry the driver's recent on-duty hours into the search and stop or insert a 34-h restart when a run would exceed 70. |
+
+**Distance and time.** Road miles are **straight-line (haversine) × 1.2**, and drive time is those miles at a flat
+**50 mph**.
+
+| Simplification | What we'd add next |
+|---|---|
+| Straight-line × 1.2 instead of real road miles | Real road distances and route shapes from a routing engine (e.g. OSRM), cached per city pair so the demo still runs offline. |
+| Flat 50 mph | Drive times from the routing engine, which accounts for road type, instead of one average speed. |
+
 ## Scripts
 | Script | What it does |
 |---|---|

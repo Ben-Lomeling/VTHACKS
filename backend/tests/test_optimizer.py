@@ -157,6 +157,52 @@ def test_real_board_runs_under_one_second():
         assert len(chains) <= 3
 
 
-def test_money_losing_runs_are_never_returned():
-    bad = mk("M1", HOME, HOME, 50, loaded_miles_est=300)
-    assert best_chains(profile(), HOME, T0, [bad]) == []
+def test_losing_run_fills_an_empty_slot_with_a_reason():
+    bad = mk("M1", HOME, HOME, 50, loaded_miles_est=300)          # pays $50 for 300 mi
+    chains = best_chains(profile(), HOME, T0, [bad])
+    assert [c.loads for c in chains] == [["M1"]]
+    c = chains[0]
+    assert c.losing is True and c.total_net_profit < 0
+    assert c.losing_reason == f"Loses ${-c.total_net_profit:,.0f}: pays only $0.17 per loaded mile"
+
+
+def test_losing_runs_rank_below_profitable_and_only_fill_leftover_slots():
+    # Windows close early, so a bad load (10 h) can't be followed by a good one to make it profitable.
+    good = mk("G1", HOME, N2, 1500, pickup_window_end=h(1))
+    back = mk("G2", N2, HOME, 1500, pickup_window_end=h(9))
+    bad1 = mk("B1", HOME, HOME, 50, loaded_miles_est=300)
+    bad2 = mk("B2", HOME, HOME, 60, loaded_miles_est=300)
+    chains = best_chains(profile(), HOME, T0, [good, back, bad1, bad2])
+    flags = [c.losing for c in chains]
+    assert flags == sorted(flags), "profitable runs must come before losing runs"
+    assert len(chains) == 3
+    profitable = [c for c in chains if not c.losing]
+    assert {c.loads[0] for c in profitable} == {"G1", "G2"}
+    assert chains[2].loads == ["B2"], "the smaller loss fills the one leftover slot"
+    assert all(c.losing_reason is None for c in profitable)
+
+
+def test_no_losing_runs_when_three_profitable_exist():
+    loads = [mk(f"P{i}", HOME, HOME, 2000, loaded_miles_est=300) for i in range(3)]
+    loads.append(mk("B1", HOME, HOME, 50, loaded_miles_est=300))
+    chains = best_chains(profile(), HOME, T0, loads)
+    assert len(chains) == 3 and not any(c.losing for c in chains)
+
+
+def test_losing_runs_far_from_home_are_not_shown():
+    far_bad = mk("FB", HOME, N4, 100)            # loses money and ends ~332 mi from home
+    assert best_chains(profile(), HOME, T0, [far_bad]) == []
+
+
+def test_losing_reason_names_empty_miles_to_pickup():
+    # pickup ~166 empty miles away, then a short cheap haul home
+    L = mk("E1", N2, HOME, 150, loaded_miles_est=60)
+    c = best_chains(profile(), HOME, T0, [L])[0]
+    assert c.losing and c.losing_reason.endswith("166 empty miles to pickup")
+
+
+def test_every_run_reports_days_and_net_per_day():
+    loads = [mk("A", HOME, N2, 1500), mk("B", N2, HOME, 1500), mk("M1", HOME, HOME, 50, loaded_miles_est=300)]
+    for c in best_chains(profile(), HOME, T0, loads):
+        assert c.days > 0
+        assert c.net_per_day == pytest.approx(c.total_net_profit / c.days)
