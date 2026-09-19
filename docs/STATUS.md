@@ -114,7 +114,7 @@ trucker's bank account into a **map of the road ahead**. Full design: **`docs/CA
 5. ~~Nessie follow-ups~~ done in Feature B: 60 s live snapshot cache, `STATUS` starts as `fixture`.
 6. ~~Dad's data swap~~ dropped (Sat 3 PM).
 7. Gemini PR when it lands (extract/explain/counter; explain the whole run; format negatives as -$0.02).
-8. Deploy + free MLH domain (permanent link for friends + Devpost "Try it"; needs Nihal to sign in to the hosts).
+8. Deploy + free MLH domain: config is in `render.yaml` + `frontend/vercel.json`, click-by-click in **`docs/DEPLOY.md`**. Needs Nihal to sign in to Render, Vercel and GoDaddy.
 9. Sat evening: backup demo video, README GIF, timed 4-minute rehearsal. Sun 6 AM: Wi-Fi-off run-through (map tiles
    need internet). Sun 7:15 AM: submit on Devpost (tag Capital One, Gemini, GoDaddy).
 

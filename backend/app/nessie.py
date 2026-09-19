@@ -36,6 +36,11 @@ _ADVANCES: dict[str, dict] = {}    # load_id -> advance record created by this s
 ALIASES = {"Truck Finance Co": "Truck payment", "Commercial Truck Insurance": "Truck insurance", "ELD + Phone": "ELD / phone"}
 
 
+def _secret(name: str) -> str | None:
+    """The local .env file if it has the key, else the environment (that's how Render passes secrets)."""
+    return dotenv_values(ROOT / ".env").get(name) or os.getenv(name)
+
+
 def _today() -> date:
     config = dotenv_values(ROOT / ".env")
     raw = os.getenv("DEMO_NOW", config.get("DEMO_NOW", "2026-09-21T06:00"))
@@ -50,9 +55,9 @@ def _number(value: object) -> float:
 
 
 def _live(resources: tuple[str, ...]) -> dict:
-    key = dotenv_values(ROOT / ".env").get("NESSIE_API_KEY")
+    key = _secret("NESSIE_API_KEY")
     if not key:
-        raise ValueError("Missing root .env Nessie key")
+        raise ValueError("Missing NESSIE_API_KEY (env or root .env)")
     ids = json.loads((DATA / "nessie_ids.json").read_text())
     with httpx.Client(base_url=BASE, params={"key": key}, timeout=5) as client:
         def get(path: str) -> dict | list:
@@ -196,9 +201,9 @@ def get_costs_from_bank(profile: TruckProfile) -> dict:
 
 # ---- Feature B: Capital One advance (writes) ----
 def _client() -> httpx.Client:
-    key = dotenv_values(ROOT / ".env").get("NESSIE_API_KEY")
+    key = _secret("NESSIE_API_KEY")
     if not key:
-        raise ValueError("Missing root .env Nessie key")
+        raise ValueError("Missing NESSIE_API_KEY (env or root .env)")
     return httpx.Client(base_url=BASE, params={"key": key}, timeout=5)
 
 
