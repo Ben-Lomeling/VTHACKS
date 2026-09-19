@@ -12,7 +12,9 @@ How it works (the 30-second version for judges):
   5. Score = sum of each leg's net profit (profit.py) minus the cost of the empty drive home.
      We keep runs that end within 150 mi of home, and return the top 3 that each start with a
      different load, so the driver sees three real alternatives, not one run three ways.
-     Runs that lose money are never returned (an empty list means "nothing profitable from here").
+     Profitable runs always come first. If fewer than 3 exist, runs that LOSE money (and still end within
+     150 mi of home) fill the leftover slots, flagged `losing: true` with a one-line reason, so the driver
+     sees why nothing nearby pays instead of an empty screen.
   With 60 loads, depth 3 and the 250-mile prune this is a few thousand steps: well under a second.
 
 Pure: no network, no files. Places must already have lat/lng (main.py resolves them first).
@@ -158,22 +160,42 @@ def best_chains(profile: TruckProfile, start: Place, start_time: datetime, loads
 
     dfs(start, Clock(start_time), [], set())
 
-    runs = [c for c in runs if c.total_net_profit > 0]          # never suggest a run that loses money
-    near_home = [c for c in runs if c.home_deadhead_miles <= HOME_RADIUS_MI]
-    pool = near_home or runs
-    pool.sort(key=lambda c: (-c.total_net_profit, c.loads))
+    profitable = [c for c in runs if c.total_net_profit > 0]
+    near_home = [c for c in profitable if c.home_deadhead_miles <= HOME_RADIUS_MI]
+    main_pool = near_home or profitable          # no profitable run near home -> best profitable anywhere
+    losing = [c for c in runs if c.total_net_profit <= 0 and c.home_deadhead_miles <= HOME_RADIUS_MI]
+    main_pool.sort(key=lambda c: (-c.total_net_profit, c.loads))
+    losing.sort(key=lambda c: (-c.total_net_profit, c.loads))    # smallest loss first
 
     picked: list[Chain] = []
     first_loads: set[str] = set()
-    for c in pool:
+    for c in main_pool + losing:                 # losing runs only fill slots profitable runs left open
+        if len(picked) == top_k:
+            break
         if c.loads[0] in first_loads:
             continue
         picked.append(c)
         first_loads.add(c.loads[0])
-        if len(picked) == top_k:
-            break
 
-    if not near_home:
-        for c in picked:
+    for c in picked:
+        if c.total_net_profit <= 0:
+            c.losing = True
+            c.losing_reason = losing_reason(c)
+        elif not near_home:
             c.feasible_notes.append(f"No run ends within {HOME_RADIUS_MI:.0f} mi of home; best available shown")
     return picked
+
+
+def losing_reason(chain: Chain) -> str:
+    """One line on why a run loses money, naming the biggest driver: empty miles or low pay."""
+    loss = -chain.total_net_profit
+    to_pickup = chain.legs[0].deadhead_miles
+    empty = sum(l.deadhead_miles for l in chain.legs) + chain.home_deadhead_miles
+    share = empty / chain.total_miles if chain.total_miles else 0.0
+    if share >= 0.25 and to_pickup >= empty / 2:
+        return f"Loses ${loss:,.0f}: {to_pickup:.0f} empty miles to pickup"
+    if share >= 0.25:
+        return f"Loses ${loss:,.0f}: {empty:.0f} empty miles ({share:.0%} of the run)"
+    loaded = sum(l.loaded_miles for l in chain.legs)
+    pay_per_mi = sum(l.posted_rpm * l.loaded_miles for l in chain.legs) / loaded
+    return f"Loses ${loss:,.0f}: pays only ${pay_per_mi:.2f} per loaded mile"

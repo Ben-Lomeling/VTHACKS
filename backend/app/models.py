@@ -83,6 +83,8 @@ class Chain(BaseModel):
     ends_at: Place
     feasible_notes: list[str]     # e.g. "10-hr rest inserted before L014"
     schedule: list[dict]          # [{load_id, depart_at, pickup_at, delivered_at}] ISO strings; cashflow uses delivered_at
+    losing: bool = False          # true only when total_net_profit <= 0 (fills leftover slots; see SPEC)
+    losing_reason: str | None = None  # e.g. "Loses $345: 142 empty miles to pickup"
 
 
 class CashflowCheck(BaseModel):

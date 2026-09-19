@@ -120,6 +120,8 @@ class Chain(BaseModel):
     feasible_notes: list[str]     # e.g. "10-hr rest inserted before L014"
     schedule: list[dict]          # [{load_id, depart_at, pickup_at, delivered_at}] ISO strings; cashflow uses delivered_at
                                   # delivered_at = arrival at destination + 2 h unload
+    losing: bool = False          # true only when total_net_profit <= 0
+    losing_reason: str | None = None  # one line, e.g. "Loses $345: 142 empty miles to pickup"
 
 class CashflowCheck(BaseModel):
     starting_balance: float
@@ -196,8 +198,15 @@ Rules for adding load L after current position P at time T:
 
 Score each chain: `total_net_profit` = sum of leg net profits − cost of deadhead home
 (home deadhead costed with empty mpg + variable + fixed per mile).
-Return the top 3 by `total_net_profit`, plus `net_per_day`. Runs with `total_net_profit ≤ 0` are never returned
-(an empty list means nothing profitable from here). Exclude chains that end more than
+Return the top 3 by `total_net_profit`, plus `net_per_day`.
+Every returned run includes `days` and `net_per_day` (ranking stays by `total_net_profit`).
+
+**Losing runs fill leftover slots.** Profitable runs are chosen first (with the 150-mi rule and its fallback
+above). If fewer than 3 were found, runs with `total_net_profit ≤ 0` that still end ≤ 150 mi from home fill
+the remaining slots (smallest loss first, still one per first load), with `losing: true` and a
+`losing_reason` naming the biggest cause: empty miles to pickup, empty miles overall (≥ 25% of the run),
+or low pay per loaded mile. Losing runs never outrank a profitable one. An empty list means nothing
+feasible ends near home. Exclude chains that end more than
 **150 mi from home** unless nothing else exists; if so, add a note.
 
 60 loads, depth 3, with the 250-mi prune runs in well under a second. Don't optimize further.

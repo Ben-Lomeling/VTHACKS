@@ -47,6 +47,12 @@ def main() -> None:
     save("POST_explain", {"economics": "...", "chain": "...", "cashflow": "..."}, c.post("/api/explain", json=ex))
     save("POST_counter_message", {"economics": "<POST_evaluate response>"},
          c.post("/api/counter-message", json={"economics": econ.json()}))
+    # a losing run: one lowball pasted offer near home, board excluded -> nothing profitable fills the slots
+    lowball = {"id": "DEMO-LOWBALL", "origin": {"city": "Lynchburg, VA"}, "destination": {"city": "Roanoke, VA"},
+               "rate_usd": 60, "trailer_type": "dry_van", "source": "pasted"}
+    c.post("/api/evaluate", json={"load": lowball})
+    req = {"seed_load_ids": ["DEMO-LOWBALL"], "include_board": False}
+    save("POST_chains_losing_example", req, c.post("/api/chains", json=req))
     bad = c.post("/api/evaluate", json={"load": {**BAD_LOAD, "rate_usd": 0, "loaded_miles_est": 300}})
     save("ERROR_evaluate_422", "rate_usd = 0", bad)
 
