@@ -1,4 +1,5 @@
-import type { Chain } from "../types";
+import type { Chain, RouteStretch } from "../types";
+import { balanceColor } from "../money";
 
 type Kind = "empty" | "loaded" | "home";
 interface Segment {
@@ -20,7 +21,7 @@ const when = (t: number) =>
 
 // Lays the backend's schedule out on a time bar. No economics here: the optimizer
 // decides every time; this only turns its timestamps into widths.
-export function RunTimeline({ chain }: { chain: Chain }) {
+export function RunTimeline({ chain, route = [] }: { chain: Chain; route?: RouteStretch[] }) {
   const stops = chain.schedule.map((s) => ({
     id: String(s.load_id),
     depart: Date.parse(String(s.depart_at)),
@@ -92,6 +93,22 @@ export function RunTimeline({ chain }: { chain: Chain }) {
           </b>
         ))}
       </div>
+      {route.length > 0 && (
+        // Same stretches as the map: his balance while driving each part of the run.
+        <div className="balance-strip" aria-label="Bank balance along the run">
+          {route.map((r, i) => {
+            const a = Math.max(Date.parse(r.start), start);
+            const b = Math.min(Date.parse(r.end), end);
+            return (
+              <div
+                key={i}
+                style={{ left: `${pct(a)}%`, width: `${pct(b) - pct(a)}%`, background: balanceColor(r.balance) }}
+                title={`$${Math.round(r.balance).toLocaleString("en-US")} in the bank`}
+              />
+            );
+          })}
+        </div>
+      )}
       <p className="map-legend">
         ▮ Loaded　▯ Empty / waiting　<span>▯ Home</span>　10-h rest = hours-of-service break
       </p>

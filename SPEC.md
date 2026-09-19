@@ -132,6 +132,8 @@ class CashflowCheck(BaseModel):
     quick_pay_cost: float
     timeline: list[dict]          # [{date, label, amount, balance}] for the chart (this trip only)
     later: list[dict] = []        # [{date, label, amount}] money after he's home (broker pay, advance repayment); not in balance
+    route: list[dict] = []        # [{from: [lat, lng], to: [lat, lng], start, end, balance, loaded}] trip stretches, one balance each
+    money_stops: list[dict] = []  # [{at, lat, lng, label, amount, balance, kind: fuel|bill|pay|advance}] where money moves on the trip
 ```
 
 ## The math (profit.py) — pure functions, no I/O
@@ -275,6 +277,13 @@ Input: chain + today's date. Simulate day by day:
 - Timeline details: the first entry is `{date: today, label: "Checking balance today", amount: 0, balance}`;
   money out is booked before money in on the same day. If advances can't fix it, `quick_pay_cost` is the cost of an
   advance on every load.
+- **Money on the map** (Feature A): `cashflow.balance_along_route(chain, loads_by_id, start, home, start_balance,
+  bills, today)` walks the same events in time order along the drawn route (start → pickup → delivery → … → home).
+  Diesel is paid at pickup, an advance lands at delivery, and bills post at **noon** on their due date wherever the
+  truck is then (position interpolated by time along the current stretch; estimate). It returns `route` (stretches
+  cut at every money event, each with the balance while driving it) and `money_stops` (markers). `/api/cashflow`
+  fills both using the profile's current location and home. The UI colors stretches **green ≥ $500, amber $0–500,
+  red < $0**.
 Demo moment: "Best run makes $1,496. His truck payment ($2,150) comes due on Sep 22 while he's hauling through
 Tennessee, and his balance goes to −$313. A Capital One advance on the Atlanta load (delivered the night before)
 costs $36, lands $1,044 that evening, and keeps him at $731; it pays itself back when the broker pays on Oct 21."

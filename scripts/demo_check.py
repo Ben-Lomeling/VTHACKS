@@ -154,8 +154,13 @@ def main() -> int:
         home = cf.timeline[-1]["date"]
         assert cf.lowest_balance_date.isoformat() <= home, "want: the red is on the road, not after he's home"
         assert cf.quick_pay_cost <= 50, "want: one advance (on the Atlanta load) fixes it"
+        bill = next(m for m in cf.money_stops if m["label"] == "Truck payment")
+        assert 34.9 <= bill["lat"] <= 36.7 and -90.3 <= bill["lng"] <= -81.6, "want: the truck payment posts in Tennessee"
+        red = next(r for r in cf.route if r["balance"] < 0)
+        assert red["loaded"], "want: the map turns red while he's hauling a load"
         return (f"truck payment {truck['date']} -> ${truck['balance']:,.0f}; low ${cf.lowest_balance:,.0f} on "
-                f"{cf.lowest_balance_date}; advance fixes it for ${cf.quick_pay_cost:,.0f}")
+                f"{cf.lowest_balance_date}; advance fixes it for ${cf.quick_pay_cost:,.0f}; map red from "
+                f"{bill['lat']:.2f},{bill['lng']:.2f} (TN)")
 
     print(f"LoadCheck demo check -> {'in-process' if args.in_process else args.base_url}\n")
     for name, fn in [

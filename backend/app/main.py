@@ -162,10 +162,12 @@ def costs_from_bank() -> CostsFromBank:
 
 @app.post("/api/cashflow", response_model=CashflowCheck)
 def cashflow_check(req: CashflowRequest) -> CashflowCheck:
-    return cashflow.simulate(
-        req.chain, _all_loads(), nessie.get_checking_balance(),
-        nessie.get_upcoming_bills(60), demo_now().date(),
-    )
+    loads, balance, bills, today = _all_loads(), nessie.get_checking_balance(), nessie.get_upcoming_bills(60), demo_now().date()
+    check = cashflow.simulate(req.chain, loads, balance, bills, today)
+    start, _ = geo.resolve(PROFILE.current_location)
+    home, _ = geo.resolve(PROFILE.home)
+    check.route, check.money_stops = cashflow.balance_along_route(req.chain, loads, start, home, balance, bills, today)
+    return check
 
 
 @app.post("/api/explain", response_model=TextResponse)

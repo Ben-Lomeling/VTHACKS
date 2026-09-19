@@ -103,7 +103,9 @@ trucker's bank account into a **map of the road ahead**. Full design: **`docs/CA
 1. ~~Decision 1~~ done. Merge `story/option-1` (trip-only cash flow, advance, $2,500 / truck payment on the 22nd).
    Live Nessie re-seeded Sat 3:45 PM (new customer, $2,500, truck payment the 22nd); fixture re-recorded. The old
    customer's IDs are kept in `backend/data/nessie_ids.old.json` (unused). Demo laptop `.env` has `NESSIE_API_KEY`.
-2. **Feature A: money on the map** (issue #13). Demo-ready checkpoint.
+2. ~~**Feature A: money on the map** (#13)~~ built on `capone/a-money-map`: route colored by balance (green ≥ $500, amber,
+   red < $0), ⛽/🧾/💵 markers, balance strip under the timeline, cash flow auto-loads when a run is picked. Red starts
+   at the truck payment near Rogersville, TN (Sep 22 noon, on L058).
 3. **Feature B: Capital One advance**: Nessie deposit + repayment bill + reset (#14).
 4. **Feature C: receipt photos**: Gemini read + Nessie purchase + food_per_day (#15).
 5. Nessie follow-ups: cache the live snapshot (slow Wi-Fi = up to 5 s per call); start STATUS as "fixture" until a live

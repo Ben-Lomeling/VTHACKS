@@ -146,6 +146,18 @@ export default function App() {
     setBank(undefined);
   }, [draft]);
   const chain = chains[selected];
+  // Feature A: the map is colored by money, so fetch the cash flow as soon as a run is picked.
+  useEffect(() => {
+    if (!chain) return;
+    let current = true;
+    api
+      .cashflow(chain)
+      .then((c) => current && setCash(c))
+      .catch(() => undefined); // the "Can I afford this run?" button still shows errors
+    return () => {
+      current = false;
+    };
+  }, [chain]);
   const allLoads = [...board, ...offers];
   const analyze = () =>
     run("Reading your offer…", async () => {
@@ -986,9 +998,10 @@ export default function App() {
                         chain={chain}
                         loads={allLoads}
                         profile={profile}
+                        cash={cash}
                       />
                     )}
-                    {chain && <RunTimeline chain={chain} />}
+                    {chain && <RunTimeline chain={chain} route={cash?.route} />}
                   </section>
                 </div>
               )}

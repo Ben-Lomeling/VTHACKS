@@ -79,6 +79,26 @@ export interface CashflowCheck {
   quick_pay_cost: number;
   timeline: Record<string, unknown>[];
   later: Record<string, unknown>[];
+  route: RouteStretch[];
+  money_stops: MoneyStop[];
+}
+// Feature A: the trip as straight stretches, each with the balance while driving it (see SPEC "Money on the map").
+export interface RouteStretch {
+  from: [number, number];
+  to: [number, number];
+  start: string;
+  end: string;
+  balance: number;
+  loaded: boolean;
+}
+export interface MoneyStop {
+  at: string;
+  lat: number;
+  lng: number;
+  label: string;
+  amount: number;
+  balance: number;
+  kind: "fuel" | "bill" | "pay" | "advance";
 }
 export interface EvaluateRequest {
   load: Load;
