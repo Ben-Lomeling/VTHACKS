@@ -196,7 +196,8 @@ Rules for adding load L after current position P at time T:
 
 Score each chain: `total_net_profit` = sum of leg net profits − cost of deadhead home
 (home deadhead costed with empty mpg + variable + fixed per mile).
-Return the top 3 by `total_net_profit`, plus `net_per_day`. Exclude chains that end more than
+Return the top 3 by `total_net_profit`, plus `net_per_day`. Runs with `total_net_profit ≤ 0` are never returned
+(an empty list means nothing profitable from here). Exclude chains that end more than
 **150 mi from home** unless nothing else exists; if so, add a note.
 
 60 loads, depth 3, with the 250-mi prune runs in well under a second. Don't optimize further.
@@ -286,7 +287,7 @@ so `main.py` and the frontend can wire everything on day one.
 | Method | Path | Body → Response |
 |---|---|---|
 | GET | `/api/profile` | → `TruckProfile` |
-| PUT | `/api/profile` | `TruckProfile` → `TruckProfile` |
+| PUT | `/api/profile` | `TruckProfile` → `TruckProfile` (home/current_location may omit lat/lng: the backend resolves them; 422 if a city can't be placed) |
 | POST | `/api/extract` | multipart: `text?` and/or `image?` → `ExtractionResult` |
 | POST | `/api/evaluate` | `{load: Load}` → `LoadEconomics` (deadhead from `current_location`) |
 | POST | `/api/offers` | `{loads: Load[]}` → `LoadEconomics[]` sorted best first |

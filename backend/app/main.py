@@ -92,8 +92,13 @@ def get_profile() -> TruckProfile:
 
 @app.put("/api/profile", response_model=TruckProfile)
 def put_profile(profile: TruckProfile) -> TruckProfile:
+    """Save the profile. Home and current location can be any US city; we look up their coordinates."""
     global PROFILE
-    PROFILE = profile
+    home, w1 = geo.resolve(profile.home)
+    here, w2 = geo.resolve(profile.current_location)
+    if home.lat is None or here.lat is None:
+        raise HTTPException(status_code=422, detail="; ".join(w1 + w2) or "Couldn't place that city")
+    PROFILE = profile.model_copy(update={"home": home, "current_location": here})
     return PROFILE
 
 
@@ -133,7 +138,11 @@ def chains(req: ChainsRequest) -> list[Chain]:
     if req.include_board:
         pool.update(BOARD)
     start, _ = geo.resolve(PROFILE.current_location)
-    return optimizer.best_chains(PROFILE, start, demo_now(), list(pool.values()), top_k=3)
+    resolved = [
+        l.model_copy(update={"origin": geo.resolve(l.origin)[0], "destination": geo.resolve(l.destination)[0]})
+        for l in pool.values()
+    ]
+    return optimizer.best_chains(PROFILE, start, demo_now(), resolved, top_k=3)
 
 
 @app.get("/api/board", response_model=list[Load])
