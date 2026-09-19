@@ -146,37 +146,23 @@ export async function mockRequest(
       };
     case "cashflow":
       return {
-        starting_balance: 3800,
-        lowest_balance: -312,
-        lowest_balance_date: "2026-10-01",
+        starting_balance: 2500,
+        lowest_balance: -494.03,
+        lowest_balance_date: "2026-09-23",
         shortfall: true,
         quick_pay_fixes_it: true,
         quick_pay_cost: 36,
         timeline: [
-          {
-            date: "2026-09-21",
-            label: "Opening balance",
-            amount: 0,
-            balance: 3800,
-          },
-          {
-            date: "2026-09-22",
-            label: "Fuel for run",
-            amount: -1962,
-            balance: 1838,
-          },
-          {
-            date: "2026-10-01",
-            label: "Truck payment",
-            amount: -2150,
-            balance: -312,
-          },
-          {
-            date: "2026-10-03",
-            label: "Load payment",
-            amount: 2160,
-            balance: 1848,
-          },
+          { date: "2026-09-21", label: "Checking balance today", amount: 0, balance: 2500 },
+          { date: "2026-09-21", label: "Diesel for L027", amount: -244.95, balance: 2255.05 },
+          { date: "2026-09-22", label: "Diesel for L058", amount: -417.59, balance: 1837.46 },
+          { date: "2026-09-22", label: "Truck payment", amount: -2150, balance: -312.54 },
+          { date: "2026-09-23", label: "Diesel for L012", amount: -181.49, balance: -494.03 },
+        ],
+        later: [
+          { date: "2026-10-21", label: "Pay for L027 (Blue Ridge Logistics)", amount: 1080 },
+          { date: "2026-10-23", label: "Pay for L058 (Summit Carrier Services)", amount: 1530 },
+          { date: "2026-10-23", label: "Pay for L012 (Piedmont Transport Group)", amount: 765 },
         ],
       };
     case "explain": {

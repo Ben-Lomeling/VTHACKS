@@ -115,7 +115,7 @@ def main() -> int:
     def cashflow():
         cf = CashflowCheck.model_validate(ok(c.post("/api/cashflow", json={"chain": ctx["chain"].model_dump(mode="json")})))
         ctx["cashflow"] = cf
-        fix = f", quick pay fixes it for ${cf.quick_pay_cost:,.0f}" if cf.quick_pay_fixes_it else ""
+        fix = f", advance fixes it for ${cf.quick_pay_cost:,.0f}" if cf.quick_pay_fixes_it else ""
         return f"lowest ${cf.lowest_balance:,.0f} on {cf.lowest_balance_date}{fix}"
 
     def explain_run():
@@ -148,8 +148,14 @@ def main() -> int:
 
     def story_cashflow():
         cf = CashflowCheck.model_validate(ok(c.post("/api/cashflow", json={"chain": ctx["story_chain"].model_dump(mode="json")})))
-        assert cf.shortfall and cf.quick_pay_fixes_it, "want: dips below zero, quick pay fixes it"
-        return f"dips to ${cf.lowest_balance:,.0f} on {cf.lowest_balance_date}; quick pay fixes it for ${cf.quick_pay_cost:,.0f}"
+        assert cf.shortfall and cf.quick_pay_fixes_it, "want: dips below zero, a Capital One advance fixes it"
+        truck = next((e for e in cf.timeline if e["label"] == "Truck payment"), None)
+        assert truck and truck["balance"] < 0, "want: the truck payment lands mid-trip and turns the balance red"
+        home = cf.timeline[-1]["date"]
+        assert cf.lowest_balance_date.isoformat() <= home, "want: the red is on the road, not after he's home"
+        assert cf.quick_pay_cost <= 50, "want: one advance (on the Atlanta load) fixes it"
+        return (f"truck payment {truck['date']} -> ${truck['balance']:,.0f}; low ${cf.lowest_balance:,.0f} on "
+                f"{cf.lowest_balance_date}; advance fixes it for ${cf.quick_pay_cost:,.0f}")
 
     print(f"LoadCheck demo check -> {'in-process' if args.in_process else args.base_url}\n")
     for name, fn in [
@@ -159,12 +165,12 @@ def main() -> int:
         ("plan: simulated board", board), ("plan: chains", chains), ("plan: cash flow", cashflow),
         ("plan: explain run", explain_run),
         ("story: bad load ~ $0.50/mi", story_bad_load), ("story: better run, near home, rest", story_better_run),
-        ("story: cash-flow dip + quick pay", story_cashflow),
+        ("story: red on the road + advance", story_cashflow),
     ]:
         needs = {"check: evaluate": "load", "check: rank offers": "load", "check: counter message": "econ",
                  "check: explain load": "econ", "plan: chains": "load", "plan: cash flow": "chain",
                  "plan: explain run": "cashflow", "story: better run, near home, rest": "bad",
-                 "story: cash-flow dip + quick pay": "story_chain"}.get(name)
+                 "story: red on the road + advance": "story_chain"}.get(name)
         if needs and needs not in ctx:
             print(f"{RED}SKIP{END}  {name:<34} (an earlier step failed)")
             results.append(False)

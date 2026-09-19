@@ -4,26 +4,26 @@
   },
   "response": {
     "load": {
-      "id": "P5dc66a",
+      "id": "Ped67e8",
       "origin": {
-        "city": "Roanoke, VA",
-        "lat": 37.271,
-        "lng": -79.9414
+        "city": "Greensboro, NC",
+        "lat": 36.0726,
+        "lng": -79.792
       },
       "destination": {
-        "city": "Charlotte, NC",
-        "lat": 35.2271,
-        "lng": -80.8431
+        "city": "Jacksonville, FL",
+        "lat": 30.3322,
+        "lng": -81.6557
       },
-      "pickup_window_start": "2026-09-22T08:00:00",
-      "pickup_window_end": "2026-09-22T12:00:00",
-      "delivery_by": "2026-09-23T08:00:00",
+      "pickup_window_start": null,
+      "pickup_window_end": null,
+      "delivery_by": null,
       "rate_usd": 1200.0,
-      "loaded_miles_est": 500.0,
+      "loaded_miles_est": null,
       "trailer_type": "dry_van",
-      "weight_lbs": 38000,
-      "commodity": "paper products",
-      "broker": "Blue Ridge Logistics",
+      "weight_lbs": 40000,
+      "commodity": null,
+      "broker": "Coastal Brokerage",
       "payment_terms_days": 30,
       "quick_pay_fee_pct": 0.03,
       "source": "pasted"
@@ -31,9 +31,9 @@
     "confidence": {
       "origin": "high",
       "destination": "high",
-      "pickup_window_start": "high",
-      "pickup_window_end": "high",
-      "delivery_by": "high",
+      "pickup_window_start": "low",
+      "pickup_window_end": "low",
+      "delivery_by": "low",
       "rate_usd": "high",
       "loaded_miles_est": "low",
       "trailer_type": "high",
@@ -44,7 +44,8 @@
       "quick_pay_fee_pct": "high"
     },
     "warnings": [
-      "Loaded miles not stated in the offer; estimated"
+      "Loaded miles not stated in the offer; estimated",
+      "Pickup and delivery times are vague (\"Mon\", \"Tue\"); check them"
     ]
   },
   "status": 200

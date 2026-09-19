@@ -130,7 +130,8 @@ class CashflowCheck(BaseModel):
     shortfall: bool               # lowest_balance < 0
     quick_pay_fixes_it: bool
     quick_pay_cost: float
-    timeline: list[dict]          # [{date, label, amount, balance}] for the chart
+    timeline: list[dict]          # [{date, label, amount, balance}] for the chart (this trip only)
+    later: list[dict] = []        # [{date, label, amount}] money after he's home (broker pay, advance repayment); not in balance
 ```
 
 ## The math (profit.py) — pure functions, no I/O
@@ -233,10 +234,10 @@ feasible ends near home. Exclude chains that end more than
 If their prompt differs, change the framing, not the architecture.
 
 ### Seed (run once, Friday night)
-`scripts/seed_nessie.py` creates: customer "Dad's LLC" → Checking account (balance ~$3,800) →
+`scripts/seed_nessie.py` creates: customer "Dad's LLC" → Checking account (balance ~$2,500) →
 merchants (Pilot/Love's-style fuel stops with `geocode`, a tire shop, a repair shop, a toll authority,
 an insurer) → 90 days of purchases (diesel, tires, repairs, tolls) → recurring bills (truck payment
-$2,150 due on the 1st, insurance $1,100 due on the 5th, phone/ELD $65) → deposits (past load payments,
+$2,150 due on the 22nd, insurance $1,100 due on the 5th, phone/ELD $65) → deposits (past load payments,
 each with a broker name in `description`). Save created IDs to `backend/data/nessie_ids.json`.
 If Nessie is down or returns errors, `nessie.py` reads `backend/data/nessie_fixture.json`
 (same shapes, recorded from a successful run). **Record that fixture as soon as seeding works.**
@@ -257,23 +258,29 @@ Split of work: `nessie.py` exposes `get_checking_balance() -> float` and
 `get_upcoming_bills(days: int) -> list[dict]` (each `{payee, amount, due_date}`), normalized so
 nothing downstream sees raw Nessie JSON. `cashflow.py` is pure and does the simulation below.
 Input: chain + today's date. Simulate day by day:
+- **Window = this trip only** (Decision 1, Sat Sep 19): from `today` until he's home (`chain.schedule[0].depart_at
+  + chain.days`, as a date). A single 2.6-day run can't pay a whole month of bills; next month is covered by his next
+  runs, so bills and broker pay after he's home are left out of the balance.
 - Start = current checking balance.
 - Subtract fuel cost on each leg's pickup day (diesel is paid up front).
-- Subtract bills on their due dates.
-- Add each load's pay on `delivery date + payment_terms_days`. Pay deposited = `rate − dispatch fee`
-  (the dispatcher takes his cut before the driver sees it).
-- Report lowest balance and date. If negative, re-run with quick pay
-  (paid 2 days after delivery, minus `rate × quick_pay_fee_pct`) on the fewest loads needed (earliest delivery
-  first) and report whether that fixes it and what it costs. `timeline` is the ORIGINAL run (it shows the dip);
-  the quick-pay result is reported in `quick_pay_fixes_it` / `quick_pay_cost`.
+- Subtract bills due inside the window on their due dates.
+- Broker pay (`rate − dispatch fee`, on `delivery date + payment_terms_days`) almost always lands after the window.
+  It goes in `later` (`[{date, label, amount}]`, not counted in the balance) so the driver sees when money arrives.
+- Report lowest balance and date. If negative, re-run with a **Capital One advance** on the fewest loads needed
+  (earliest delivery first). An advance deposits `rate − dispatch fee − rate × quick_pay_fee_pct` **on delivery day**
+  and is paid back (`rate − dispatch fee`) automatically when the broker pays, so its repayment is a `later` entry
+  that cancels that broker's pay. Report whether that fixes it and what it costs. `timeline` is the ORIGINAL run
+  (it shows the dip); the advance result is reported in `quick_pay_fixes_it` / `quick_pay_cost` (field names kept
+  from v1 for compatibility; the UI says "Capital One advance").
 - Timeline details: the first entry is `{date: today, label: "Checking balance today", amount: 0, balance}`;
-  money out is booked before money in on the same day; bills count only if due between today and the run's
-  last payment. If quick pay can't fix it, `quick_pay_cost` is the cost of quick pay on every load.
-Demo moment: "Best run makes $1,496, but your balance goes negative on Oct 5 when the $1,100 insurance
-hits, and bottoms out at −$359 on Oct 15, before the first broker pays on Oct 21. Quick pay on the Atlanta
-load costs $36 and keeps you positive the whole way."
-(Numbers from the current simulated board with a $3,800 starting balance; `scripts/demo_check.py` prints
-the live values. Re-check this line whenever the board, the profile or the Nessie data changes.)
+  money out is booked before money in on the same day. If advances can't fix it, `quick_pay_cost` is the cost of an
+  advance on every load.
+Demo moment: "Best run makes $1,496. His truck payment ($2,150) comes due on Sep 22 while he's hauling through
+Tennessee, and his balance goes to −$313. A Capital One advance on the Atlanta load (delivered the night before)
+costs $36, lands $1,044 that evening, and keeps him at $731; it pays itself back when the broker pays on Oct 21."
+(Numbers from the current simulated board with a **$2,500** starting balance and the truck payment due on the
+**22nd**; `scripts/demo_check.py` prints the live values. Re-check this line whenever the board, the profile or
+the Nessie data changes.)
 
 ## Module interfaces (frozen: everyone codes against these signatures)
 ```python

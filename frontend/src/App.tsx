@@ -1013,8 +1013,9 @@ export default function App() {
                     </button>
                   </div>
                   <p>
-                    Capital One Nessie sandbox balance and bills. The chart
-                    shows the original payment schedule.
+                    Capital One Nessie sandbox balance and bills, from today
+                    until you're home. Next month's bills are covered by your
+                    next runs.
                   </p>
                   {cash && (
                     <>
@@ -1024,9 +1025,9 @@ export default function App() {
                         {cash.lowest_balance_date}.{" "}
                         {cash.shortfall
                           ? cash.quick_pay_fixes_it
-                            ? `Quick pay fixes the shortfall for ${money(cash.quick_pay_cost)}.`
-                            : "Quick pay does not cover this shortfall."
-                          : "Your balance stays nonnegative; quick pay is not needed."}
+                            ? `A Capital One advance fixes it for ${money(cash.quick_pay_cost)}, repaid when the broker pays.`
+                            : "A Capital One advance does not cover this shortfall."
+                          : "You stay above $0 for the whole trip; no advance needed."}
                       </div>
                       <div className="cash-chart">
                         <ResponsiveContainer width="100%" height="100%">
@@ -1058,7 +1059,7 @@ export default function App() {
                                   // one tick per date, at least 3 days apart
                                   (kept, t) =>
                                     kept.length &&
-                                    t - kept[kept.length - 1] < 3 * 864e5
+                                    t - kept[kept.length - 1] < 864e5
                                       ? kept
                                       : [...kept, t],
                                   [],
@@ -1144,6 +1145,28 @@ export default function App() {
                           </tbody>
                         </table>
                       </div>
+                      {cash.later.length > 0 && (
+                        <div className="table-wrap">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>After you're home</th>
+                                <th>Amount</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {cash.later.map((e, i) => (
+                                <tr key={i}>
+                                  <td>
+                                    {String(e.date)} · {String(e.label)}
+                                  </td>
+                                  <td>{money(Number(e.amount))}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
                     </>
                   )}
                 </section>

@@ -12,23 +12,30 @@ we **read** his balance, bills and spending, and **write** deposits and purchase
 **Pitch line:** *"Your bank shows what you spent. LoadCheck shows where on the road you'll run out of money, and
 lets you fix it before you leave."*
 
-## ⚠️ Decision 1 (needs Nihal before building A): make the red happen *on the road*
-With today's data the route never turns red. The run is Sep 21–23 and the balance only drops from $3,800 to about $2,956.
-The dip comes **Oct 5** (insurance), 12 days after he's home. Options:
+## ✅ Decision 1 (decided Sat Sep 19, 3 PM): red on the road, trip-only cash flow, Capital One advance
+Nihal's choices (full list in `docs/STATUS.md`):
+- **Option 1: red on the road.** Truck payment due on the **22nd** (was the 1st), starting balance **$2,500** (was $3,800).
+- **Cash flow covers this trip only** (today → home). Checked in code: over the full horizon the balance falls to
+  −$2,729 on Oct 22, because one 2.6-day run ($3,375 take-home) can't pay a month of bills ($3,315 + diesel), and
+  October's truck payment lands a day before the last brokers pay. His next runs cover October; broker pay and
+  advance repayments after he's home are listed in a new `later` field, not counted in the balance. See SPEC.md Feature 2.
+- **Feature B is a "Capital One advance"**, not broker quick pay: on delivery day Nessie gets a **deposit** of
+  `rate − dispatch − 3% fee`; a Nessie **bill** repays `rate − dispatch` on the broker's pay date. Net cost = the fee.
+- **Minimum to submit: A + B.** C is a bonus. Dad's data is dropped; the simulated story stays.
 
-| Option | What changes | Result |
-|---|---|---|
-| **1. Tune the story (recommended)** | Truck payment due on the **22nd** (mid-run) instead of the 1st; starting balance **$2,500**; "get paid early" pays **on delivery day** (instant pay) instead of delivery + 2 days | Red **while hauling L058 through Tennessee** on Sep 22 (about −$313). Instant pay on L027 (delivered Sep 21 evening, about +$1,044) turns it green. The story is on the map |
-| 2. Keep the data, extend the map | Route stays green; the home pin gets a "waiting to get paid" ring that's red Oct 5–Oct 21, plus the timeline extends past arrival | Honest, but the red isn't on the road, which is the idea's main visual |
+Verified numbers (in code, fixture with the Option 1 changes):
 
-Option 1 math (hand-checked, re-verify in code): $2,500 − $245 diesel (Sep 21) → $2,255; Sep 22: −$418 diesel −$2,150
-truck payment → **−$313**. With instant pay on L027 ($1,200 − $120 dispatch − $36 fee = $1,044 on Sep 21) → Sep 22 ≈ **$731**,
-Sep 23 ≈ **$550**. Caveat: *after* the trip the chart still dips (insurance Oct 5, and the next truck payment Oct 22 lands
-before the last broker pays Oct 23). Decide whether the demo shows only the trip, or also tune the post-trip bills.
+| Date | Event | Balance | With advance on L027 |
+|---|---|---|---|
+| Sep 21 | Start | $2,500 | $2,500 |
+| Sep 21 | Diesel L027 (−$245) · L027 delivered 7:22 PM | $2,255 | + advance $1,044 → $3,299 |
+| Sep 22 | Diesel L058 (−$418) + **truck payment (−$2,150)**, hauling through TN | **−$313** 🔴 | $731 🟢 |
+| Sep 23 | Diesel L012 (−$181), home that night | −$494 | $550 |
+| Oct 21 | (later) Blue Ridge pays L027 $1,080 → repays the advance | | net $0 |
 
-Option 1 touches: the Nessie seed + fixture (bill date, balance), `QUICK_PAY_DAYS` in `cashflow.py` (SPEC decision:
-quick pay = +2 days → same day), `scripts/demo_check.py` expectations, and the pitch numbers in SPEC.md, README and STATUS.
-Re-check `docs/api-samples/` afterwards (`scripts/export_api_samples.py`).
+Option 1 touches: the Nessie seed + fixture (bill day, balance), `cashflow.py` (window + advance on delivery day +
+`later`), `models.py`/`types.ts` (`later`), `scripts/demo_check.py`, pitch numbers in SPEC/README/STATUS, and
+`docs/api-samples/`.
 
 ## Feature A: Money on the map (build first)
 **What the judge sees:** on Plan my run, the route line is colored by his projected balance: **green** (fine),
@@ -55,9 +62,9 @@ Re-check `docs/api-samples/` afterwards (`scripts/export_api_samples.py`).
 - `frontend/src/App.tsx`: fetch cash flow automatically when a run is selected (today it's a button), so the map is
   colored without an extra click.
 
-## Feature B: Get paid early (build second)
-**What the judge sees:** a red stretch has a **"Get paid early"** button. Tapping it **creates a real deposit in Nessie**,
-and the map repaints green. The Nessie deposit is visible (show "Deposit created in Capital One · id …").
+## Feature B: Capital One advance (build second)
+**What the judge sees:** a red stretch has a **"Get a Capital One advance"** button. Tapping it **creates a real deposit
+in Nessie** (plus the repayment bill on the broker's pay date), and the map repaints green. The Nessie deposit is visible (show "Deposit created in Capital One · id …").
 
 **Backend**
 - `backend/app/nessie.py` (Nessie owner): `create_deposit(amount, on: date, description) -> dict` and

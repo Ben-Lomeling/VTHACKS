@@ -17,7 +17,7 @@ from dotenv import dotenv_values
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "backend/data/nessie_ids.json"
 BASE = "https://api.nessieisreal.com"
-BILLS = [("Truck payment", 2150, 1), ("Truck insurance", 1100, 5), ("ELD / phone", 65, 15)]
+BILLS = [("Truck payment", 2150, 22), ("Truck insurance", 1100, 5), ("ELD / phone", 65, 15)]
 MERCHANTS = [
     ("Pilot Travel Center Wytheville", "fuel", "Wytheville", "VA", 36.948, -81.085),
     ("Love's Travel Stop Raphine", "fuel", "Raphine", "VA", 37.936, -79.232),
@@ -70,7 +70,7 @@ def seed(client: httpx.Client, today: date, out: Path = OUT, *, resume: bool = F
     # Verified against the live API: completed transactions do not mutate
     # account.balance here, and purchase amounts are integers (fractional dollars
     # are truncated). Use whole dollars; always assert the final GET below.
-    opening = Decimal("3800")
+    opening = Decimal("2500")
     ids = {"state": "in_progress", "merchants": {}, "purchases": [], "deposits": [], "bills": []}
     out.parent.mkdir(parents=True, exist_ok=True)
     # Exclusive creation prevents duplicate customers even after partial failure.
@@ -124,8 +124,8 @@ def seed(client: httpx.Client, today: date, out: Path = OUT, *, resume: bool = F
         checkpoint()
     account = request(client, "GET", path)
     bills = request(client, "GET", path + "/bills")
-    if abs(Decimal(str(account["balance"])) - Decimal("3800")) > 1:
-        raise RuntimeError("Final balance is not $3,800; inspect the checkpoint and account before proceeding.")
+    if abs(Decimal(str(account["balance"])) - opening) > 1:
+        raise RuntimeError("Final balance is not $2,500; inspect the checkpoint and account before proceeding.")
     if sorted((b["payee"], b["payment_amount"], b["recurring_date"]) for b in bills) != sorted(BILLS):
         raise RuntimeError("Final bills do not match the demo contract.")
     ids["state"] = "complete"
