@@ -94,7 +94,7 @@ trucker's bank account into a **map of the road ahead**. Full design: **`docs/CA
 | Who | What |
 |---|---|
 | Gemini teammate | Replace `gemini.py` stub (extract, explain + number check, counter message) → PR on `gemini/...` |
-| Nessie worker | Follow-ups on #11: cache live snapshot (slow Wi-Fi = up to 5 s per call), start STATUS as "fixture" until a live call works. Then Feature B/C Nessie writes (`create_deposit`, `create_purchase`, food/parking merchants) |
+| Nessie worker | **Pull `main`** (new customer: `nessie_ids.json` changed Sat 3:45 PM). New in `nessie.py` (by Claude, Feature B): `_CACHE` (60 s), `STATUS` starts `fixture`, `create_advance` / `advances` / `reset_advances`, `get_upcoming_bills` skips `Capital One advance repayment`. Gotchas found live: pending deposits/bills don't move the balance; a bill without `recurring_date` breaks `GET /bills` (400); Nessie derives a pending bill's `upcoming_payment_date` from the day of month. Feature C still needs `create_purchase` + food/parking merchants |
 | Nihal | Sign in to Render, Vercel, GoDaddy (MLH) for deploy |
 | Frontend teammate | Pull `frontend/review-fixes` once merged; offline map tiles or no-tile fallback |
 | Ben | Protect `main` (message drafted in chat: require PR, 0 approvals, Code Owners review off, required check `backend`, no strict up-to-date) and add collaborators |
@@ -106,10 +106,12 @@ trucker's bank account into a **map of the road ahead**. Full design: **`docs/CA
 2. ~~**Feature A: money on the map** (#13)~~ built on `capone/a-money-map`: route colored by balance (green ≥ $500, amber,
    red < $0), ⛽/🧾/💵 markers, balance strip under the timeline, cash flow auto-loads when a run is picked. Red starts
    at the truck payment near Rogersville, TN (Sep 22 noon, on L058).
-3. **Feature B: Capital One advance**: Nessie deposit + repayment bill + reset (#14).
+3. ~~**Feature B: Capital One advance** (#14)~~ built on `capone/b-advance`: red run shows "Get a Capital One advance on
+   L027 ($36)" → inline confirm → **pending Nessie deposit** ($1,044, Sep 21) + **repayment bill** ($1,080, Oct 21) →
+   map/chart repaint green, card shows the Nessie ids. "Reset demo" deletes advance items from Nessie. Verified live.
+   "Accept bank costs" now needs a second click (the demo gotcha).
 4. **Feature C: receipt photos**: Gemini read + Nessie purchase + food_per_day (#15).
-5. Nessie follow-ups: cache the live snapshot (slow Wi-Fi = up to 5 s per call); start STATUS as "fixture" until a live
-   call works. `NESSIE_API_KEY` in the root `.env` on the demo laptop (live mode not tested yet).
+5. ~~Nessie follow-ups~~ done in Feature B: 60 s live snapshot cache, `STATUS` starts as `fixture`.
 6. ~~Dad's data swap~~ dropped (Sat 3 PM).
 7. Gemini PR when it lands (extract/explain/counter; explain the whole run; format negatives as -$0.02).
 8. Deploy + free MLH domain (permanent link for friends + Devpost "Try it"; needs Nihal to sign in to the hosts).

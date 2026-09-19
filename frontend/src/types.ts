@@ -81,6 +81,24 @@ export interface CashflowCheck {
   later: Record<string, unknown>[];
   route: RouteStretch[];
   money_stops: MoneyStop[];
+  advance_load_ids: string[];
+  advances: Advance[];
+  advance_offer: AdvanceTerms | null;
+}
+// Feature B: a Capital One advance, paid on delivery day and repaid when the broker pays.
+export interface AdvanceTerms {
+  load_id: string;
+  amount: number;
+  fee: number;
+  on: string;
+  repay_amount: number;
+  repay_on: string;
+  broker: string | null;
+}
+export interface Advance extends Omit<AdvanceTerms, "fee" | "broker"> {
+  deposit_id: string;
+  bill_id: string;
+  source: "live" | "fixture";
 }
 // Feature A: the trip as straight stretches, each with the balance while driving it (see SPEC "Money on the map").
 export interface RouteStretch {

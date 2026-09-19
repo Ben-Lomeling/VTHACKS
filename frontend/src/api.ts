@@ -66,6 +66,9 @@ export const api = {
   bankCosts: () => request<CostsFromBank>("costs/from-bank"),
   cashflow: (chain: Chain) =>
     request<CashflowCheck>("cashflow", "POST", { chain }),
+  advance: (chain: Chain, load_id: string) =>
+    request<CashflowCheck>("advance", "POST", { chain, load_id }),
+  resetBank: () => request<{ removed: number }>("demo/reset-bank", "POST", {}),
   explain: (body: ExplainRequest) =>
     request<TextResponse>("explain", "POST", body),
   counterMessage: (economics: LoadEconomics) =>

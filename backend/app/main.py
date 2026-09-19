@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import json
 import os
-from datetime import datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -15,7 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app import cashflow, gemini, geo, nessie, optimizer, profit
 from app.models import (
-    CashflowCheck, CashflowRequest, Chain, ChainsRequest, CostsFromBank, CounterRequest,
+    AdvanceRequest, CashflowCheck, CashflowRequest, Chain, ChainsRequest, CostsFromBank, CounterRequest,
     EvaluateRequest, ExplainRequest, ExtractionResult, Load, LoadEconomics, OffersRequest,
     TextResponse, TruckProfile,
 )
@@ -162,12 +162,54 @@ def costs_from_bank() -> CostsFromBank:
 
 @app.post("/api/cashflow", response_model=CashflowCheck)
 def cashflow_check(req: CashflowRequest) -> CashflowCheck:
+    return _check(req.chain)
+
+
+def _check(chain: Chain) -> CashflowCheck:
+    """Cash flow + money map for a run, including Capital One advances already taken on its loads."""
     loads, balance, bills, today = _all_loads(), nessie.get_checking_balance(), nessie.get_upcoming_bills(60), demo_now().date()
-    check = cashflow.simulate(req.chain, loads, balance, bills, today)
+    taken = nessie.advances()
+    advanced = set(taken) & set(chain.loads)
+    check = cashflow.simulate(chain, loads, balance, bills, today, advanced)
     start, _ = geo.resolve(PROFILE.current_location)
     home, _ = geo.resolve(PROFILE.home)
-    check.route, check.money_stops = cashflow.balance_along_route(req.chain, loads, start, home, balance, bills, today)
+    check.route, check.money_stops = cashflow.balance_along_route(chain, loads, start, home, balance, bills, today, advanced)
+    check.advances = [taken[i] for i in chain.loads if i in advanced]
+    if check.advance_load_ids:
+        check.advance_offer = _advance_terms(chain, check.advance_load_ids[0])
     return check
+
+
+def _advance_terms(chain: Chain, load_id: str) -> dict:
+    """What a Capital One advance on this load would be: paid on delivery day, repaid when the broker pays."""
+    stop = next((s for s in chain.schedule if s["load_id"] == load_id), None)
+    leg = next((l for l in chain.legs if l.load_id == load_id), None)
+    load = _all_loads().get(load_id)
+    if not (stop and leg and load):
+        raise HTTPException(status_code=404, detail=f"{load_id} isn't on this run.")
+    take_home = load.rate_usd - leg.dispatch_fee
+    fee = load.rate_usd * load.quick_pay_fee_pct
+    delivered = datetime.fromisoformat(str(stop["delivered_at"])).date()
+    return {"load_id": load_id, "amount": round(take_home - fee, 2), "fee": round(fee, 2), "on": delivered.isoformat(),
+            "repay_amount": round(take_home, 2),
+            "repay_on": (delivered + timedelta(days=load.payment_terms_days)).isoformat(), "broker": load.broker}
+
+
+@app.post("/api/advance", response_model=CashflowCheck)
+def advance(req: AdvanceRequest) -> CashflowCheck:
+    """Tap "Get a Capital One advance": book it in Nessie (deposit + repayment bill), return the repainted cash flow."""
+    terms = _advance_terms(req.chain, req.load_id)
+    if req.load_id not in nessie.advances():
+        nessie.create_advance(
+            req.load_id, terms["amount"], date.fromisoformat(terms["on"]), terms["repay_amount"],
+            date.fromisoformat(terms["repay_on"]), f" ({terms['broker']})" if terms["broker"] else "")
+    return _check(req.chain)
+
+
+@app.post("/api/demo/reset-bank")
+def reset_bank() -> dict:
+    """Undo every advance on the demo account (rehearsals). "Reset demo" in the UI calls this."""
+    return {"removed": nessie.reset_advances()}
 
 
 @app.post("/api/explain", response_model=TextResponse)

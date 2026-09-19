@@ -25,6 +25,9 @@ def offline(monkeypatch):
     def fail(resources):
         raise httpx.ConnectError('offline')
     monkeypatch.setattr(nessie, '_live', fail)
+    monkeypatch.setattr(nessie, '_client', lambda: (_ for _ in ()).throw(httpx.ConnectError('offline')))
+    nessie._CACHE.clear()
+    nessie._ADVANCES.clear()
 
 
 @pytest.mark.parametrize('description,expected', [

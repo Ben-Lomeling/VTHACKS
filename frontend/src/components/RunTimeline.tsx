@@ -21,14 +21,23 @@ const when = (t: number) =>
 
 // Lays the backend's schedule out on a time bar. No economics here: the optimizer
 // decides every time; this only turns its timestamps into widths.
-export function RunTimeline({ chain, route = [] }: { chain: Chain; route?: RouteStretch[] }) {
+export function RunTimeline({
+  chain,
+  route = [],
+}: {
+  chain: Chain;
+  route?: RouteStretch[];
+}) {
   const stops = chain.schedule.map((s) => ({
     id: String(s.load_id),
     depart: Date.parse(String(s.depart_at)),
     pickup: Date.parse(String(s.pickup_at)),
     delivered: Date.parse(String(s.delivered_at)),
   }));
-  if (!stops.length || stops.some((s) => isNaN(s.depart + s.pickup + s.delivered)))
+  if (
+    !stops.length ||
+    stops.some((s) => isNaN(s.depart + s.pickup + s.delivered))
+  )
     return null;
 
   const start = stops[0].depart;
@@ -80,11 +89,18 @@ export function RunTimeline({ chain, route = [] }: { chain: Chain; route?: Route
           <div
             key={i}
             className={`seg seg-${s.kind}`}
-            style={{ left: `${pct(s.start)}%`, width: `${pct(s.end) - pct(s.start)}%` }}
-            title={[`${s.label} · ${hours(s.end - s.start)}`, ...s.notes].join("\n")}
+            style={{
+              left: `${pct(s.start)}%`,
+              width: `${pct(s.end) - pct(s.start)}%`,
+            }}
+            title={[`${s.label} · ${hours(s.end - s.start)}`, ...s.notes].join(
+              "\n",
+            )}
           >
             <span>{s.kind === "loaded" ? s.label : ""}</span>
-            {s.notes.some((n) => /rest/i.test(n)) && <i className="rest">10-h rest</i>}
+            {s.notes.some((n) => /rest/i.test(n)) && (
+              <i className="rest">10-h rest</i>
+            )}
           </div>
         ))}
         {midnights.map((t) => (
@@ -102,7 +118,11 @@ export function RunTimeline({ chain, route = [] }: { chain: Chain; route?: Route
             return (
               <div
                 key={i}
-                style={{ left: `${pct(a)}%`, width: `${pct(b) - pct(a)}%`, background: balanceColor(r.balance) }}
+                style={{
+                  left: `${pct(a)}%`,
+                  width: `${pct(b) - pct(a)}%`,
+                  background: balanceColor(r.balance),
+                }}
                 title={`$${Math.round(r.balance).toLocaleString("en-US")} in the bank`}
               />
             );
@@ -110,7 +130,8 @@ export function RunTimeline({ chain, route = [] }: { chain: Chain; route?: Route
         </div>
       )}
       <p className="map-legend">
-        ▮ Loaded　▯ Empty / waiting　<span>▯ Home</span>　10-h rest = hours-of-service break
+        ▮ Loaded　▯ Empty / waiting　<span>▯ Home</span>　10-h rest =
+        hours-of-service break
       </p>
     </div>
   );

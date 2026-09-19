@@ -153,19 +153,23 @@ def balance_along_route(chain: Chain, loads_by_id: dict[str, Load], start: Place
     return route, stops
 
 
-def simulate(chain: Chain, loads_by_id: dict[str, Load], start_balance: float, bills: list[dict], today: date) -> CashflowCheck:
-    events, later = _events(chain, loads_by_id, bills, today, set())
+def simulate(chain: Chain, loads_by_id: dict[str, Load], start_balance: float, bills: list[dict], today: date,
+             advance: set[str] = frozenset()) -> CashflowCheck:
+    """`advance` = loads he already took a Capital One advance on (they're in the timeline and the balance)."""
+    taken = set(advance) & set(chain.loads)
+    events, later = _events(chain, loads_by_id, bills, today, taken)
     lowest, lowest_date, timeline = _run(start_balance, today, events)
     shortfall = lowest < 0
 
-    fixes, cost = False, 0.0
+    fixes, cost, chosen = False, 0.0, set(taken)
     if shortfall:
         by_delivery = sorted(zip(chain.legs, chain.schedule), key=lambda ls: ls[1]["delivered_at"])
-        chosen: set[str] = set()
         for leg, _ in by_delivery:                          # add an advance one load at a time
+            if leg.load_id in chosen:
+                continue
             chosen.add(leg.load_id)
             low, _, _ = _run(start_balance, today, _events(chain, loads_by_id, bills, today, chosen)[0])
-            cost = sum(loads_by_id[i].rate_usd * loads_by_id[i].quick_pay_fee_pct for i in chosen)
+            cost = sum(loads_by_id[i].rate_usd * loads_by_id[i].quick_pay_fee_pct for i in chosen - taken)
             if low >= 0:
                 fixes = True
                 break
@@ -179,4 +183,5 @@ def simulate(chain: Chain, loads_by_id: dict[str, Load], start_balance: float, b
         quick_pay_cost=round(cost, 2),
         timeline=timeline,
         later=[{"date": w.date().isoformat(), "label": label, "amount": round(amount, 2)} for w, label, amount, _ in later],
+        advance_load_ids=[i for i in chain.loads if i in chosen - taken] if fixes else [],
     )

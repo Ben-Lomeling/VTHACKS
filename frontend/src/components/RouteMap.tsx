@@ -14,7 +14,11 @@ import { divIcon, latLngBounds } from "leaflet";
 const money = (v: number) =>
   `${v < 0 ? "−" : ""}$${Math.abs(v).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
 const clock = (iso: string) =>
-  new Date(iso).toLocaleString("en-US", { weekday: "short", hour: "numeric", minute: "2-digit" });
+  new Date(iso).toLocaleString("en-US", {
+    weekday: "short",
+    hour: "numeric",
+    minute: "2-digit",
+  });
 
 export function RouteMap({
   chain,
@@ -94,7 +98,8 @@ export function RouteMap({
               }}
             >
               <Tooltip sticky>
-                {money(r.balance)} in the bank · {clock(r.start)} → {clock(r.end)}
+                {money(r.balance)} in the bank · {clock(r.start)} →{" "}
+                {clock(r.end)}
                 {r.loaded ? " · loaded" : " · empty"}
               </Tooltip>
             </Polyline>
@@ -119,22 +124,23 @@ export function RouteMap({
               </Popup>
             </Marker>
           ))}
-          {!route.length && lines.map((line, i) => (
-            <Polyline
-              key={i}
-              positions={line.positions}
-              pathOptions={{
-                color:
-                  line.kind === "home"
-                    ? "#936ed4"
-                    : line.kind === "loaded"
-                      ? "#183d40"
-                      : "#6b7b8b",
-                weight: 4,
-                dashArray: line.kind === "loaded" ? undefined : "8 8",
-              }}
-            />
-          ))}
+          {!route.length &&
+            lines.map((line, i) => (
+              <Polyline
+                key={i}
+                positions={line.positions}
+                pathOptions={{
+                  color:
+                    line.kind === "home"
+                      ? "#936ed4"
+                      : line.kind === "loaded"
+                        ? "#183d40"
+                        : "#6b7b8b",
+                  weight: 4,
+                  dashArray: line.kind === "loaded" ? undefined : "8 8",
+                }}
+              />
+            ))}
           {pins.map((pin, i) => (
             <Marker
               key={i}
@@ -153,8 +159,9 @@ export function RouteMap({
       </div>
       {route.length ? (
         <p className="map-legend money-legend">
-          <i className="swatch green" /> Covered　<i className="swatch amber" /> Under{" "}
-          {money(BUFFER)}　<i className="swatch red" /> Overdrawn · ━ Loaded ┄ Empty ·{" "}
+          <i className="swatch green" /> Covered　
+          <i className="swatch amber" /> Under {money(BUFFER)}　
+          <i className="swatch red" /> Overdrawn · ━ Loaded ┄ Empty ·{" "}
           {"⛽ fuel · 🧾 bill · 💵 money in"}
         </p>
       ) : (
