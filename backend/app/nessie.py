@@ -11,6 +11,8 @@ import logging
 import math
 import os
 import re
+import time
+import uuid
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Callable, TypeVar
@@ -20,12 +22,17 @@ from dotenv import dotenv_values
 
 from app.models import TruckProfile
 
-STATUS = "live"
+STATUS = "fixture"                 # until a live call succeeds
 ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "backend/data"
 BASE = "https://api.nessieisreal.com"
 LOG = logging.getLogger(__name__)
 T = TypeVar("T")
+CACHE_SECONDS = 60                 # slow venue Wi-Fi: each live read can take up to 5 s per call
+_CACHE: dict[tuple[str, ...], tuple[float, dict]] = {}
+ADVANCE_PAYEE = "Capital One advance repayment"
+ADVANCE_TAG = "CAPITAL ONE ADVANCE"
+_ADVANCES: dict[str, dict] = {}    # load_id -> advance record created by this server (live or offline)
 ALIASES = {"Truck Finance Co": "Truck payment", "Commercial Truck Insurance": "Truck insurance", "ELD + Phone": "ELD / phone"}
 
 
@@ -64,10 +71,19 @@ def _live(resources: tuple[str, ...]) -> dict:
         return snapshot
 
 
+def _cached_live(resources: tuple[str, ...]) -> dict:
+    hit = _CACHE.get(resources)
+    if hit and time.monotonic() - hit[0] < CACHE_SECONDS:
+        return hit[1]
+    snapshot = _live(resources)
+    _CACHE[resources] = (time.monotonic(), snapshot)
+    return snapshot
+
+
 def _read(resources: tuple[str, ...], normalize: Callable[[dict], T]) -> tuple[T, str]:
     global STATUS
     try:
-        result = normalize(_live(resources))
+        result = normalize(_cached_live(resources))
         source = "live"
     except Exception as exc:
         LOG.info("Nessie live unavailable (%s); using fixture", type(exc).__name__)
@@ -121,7 +137,10 @@ def _expand(bills: list[dict], start: date, days: int) -> list[dict]:
 
 def get_upcoming_bills(days: int = 45) -> list[dict]:
     start = _today()
-    result, _ = _read(("bills",), lambda data: _expand(data["bills"], start, days))
+    # Advance repayments are modeled by cashflow itself (and Nessie reports their date wrong: it derives
+    # upcoming_payment_date from the day of month), so they never come back in as ordinary bills.
+    result, _ = _read(("bills",), lambda data: _expand(
+        [b for b in data["bills"] if b.get("payee") != ADVANCE_PAYEE], start, days))
     return result
 
 
@@ -173,3 +192,82 @@ def get_costs_from_bank(profile: TruckProfile) -> dict:
     result, source = _read(("purchases", "merchants", "bills"), lambda data: _costs(data, profile, today))
     result["evidence"]["source"] = source
     return result
+
+
+# ---- Feature B: Capital One advance (writes) ----
+def _client() -> httpx.Client:
+    key = dotenv_values(ROOT / ".env").get("NESSIE_API_KEY")
+    if not key:
+        raise ValueError("Missing root .env Nessie key")
+    return httpx.Client(base_url=BASE, params={"key": key}, timeout=5)
+
+
+def _account_path() -> str:
+    return f"/accounts/{json.loads((DATA / 'nessie_ids.json').read_text())['account_id']}"
+
+
+def _post(client: httpx.Client, path: str, body: dict) -> str:
+    response = client.post(path, json=body)
+    response.raise_for_status()
+    return response.json()["objectCreated"]["_id"]
+
+
+def create_advance(load_id: str, amount: float, on: date, repay_amount: float, repay_on: date,
+                   who: str = "") -> dict:
+    """Record a Capital One advance in the bank: a deposit on `on` and a repayment bill on `repay_on`.
+
+    Both are `pending` (Nessie doesn't move the balance for them; cashflow adds the advance itself).
+    Offline, or if Nessie refuses, the advance is kept in memory with source "fixture" so the demo still works.
+    """
+    record = {"load_id": load_id, "amount": round(amount, 2), "on": on.isoformat(),
+              "repay_amount": round(repay_amount, 2), "repay_on": repay_on.isoformat()}
+    deposit_id = None
+    try:
+        with _client() as client:
+            path = _account_path()
+            deposit_id = _post(client, path + "/deposits", {
+                "medium": "balance", "transaction_date": on.isoformat(), "status": "pending",
+                "amount": record["amount"], "description": f"{ADVANCE_TAG} {load_id}{who}"})
+            try:
+                # recurring_date is required, or Nessie can't read the bill list back (HTTP 400)
+                bill_id = _post(client, path + "/bills", {
+                    "status": "pending", "payee": ADVANCE_PAYEE, "nickname": f"ADVANCE {load_id}",
+                    "payment_date": repay_on.isoformat(), "recurring_date": repay_on.day,
+                    "payment_amount": record["repay_amount"]})
+            except Exception:
+                client.delete(f"/deposits/{deposit_id}")
+                raise
+        record |= {"deposit_id": deposit_id, "bill_id": bill_id, "source": "live"}
+    except Exception as exc:
+        LOG.info("Nessie advance write unavailable (%s); keeping it offline", type(exc).__name__)
+        offline = f"offline-{uuid.uuid4().hex[:8]}"
+        record |= {"deposit_id": offline, "bill_id": offline, "source": "fixture"}
+    _CACHE.clear()
+    _ADVANCES[load_id] = record
+    return record
+
+
+def advances() -> dict[str, dict]:
+    """Advances created since the server started (or the last reset), by load id."""
+    return dict(_ADVANCES)
+
+
+def reset_advances() -> int:
+    """Delete every advance deposit and repayment bill on the demo account (for rehearsals). Returns how many."""
+    removed = 0
+    try:
+        with _client() as client:
+            path = _account_path()
+            for kind, match in (("deposits", lambda d: str(d.get("description", "")).startswith(ADVANCE_TAG)),
+                                ("bills", lambda b: b.get("payee") == ADVANCE_PAYEE)):
+                response = client.get(f"{path}/{kind}")
+                response.raise_for_status()
+                for item in filter(match, response.json()):
+                    client.delete(f"/{kind}/{item['_id']}").raise_for_status()
+                    removed += 1
+    except Exception as exc:
+        LOG.info("Nessie reset unavailable (%s); clearing offline advances only", type(exc).__name__)
+    removed = max(removed, len(_ADVANCES))
+    _ADVANCES.clear()
+    _CACHE.clear()
+    return removed

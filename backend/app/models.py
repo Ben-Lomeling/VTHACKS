@@ -98,6 +98,9 @@ class CashflowCheck(BaseModel):
     later: list[dict] = []        # [{date, label, amount}] money after he's home (broker pay, advance repayment); not in balance
     route: list[dict] = []        # [{from: [lat, lng], to: [lat, lng], start, end, balance, loaded}] trip stretches, one balance each
     money_stops: list[dict] = []  # [{at, lat, lng, label, amount, balance, kind: fuel|bill|pay|advance}] where money moves on the trip
+    advance_load_ids: list[str] = []  # loads a (further) Capital One advance should go on to fix the trip; [] if not needed / can't
+    advances: list[dict] = []     # advances already taken on this run: {load_id, amount, on, repay_amount, repay_on, deposit_id, bill_id, source}
+    advance_offer: dict | None = None  # terms for advance_load_ids[0]: {load_id, amount, fee, on, repay_amount, repay_on, broker}
 
 
 # ---- Request / response bodies for the API table ----
@@ -117,6 +120,11 @@ class ChainsRequest(BaseModel):
 
 class CashflowRequest(BaseModel):
     chain: Chain
+
+
+class AdvanceRequest(BaseModel):
+    chain: Chain
+    load_id: str
 
 
 class ExplainRequest(BaseModel):

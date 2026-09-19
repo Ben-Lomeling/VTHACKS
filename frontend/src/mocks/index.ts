@@ -166,7 +166,12 @@ export async function mockRequest(
         ],
         route: [],
         money_stops: [],
+        advance_load_ids: [],
+        advances: [],
+        advance_offer: null,
       };
+    case "demo/reset-bank":
+      return { removed: 0 };
     case "explain": {
       const { economics: e } = body as ExplainRequest;
       return {

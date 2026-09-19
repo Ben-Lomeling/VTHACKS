@@ -161,3 +161,21 @@ def test_advance_removes_the_red_and_shows_up_at_delivery():
 def test_route_needs_coordinates():
     chain, loads, bills = two_load_trip()
     assert balance_along_route(chain, loads, Place(city="Nowhere"), RIC, 2700.0, bills, TODAY) == ([], [])
+
+
+# ---- Feature B: advances already taken ----
+def test_taken_advance_is_in_the_timeline_and_clears_the_shortfall():
+    chain, loads, bills = two_load_trip()
+    before = simulate(chain, loads, 2700.0, bills, TODAY)
+    assert before.advance_load_ids == ["L1"]
+    after = simulate(chain, loads, 2700.0, bills, TODAY, advance={"L1"})
+    assert after.shortfall is False and after.advance_load_ids == [] and after.quick_pay_cost == 0
+    assert "Capital One advance on L1" in [e["label"] for e in after.timeline]
+    assert {e["label"] for e in after.later} == {"Advance on L1 repaid", "Pay for L1 (Blue Ridge Logistics)",
+                                                 "Pay for L2 (Blue Ridge Logistics)"}
+
+
+def test_advance_on_a_load_not_on_this_run_is_ignored():
+    chain, loads, bills = two_load_trip()
+    cf = simulate(chain, loads, 2700.0, bills, TODAY, advance={"OTHER"})
+    assert cf.shortfall is True and cf.advance_load_ids == ["L1"]

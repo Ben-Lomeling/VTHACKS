@@ -1237,3 +1237,37 @@ footer span:last-child {
   top: 0;
   bottom: 0;
 }
+/* Feature B: Capital One advance */
+.advance {
+  margin: 14px 0;
+  padding: 14px 16px;
+  border-radius: 7px;
+  font-size: 14px;
+}
+.advance p {
+  margin: 0 0 10px;
+}
+.advance-red {
+  background: #c039370f;
+  border: 1px solid #c0393766;
+}
+.advance-done {
+  background: #1f8a4c12;
+  border: 1px solid #1f8a4c66;
+}
+.advance-done p {
+  margin: 0;
+}
+.advance-confirm {
+  padding: 12px;
+  background: white;
+  border-radius: 6px;
+}
+.advance-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.money-legend .swatch:not(:first-child) {
+  margin-left: 12px;
+}
