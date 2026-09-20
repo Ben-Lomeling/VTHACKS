@@ -1,4 +1,5 @@
-import type { ReactNode } from "react";
+import { useId, useState, type ReactNode } from "react";
+import { cityValidation } from "../mapGeometry";
 import type { Place } from "../types";
 export function Field({
   label,
@@ -33,18 +34,28 @@ export function PlaceFields({
   onChange: (p: Place) => void;
   low?: boolean;
 }) {
+  const id = useId();
+  const [touched, setTouched] = useState(false);
+  const message = cityValidation(place.city);
   return (
     <div className="place-fields">
       <Field label={label} low={low}>
         <input
           required
+          pattern="[ ]*[^,\s][^,]*,[ ]*[A-Za-z]{2}[ ]*"
+          aria-describedby={id}
+          aria-invalid={touched && !!message}
+          onBlur={(e) => { setTouched(true); e.currentTarget.setCustomValidity(cityValidation(e.currentTarget.value)); }}
+          onInvalid={() => setTouched(true)}
           value={place.city}
-          onChange={(e) =>
-            onChange({ city: e.target.value, lat: null, lng: null })
-          }
+          onChange={(e) => {
+            e.currentTarget.setCustomValidity(cityValidation(e.currentTarget.value));
+            onChange({ city: e.target.value, lat: null, lng: null });
+          }}
           placeholder="City, ST"
         />
       </Field>
+      <small id={id} className={touched && message ? "field-error" : "field-hint"}>{touched && message ? message : "City and two-letter state, e.g. Richmond, VA. Locations are checked when you submit."}</small>
     </div>
   );
 }
