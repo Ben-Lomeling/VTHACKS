@@ -5,7 +5,9 @@ Run from backend/:  uvicorn app.main:app --reload
 from __future__ import annotations
 
 import json
+import logging
 import os
+from contextlib import asynccontextmanager
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
@@ -21,6 +23,7 @@ from app.models import (
     TextResponse, TruckProfile,
 )
 
+LOG = logging.getLogger(__name__)
 WEEKLY_PAY_DAYS = 7               # a dispatcher who pays weekly
 BACKEND = Path(__file__).resolve().parents[1]
 DATA = BACKEND / "data"
@@ -43,7 +46,17 @@ PROFILE: TruckProfile = TruckProfile.model_validate_json((DATA / "profile.json")
 BOARD: dict[str, Load] = {l.id: l for l in _read_board()}
 PASTED: dict[str, Load] = {}   # pasted/screenshot loads seen by /evaluate or /offers, by id
 
-app = FastAPI(title="LoadCheck API")
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    """A restart (deploy, idle wake) must not forget advances the bank already holds."""
+    if os.getenv("BANK_RELOAD_ON_START", "on").lower() != "off":
+        found = nessie.load_existing_advances()
+        if found:
+            LOG.info("Reloaded %d advance(s) from the bank", found)
+    yield
+
+
+app = FastAPI(title="LoadCheck API", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     # ALLOWED_ORIGINS on the host (comma-separated) adds the deployed site; local dev always works.
@@ -87,6 +100,8 @@ def health() -> dict:
             # and only flips once something reads the account (the read is cached for 60 s)
             "nessie": nessie.data_source(),
         },
+        # "off" on the public deployment: advances are demo-only there, nothing is written to the bank
+        "bank_writes": "on" if nessie.writes_enabled() else "off",
         "demo_now": demo_now().isoformat(),
         "board_loads": len(BOARD),
         "pasted_loads": len(PASTED),

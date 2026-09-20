@@ -45,7 +45,7 @@ export function AdvanceOffer({
             Scheduled repayment {money(a.repay_amount)} on {day(a.repay_on)} when the broker
             pays.
             <br />
-            {a.source === "live" ? <div className="advance-receipt"><span>Capital One sandbox · pending deposit</span><code>Deposit {a.deposit_id}</code><code>Repayment bill {a.bill_id}</code></div> : <p className="advance-fixture">Offline demo only · no Nessie deposit created.</p>}
+            {a.source === "live" ? <div className="advance-receipt"><span>Capital One sandbox · pending deposit</span><code>Deposit {a.deposit_id}</code><code>Repayment bill {a.bill_id}</code></div> : <p className="advance-fixture">Demo mode · nothing written to the bank. The live pitch writes a real deposit to Capital One.</p>}
 
           </div>
         ))}
