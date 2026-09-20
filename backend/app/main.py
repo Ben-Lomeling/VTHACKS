@@ -95,13 +95,20 @@ def health() -> dict:
     return {
         "modules": {
             "profit": profit.STATUS, "geo": geo.STATUS, "optimizer": optimizer.STATUS,
-            "cashflow": cashflow.STATUS, "gemini": gemini.STATUS,
+            "cashflow": cashflow.STATUS, "gemini": gemini.data_source(),
             # ask the bank, don't report the last-seen value: nessie.STATUS starts "fixture"
             # and only flips once something reads the account (the read is cached for 60 s)
             "nessie": nessie.data_source(),
         },
         # "off" on the public deployment: advances are demo-only there, nothing is written to the bank
         "bank_writes": "on" if nessie.writes_enabled() else "off",
+        # Free-tier Gemini allows 20 reads a day. The pitch spends none of them (the example load is
+        # pinned); this is the budget for offers judges paste. Check it before judging.
+        "gemini_reads": {
+            "used": gemini.calls_made(),
+            "daily_limit": gemini.DAILY_LIMIT,
+            "exhausted": gemini.quota_exhausted(),
+        },
         "demo_now": demo_now().isoformat(),
         "board_loads": len(BOARD),
         "pasted_loads": len(PASTED),
