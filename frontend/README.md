@@ -75,3 +75,31 @@ Mock mode uses recorded backend run/cash-flow responses and has an in-memory adv
 it never calls Nessie and does not recalculate values when inputs change. Live API mode remains the
 default and never silently substitutes mock results. The proposed follow-up-question routes in
 `docs/FRONTEND_NOTES.md` are not in the merged contract, so that optional UI remains pending.
+
+## Map interaction update
+
+The production map now enables wheel/trackpad, button, touch, and keyboard zoom. `MapViewport`
+fits once when ordered load IDs or valid stop coordinates change; cash-flow updates never trigger
+fitting. Its resize observer preserves center/zoom, and **Fit route** uses measured visible overlays.
+Keeping this component outside the map render function prevents remounts from resetting exploration.
+
+`mapGeometry.ts` validates coordinates, combines coincident stop roles, and omits unavailable legs
+without inventing connections. Pickup/delivery markers have distinct shapes and accessible names;
+white route outlines preserve contrast, and money markers sit beside stop labels. `MapTiles` keeps
+successful tiles after individual errors and provides loading, degraded, offline, and retry feedback.
+Planning and cash-flow errors have separate retries. Request generations prevent stale cash-flow
+responses from overwriting another selected run. City/state fields provide inline validation.
+
+Verification: production build passed; all 6 dependency-free geometry/input regression tests passed
+(`node --test tests/mapGeometry.test.mjs` from frontend, Node 22.18+); backend pytest: 129 passed.
+Desktop browser checks covered zoom buttons, wheel input, drag, keyboard navigation, route selection,
+Fit route, cash-refresh/offline view preservation, and resize preservation at 1024×768 and 1280×800.
+A local fixture server verified planning failure/recovery, cash-flow errors, delayed stale responses,
+empty results, invalid city submission, and missing coordinates. Wide desktop layout was also inspected
+at 1440×900. Phone-specific verification was dropped at the user's request; physical trackpad pinch,
+reduced-motion preference switching, and isolated tile-error injection remain unverified.
+
+Routes remain estimated connections, not road directions. The evaluation API still does not return
+resolved coordinates for edited offer cities; missing stop coordinates are reported, not inferred.
+No services, shared API models, or dependencies were added. The isolated preview keeps its existing
+MapTiles interface.

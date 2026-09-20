@@ -92,12 +92,21 @@ export default function App() {
   const [chains, setChains] = useState<Chain[]>([]);
   const [selected, setSelected] = useState(0);
   const [planned, setPlanned] = useState(false);
+  const [planError, setPlanError] = useState("");
   const [includeBoard, setIncludeBoard] = useState(true);
   const [cash, setCash] = useState<CashflowCheck>();
+  const [cashBusy, setCashBusy] = useState(false);
+  const [cashError, setCashError] = useState("");
+  const cashRequest = useRef(0);
   const [runExplanation, setRunExplanation] = useState("");
   const [bank, setBank] = useState<CostsFromBank>();
   // Accepting bank costs changes every number in the demo story, so it takes a second, explicit click.
   const [confirmBank, setConfirmBank] = useState(false);
+  useEffect(() => {
+    if (!toast) return;
+    const timer = window.setTimeout(() => setToast(""), 6000);
+    return () => window.clearTimeout(timer);
+  }, [toast]);
   async function run(label: string, fn: () => Promise<void>) {
     setBusy(label);
     setError("");
@@ -134,6 +143,7 @@ export default function App() {
     setChains([]);
     setCash(undefined);
     setPlanned(false);
+    setPlanError("");
     setBank(undefined);
     setExplanation("");
     setMessage("");
@@ -157,18 +167,26 @@ export default function App() {
     setConfirmBank(false);
   }, [draft]);
   const chain = chains[selected];
-  // Feature A: the map is colored by money, so fetch the cash flow as soon as a run is picked.
+  // A selection change or a newer refresh invalidates older cash-flow responses.
+  async function refreshCash(selectedChain: Chain) {
+    const request = ++cashRequest.current;
+    setCashBusy(true);
+    setCashError("");
+    try {
+      const value = await api.cashflow(selectedChain);
+      if (request === cashRequest.current) setCash(value);
+    } catch (e) {
+      if (request === cashRequest.current) setCashError(e instanceof Error ? e.message : "Cash flow unavailable.");
+    } finally {
+      if (request === cashRequest.current) setCashBusy(false);
+    }
+  }
   useEffect(() => {
-    if (!chain) return;
     setCash(undefined);
-    let current = true;
-    api
-      .cashflow(chain)
-      .then((c) => current && setCash(c))
-      .catch(() => { if(current) setError("Cash flow unavailable. Open cash-flow details and retry."); });
-    return () => {
-      current = false;
-    };
+    setCashError("");
+    setCashBusy(false);
+    if (chain) void refreshCash(chain);
+    return () => { cashRequest.current++; };
   }, [chain]);
   const allLoads = [...board, ...offers];
   const analyze = () =>
@@ -195,10 +213,14 @@ export default function App() {
     });
   const plan = () =>
     run("Finding runs that bring you home…", async () => {
-      const c = await api.chains({
-        seed_load_ids: offers.map((l) => l.id),
-        include_board: includeBoard,
-      });
+      setPlanError("");
+      let c: Chain[];
+      try {
+        c = await api.chains({ seed_load_ids: offers.map(l => l.id), include_board: includeBoard });
+      } catch (e) {
+        setPlanError(e instanceof Error ? e.message : "Could not plan this run. Please try again.");
+        return;
+      }
       setChains(c);
       setSelected(0);
       setCash(undefined);
@@ -206,7 +228,8 @@ export default function App() {
       setPlanned(true);
       if (c[0]?.legs[0])
         setRunExplanation(
-          (await api.explain({ economics: c[0].legs[0], chain: c[0] })).text,
+          await api.explain({ economics: c[0].legs[0], chain: c[0] })
+            .then(reply => reply.text).catch(() => "Your run is ready. The explanation is temporarily unavailable."),
         );
     });
   return (
@@ -890,10 +913,10 @@ export default function App() {
               </section>
             </form>
           )}
-          {screen === "Plan my run" && <RunsWorkspace profile={profile} loads={allLoads} chains={chains} selected={selected} cash={cash} busy={!!busy} planned={planned} includeBoard={includeBoard} boardCount={board.length} offerCount={offers.length}
+          {screen === "Plan my run" && <RunsWorkspace profile={profile} loads={allLoads} chains={chains} selected={selected} planError={planError} cash={cash} cashBusy={cashBusy} cashError={cashError} onRetryCash={()=>{if(chain) void refreshCash(chain);}} busy={!!busy} planned={planned} includeBoard={includeBoard} boardCount={board.length} offerCount={offers.length}
             onBoard={value=>{setIncludeBoard(value);setChains([]);setCash(undefined);setPlanned(false);}}
-            onPlan={()=>void plan()} onSelect={i=>{setSelected(i);setCash(undefined);}}
-            onAdvance={id=>{if(chain) void run("Recording sandbox advance…",async()=>{const updated=await api.advance(chain,id);setCash(updated);setToast(updated.shortfall?"Advance recorded. A shortfall remains.":"Advance recorded. Run covered.");});}}>
+            onPlan={()=>void plan()} onSelect={i=>{if(i!==selected){cashRequest.current++;setSelected(i);setCash(undefined);}}}
+            onAdvance={id=>{if(chain) void run("Recording sandbox advance…",async()=>{const request=++cashRequest.current;setCashBusy(false);const updated=await api.advance(chain,id);if(request===cashRequest.current){setCash(updated);setCashError("");}setToast(updated.shortfall?"Advance recorded. A shortfall remains.":"Advance recorded. Run covered.");});}}>
               {chain && (
                 <section className="card">
                   <div className="section-heading">
@@ -903,15 +926,10 @@ export default function App() {
                     </div>
                     <button
                       className="primary"
-                      disabled={!!busy}
-                      onClick={() =>
-                        void run(
-                          "Checking fuel, bills and payment dates…",
-                          async () => setCash(await api.cashflow(chain)),
-                        )
-                      }
+                      disabled={!!busy || cashBusy}
+                      onClick={() => void refreshCash(chain)}
                     >
-                      Can I afford this run? →
+                      {cashBusy ? "Checking cash flow…" : "Refresh cash flow"}
                     </button>
                   </div>
                   <p>
