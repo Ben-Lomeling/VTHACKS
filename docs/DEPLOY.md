@@ -1,4 +1,28 @@
-# Deploy: Render (backend) + Vercel (frontend) + the MLH/GoDaddy domain
+# Deploy
+
+**One server.** `backend/app/main.py` serves `frontend/dist` when it exists, so the API and the site share
+one URL and there is no CORS to configure.
+
+```bash
+cd frontend && npm run build          # writes frontend/dist
+cd ../backend && source .venv/bin/activate
+uvicorn app.main:app --port 8000      # http://localhost:8000 = the whole app
+```
+
+## Fastest public link (no accounts): Cloudflare quick tunnel
+```bash
+cloudflared tunnel --url http://localhost:8000
+```
+It prints a `https://<random>.trycloudflare.com` URL that anyone can open. The laptop has to stay awake
+and the URL changes each run, so paste the current one into Devpost right before submitting.
+
+## Permanent link: Render (one service)
+Render builds the frontend and runs the API from the same service (see `render.yaml`). Vercel is no longer
+needed; the old two-service steps are below for reference.
+
+---
+
+# Reference: Render (backend) + Vercel (frontend) + the MLH/GoDaddy domain
 
 Nihal does the sign-ins; everything else is in the repo. Total ~15 minutes, plus DNS time.
 Config lives in `render.yaml` and `frontend/vercel.json`.
