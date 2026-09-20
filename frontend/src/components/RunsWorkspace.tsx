@@ -5,6 +5,7 @@ import type { TruckProfile, Load, Chain, CashflowCheck } from '../types';
 import { RouteMap } from './RouteMap';
 import { MapTiles } from './MapTiles';
 import { AdvanceOffer } from './AdvanceOffer';
+import { CapitalOneMark } from './CapitalOneMark';
 import { RunTimeline } from './RunTimeline';
 const money = (n: number) => n.toLocaleString('en-US', {style:'currency',currency:'USD'});
 export function RunsWorkspace({profile, loads, chains, selected, cash, busy, planned, includeBoard, boardCount, offerCount, onBoard, onPlan, onSelect, onAdvance, children}: {
@@ -31,14 +32,14 @@ export function RunsWorkspace({profile, loads, chains, selected, cash, busy, pla
       <div className="workspace-runs" role="group" aria-label="Select a run">{chains.map((c,i)=><button key={c.loads.join()} disabled={busy} aria-pressed={i===selected} onClick={()=>onSelect(i)}><span>{i===0?'Best net':`Run ${i+1}`}</span><strong>{money(c.total_net_profit)}</strong></button>)}</div>
       <section className="workspace-profit"><span>Net profit</span><strong>{money(chain.total_net_profit)}</strong><p>{chain.days.toFixed(1)} days · {chain.total_miles.toFixed(0)} miles · {money(chain.net_per_day)}/day</p></section>
       {chain.losing && <p className="notice">{chain.losing_reason || 'This run does not earn a profit.'}</p>}
-      <section className={`workspace-funding ${cash?.shortfall?'shortfall':'covered'}`} aria-live="polite"><h2>{cash ? cash.shortfall?'! Cash shortfall':'✓ Run covered':'Cash flow'}</h2>{cash ? <><strong>{money(cash.lowest_balance)}</strong><p>Lowest projected balance · {cash.lowest_balance_date}</p></>:<p>Waiting for cash-flow data. Use Refresh cash flow below to retry.</p>}</section>
+      <section className={`workspace-funding ${cash?.shortfall?'shortfall':'covered'}`} aria-live="polite"><h2>{cash ? cash.shortfall?'! Cash shortfall':'✓ Run covered':'Cash flow'}</h2>{cash ? <><strong>{money(cash.lowest_balance)}</strong><p>Lowest projected balance · {cash.lowest_balance_date}</p><CapitalOneMark label="Balance and bills from" /></>:<p>Waiting for cash-flow data. Use Refresh cash flow below to retry.</p>}</section>
       <AdvanceOffer key={chain.loads.join()} cash={cash} busy={busy} onAdvance={onAdvance}/>
       <h2>Route</h2><ol className="workspace-stops">{chain.loads.map(id=>{const load=loads.find(l=>l.id===id);return <li key={id}><strong>{load?`${load.origin.city} to ${load.destination.city}`:id}</strong><small>{load?.broker || id}</small></li>;})}</ol>
       <details><summary>Schedule and assumptions</summary><RunTimeline chain={chain} route={cash?.route}/>{chain.feasible_notes.map((note,i)=><p key={i}>{note}</p>)}<p>Estimated connections, not road directions. Simplified hours of service.</p></details>
       <details onToggle={e=>setCashDetails(e.currentTarget.open)}><summary>Cash-flow chart and events</summary>{cashDetails && children}</details>
       <button className="text-button workspace-full" disabled={busy} onClick={onPlan}>Replan run</button>
     </>}
-    <p className="workspace-disclosure">Simulated load board · Capital One Nessie sandbox</p>
+    <p className="workspace-disclosure">Simulated load board · <CapitalOneMark label="bank data by" /> Nessie sandbox</p>
   </>;
   const loc=profile?.current_location;
   return <section className="runs-workspace" aria-label="Runs workspace" aria-busy={busy}>

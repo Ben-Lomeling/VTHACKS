@@ -1,0 +1,7 @@
+<!-- PLACEHOLDER ONLY - replace this file with the official Capital One mark, same filename.
+     Deliberately neutral: this is not an imitation of their logo. No code change is needed on swap. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="24" viewBox="0 0 120 24" role="img" aria-label="Logo placeholder">
+  <rect x="0.5" y="0.5" width="119" height="23" rx="4" fill="#f1f3f5" stroke="#c4c9cf" stroke-dasharray="4 3"/>
+  <text x="60" y="16" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10"
+        font-weight="700" letter-spacing="1.2" fill="#868e96">LOGO HERE</text>
+</svg>
