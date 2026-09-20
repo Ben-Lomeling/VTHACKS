@@ -45,25 +45,6 @@ export function PlaceFields({
           placeholder="City, ST"
         />
       </Field>
-      <div className="coordinates">
-        {(["lat", "lng"] as const).map((k) => (
-          <Field key={k} label={k === "lat" ? "Latitude" : "Longitude"}>
-            <input
-              type="number"
-              step="any"
-              min={k === "lat" ? -90 : -180}
-              max={k === "lat" ? 90 : 180}
-              value={place[k] ?? ""}
-              onChange={(e) =>
-                onChange({
-                  ...place,
-                  [k]: e.target.value === "" ? null : Number(e.target.value),
-                })
-              }
-            />
-          </Field>
-        ))}
-      </div>
     </div>
   );
 }

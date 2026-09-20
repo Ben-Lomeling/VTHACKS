@@ -195,7 +195,20 @@
         "balance": -494.03,
         "kind": "fuel"
       }
-    ]
+    ],
+    "advance_load_ids": [
+      "L027"
+    ],
+    "advances": [],
+    "advance_offer": {
+      "load_id": "L027",
+      "amount": 1044.0,
+      "fee": 36.0,
+      "on": "2026-09-21",
+      "repay_amount": 1080.0,
+      "repay_on": "2026-10-21",
+      "broker": "Blue Ridge Logistics"
+    }
   },
   "status": 200
 }

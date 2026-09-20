@@ -15,6 +15,8 @@ export interface TruckProfile {
   miles_per_month: number;
   dispatch_pct: number;
   target_net_cpm: number;
+  min_posted_cpm: number;   // his own rule on the posted rate; 0 = no rule
+  pays_weekly: boolean;     // dispatcher pays weekly instead of broker terms
   cost_source: "manual" | "nessie";
 }
 export interface Load {
@@ -54,6 +56,7 @@ export interface LoadEconomics {
   break_even_rate: number;
   counter_offer_rate: number;
   verdict: "take" | "negotiate" | "skip";
+  meets_posted_rule?: boolean | null;
 }
 export interface Chain {
   loads: string[];

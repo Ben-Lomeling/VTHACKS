@@ -1,0 +1,27 @@
+# Backend on Render (free plan). Render reads this file when you create a Blueprint from the repo.
+# Secrets are NOT in here: set NESSIE_API_KEY, GEMINI_API_KEY (and ALLOWED_ORIGINS once the
+# frontend has a URL) in the Render dashboard. See docs/DEPLOY.md.
+services:
+  - type: web
+    name: loadcheck-api
+    runtime: python
+    plan: free
+    region: ohio
+    rootDir: backend
+    # Nothing to build but Python: frontend/dist is committed (scripts/build_site.sh rebuilds it).
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.6"
+      - key: DEMO_NOW
+        value: "2026-09-21T06:00"
+      - key: NESSIE_API_KEY
+        sync: false          # set it in the dashboard
+      - key: NESSIE_WRITES
+        value: "off"         # the public site never writes to the bank; the demo laptop does
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false          # e.g. https://loadcheck.tech,https://loadcheck.vercel.app

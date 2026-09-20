@@ -1271,3 +1271,43 @@ footer span:last-child {
 .money-legend .swatch:not(:first-child) {
   margin-left: 12px;
 }
+.result-numbers em {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.rule-ok {
+  color: #1f8a4c;
+}
+.rule-no {
+  color: #c03937;
+}
+
+/* Frontend demo notes: readable phone layouts and explicit bank receipts. */
+.map-mode{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:12px 0;font-size:13px}
+.map-mode button{min-height:44px;padding:8px 12px;border:1px solid #bdc9cf;border-radius:8px;background:#fff;color:#154f77}
+.map .leaflet-container{background:#edf1f4}
+.advance-done{border-left:5px solid #0867ad;background:#edf8f2;color:#163f2a}
+.advance h3{font-size:20px;margin:0 0 12px}
+.advance-record{line-height:1.6;margin-top:12px}
+.advance-receipt{display:flex;align-items:flex-start;flex-direction:column;gap:8px;margin-top:12px}
+.advance-receipt code{max-width:100%;overflow-wrap:anywhere;padding:6px 10px;background:#fff;border:1px solid #bdd6c8;border-radius:6px;font-size:12px}
+.advance-fixture{font-weight:600;margin-top:12px!important}
+.advance button{min-height:44px;white-space:normal}
+.money-pin.money-bill.money-red span{animation:none}
+button:focus-visible,summary:focus-visible,select:focus-visible{outline:3px solid #0870db;outline-offset:3px}
+@media(max-width:640px){
+  .card,.plan-grid,.map-card,.timeline,.table-wrap{min-width:0;max-width:100%}
+  .table-wrap{overflow-x:auto} .table-wrap table{min-width:560px}
+  .advance-actions,.section-heading,.timeline-head{flex-wrap:wrap}
+  .advance-actions button{flex:1 1 140px}
+  .timeline-head span{overflow-wrap:anywhere}
+  .timeline-bar{min-height:82px}
+  .advance{padding:16px;font-size:16px;overflow-wrap:anywhere}
+  .cash-chart{width:100%;min-width:0}
+  .leaflet-control-zoom a{width:44px!important;height:44px!important;line-height:44px!important}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}

@@ -36,6 +36,11 @@ _ADVANCES: dict[str, dict] = {}    # load_id -> advance record created by this s
 ALIASES = {"Truck Finance Co": "Truck payment", "Commercial Truck Insurance": "Truck insurance", "ELD + Phone": "ELD / phone"}
 
 
+def _secret(name: str) -> str | None:
+    """The local .env file if it has the key, else the environment (that's how Render passes secrets)."""
+    return dotenv_values(ROOT / ".env").get(name) or os.getenv(name)
+
+
 def _today() -> date:
     config = dotenv_values(ROOT / ".env")
     raw = os.getenv("DEMO_NOW", config.get("DEMO_NOW", "2026-09-21T06:00"))
@@ -50,9 +55,9 @@ def _number(value: object) -> float:
 
 
 def _live(resources: tuple[str, ...]) -> dict:
-    key = dotenv_values(ROOT / ".env").get("NESSIE_API_KEY")
+    key = _secret("NESSIE_API_KEY")
     if not key:
-        raise ValueError("Missing root .env Nessie key")
+        raise ValueError("Missing NESSIE_API_KEY (env or root .env)")
     ids = json.loads((DATA / "nessie_ids.json").read_text())
     with httpx.Client(base_url=BASE, params={"key": key}, timeout=5) as client:
         def get(path: str) -> dict | list:
@@ -196,9 +201,9 @@ def get_costs_from_bank(profile: TruckProfile) -> dict:
 
 # ---- Feature B: Capital One advance (writes) ----
 def _client() -> httpx.Client:
-    key = dotenv_values(ROOT / ".env").get("NESSIE_API_KEY")
+    key = _secret("NESSIE_API_KEY")
     if not key:
-        raise ValueError("Missing root .env Nessie key")
+        raise ValueError("Missing NESSIE_API_KEY (env or root .env)")
     return httpx.Client(base_url=BASE, params={"key": key}, timeout=5)
 
 
@@ -212,6 +217,40 @@ def _post(client: httpx.Client, path: str, body: dict) -> str:
     return response.json()["objectCreated"]["_id"]
 
 
+def writes_enabled() -> bool:
+    """False on the public site (NESSIE_WRITES=off): visitors get demo-mode advances, nothing is written."""
+    return (_secret("NESSIE_WRITES") or "on").strip().lower() != "off"
+
+
+def load_existing_advances() -> int:
+    """Re-read advances this account already has, so a restart doesn't forget them. Returns how many."""
+    if not writes_enabled():
+        return 0
+    try:
+        with _client() as client:
+            path = _account_path()
+            deposits = client.get(f"{path}/deposits")
+            deposits.raise_for_status()
+            bills = client.get(f"{path}/bills")
+            bills.raise_for_status()
+            repayments = [b for b in bills.json() if b.get("payee") == ADVANCE_PAYEE]
+            for deposit in deposits.json():
+                description = str(deposit.get("description", ""))
+                if not description.startswith(ADVANCE_TAG):
+                    continue
+                load_id = description[len(ADVANCE_TAG):].strip().split(" ")[0]
+                bill = next((b for b in repayments if str(b.get("nickname", "")).endswith(load_id)), {})
+                _ADVANCES[load_id] = {
+                    "load_id": load_id, "amount": _number(deposit.get("amount", 0)),
+                    "on": str(deposit.get("transaction_date", "")),
+                    "repay_amount": _number(bill.get("payment_amount", 0)),
+                    "repay_on": str(bill.get("payment_date", "")),
+                    "deposit_id": deposit["_id"], "bill_id": bill.get("_id", ""), "source": "live"}
+    except Exception as exc:
+        LOG.info("Could not reload advances (%s); starting with none", type(exc).__name__)
+    return len(_ADVANCES)
+
+
 def create_advance(load_id: str, amount: float, on: date, repay_amount: float, repay_on: date,
                    who: str = "") -> dict:
     """Record a Capital One advance in the bank: a deposit on `on` and a repayment bill on `repay_on`.
@@ -223,6 +262,8 @@ def create_advance(load_id: str, amount: float, on: date, repay_amount: float, r
               "repay_amount": round(repay_amount, 2), "repay_on": repay_on.isoformat()}
     deposit_id = None
     try:
+        if not writes_enabled():
+            raise PermissionError("bank writes are off on this deployment")
         with _client() as client:
             path = _account_path()
             deposit_id = _post(client, path + "/deposits", {
@@ -239,7 +280,7 @@ def create_advance(load_id: str, amount: float, on: date, repay_amount: float, r
                 raise
         record |= {"deposit_id": deposit_id, "bill_id": bill_id, "source": "live"}
     except Exception as exc:
-        LOG.info("Nessie advance write unavailable (%s); keeping it offline", type(exc).__name__)
+        LOG.info("Nessie advance not written (%s); keeping it in memory", type(exc).__name__)
         offline = f"offline-{uuid.uuid4().hex[:8]}"
         record |= {"deposit_id": offline, "bill_id": offline, "source": "fixture"}
     _CACHE.clear()
@@ -256,6 +297,8 @@ def reset_advances() -> int:
     """Delete every advance deposit and repayment bill on the demo account (for rehearsals). Returns how many."""
     removed = 0
     try:
+        if not writes_enabled():
+            raise PermissionError("bank writes are off on this deployment")
         with _client() as client:
             path = _account_path()
             for kind, match in (("deposits", lambda d: str(d.get("description", "")).startswith(ADVANCE_TAG)),

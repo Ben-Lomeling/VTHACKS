@@ -5,13 +5,16 @@ Run from backend/:  uvicorn app.main:app --reload
 from __future__ import annotations
 
 import json
+import logging
 import os
+from contextlib import asynccontextmanager
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app import cashflow, gemini, geo, nessie, optimizer, profit
 from app.models import (
@@ -20,6 +23,8 @@ from app.models import (
     TextResponse, TruckProfile,
 )
 
+LOG = logging.getLogger(__name__)
+WEEKLY_PAY_DAYS = 7               # a dispatcher who pays weekly
 BACKEND = Path(__file__).resolve().parents[1]
 DATA = BACKEND / "data"
 load_dotenv(BACKEND.parent / ".env")
@@ -41,10 +46,23 @@ PROFILE: TruckProfile = TruckProfile.model_validate_json((DATA / "profile.json")
 BOARD: dict[str, Load] = {l.id: l for l in _read_board()}
 PASTED: dict[str, Load] = {}   # pasted/screenshot loads seen by /evaluate or /offers, by id
 
-app = FastAPI(title="LoadCheck API")
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    """A restart (deploy, idle wake) must not forget advances the bank already holds."""
+    if os.getenv("BANK_RELOAD_ON_START", "on").lower() != "off":
+        found = nessie.load_existing_advances()
+        if found:
+            LOG.info("Reloaded %d advance(s) from the bank", found)
+    yield
+
+
+app = FastAPI(title="LoadCheck API", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    # ALLOWED_ORIGINS on the host (comma-separated) adds the deployed site; local dev always works.
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173",
+                   *[o.strip() for o in os.getenv("ALLOWED_ORIGINS", "").split(",") if o.strip()]],
+    allow_origin_regex=r"https://.*\.vercel\.app",      # Vercel preview builds
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -77,8 +95,13 @@ def health() -> dict:
     return {
         "modules": {
             "profit": profit.STATUS, "geo": geo.STATUS, "optimizer": optimizer.STATUS,
-            "cashflow": cashflow.STATUS, "gemini": gemini.STATUS, "nessie": nessie.STATUS,
+            "cashflow": cashflow.STATUS, "gemini": gemini.STATUS,
+            # ask the bank, don't report the last-seen value: nessie.STATUS starts "fixture"
+            # and only flips once something reads the account (the read is cached for 60 s)
+            "nessie": nessie.data_source(),
         },
+        # "off" on the public deployment: advances are demo-only there, nothing is written to the bank
+        "bank_writes": "on" if nessie.writes_enabled() else "off",
         "demo_now": demo_now().isoformat(),
         "board_loads": len(BOARD),
         "pasted_loads": len(PASTED),
@@ -170,10 +193,11 @@ def _check(chain: Chain) -> CashflowCheck:
     loads, balance, bills, today = _all_loads(), nessie.get_checking_balance(), nessie.get_upcoming_bills(60), demo_now().date()
     taken = nessie.advances()
     advanced = set(taken) & set(chain.loads)
-    check = cashflow.simulate(chain, loads, balance, bills, today, advanced)
+    pay_days = WEEKLY_PAY_DAYS if PROFILE.pays_weekly else None
+    check = cashflow.simulate(chain, loads, balance, bills, today, advanced, pay_days)
     start, _ = geo.resolve(PROFILE.current_location)
     home, _ = geo.resolve(PROFILE.home)
-    check.route, check.money_stops = cashflow.balance_along_route(chain, loads, start, home, balance, bills, today, advanced)
+    check.route, check.money_stops = cashflow.balance_along_route(chain, loads, start, home, balance, bills, today, advanced, pay_days)
     check.advances = [taken[i] for i in chain.loads if i in advanced]
     if check.advance_load_ids:
         check.advance_offer = _advance_terms(chain, check.advance_load_ids[0])
@@ -192,7 +216,8 @@ def _advance_terms(chain: Chain, load_id: str) -> dict:
     delivered = datetime.fromisoformat(str(stop["delivered_at"])).date()
     return {"load_id": load_id, "amount": round(take_home - fee, 2), "fee": round(fee, 2), "on": delivered.isoformat(),
             "repay_amount": round(take_home, 2),
-            "repay_on": (delivered + timedelta(days=load.payment_terms_days)).isoformat(), "broker": load.broker}
+            "repay_on": (delivered + timedelta(days=WEEKLY_PAY_DAYS if PROFILE.pays_weekly else load.payment_terms_days)).isoformat(),
+            "broker": load.broker}
 
 
 @app.post("/api/advance", response_model=CashflowCheck)
@@ -221,3 +246,12 @@ def explain(req: ExplainRequest) -> TextResponse:
 def counter_message(req: CounterRequest) -> TextResponse:
     load = _all_loads().get(req.economics.load_id)
     return TextResponse(text=gemini.counter_message(req.economics, load.broker if load else None))
+
+
+# ---- One server: serve the built frontend from the API ----
+# `npm run build` writes frontend/dist. When it's there, this process serves the whole app:
+# one URL, no CORS, and `cloudflared tunnel --url http://localhost:8000` publishes everything.
+# Mounted last so every /api route above wins.
+DIST = BACKEND.parent / "frontend" / "dist"
+if DIST.is_dir():
+    app.mount("/", StaticFiles(directory=DIST, html=True), name="site")

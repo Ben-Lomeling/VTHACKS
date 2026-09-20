@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import type { CashflowCheck } from "../types";
 
 const money = (v: number) =>
@@ -21,29 +21,33 @@ export function AdvanceOffer({
   busy: boolean;
   onAdvance: (loadId: string) => void;
 }) {
+  const confirmButton = useRef<HTMLButtonElement>(null);
+  const successPanel = useRef<HTMLDivElement>(null);
+  const wasSubmitting = useRef(false);
+  useEffect(() => { if(wasSubmitting.current && !busy) { successPanel.current?.focus(); wasSubmitting.current=false; } }, [busy, cash]);
   const [confirming, setConfirming] = useState(false);
+  useEffect(() => { if(confirming) confirmButton.current?.focus(); }, [confirming]);
+  useEffect(() => setConfirming(false), [cash]);
   if (!cash) return null;
   const taken = cash.advances ?? [];
   const offer = cash.advance_offer;
 
   if (taken.length && !cash.shortfall)
     return (
-      <div className="advance advance-done">
+      <div className="advance advance-done" ref={successPanel} tabIndex={-1} role="status" aria-live="polite">
+        <h3><span aria-hidden="true">✓</span> Advance recorded · run covered</h3>
         {taken.map((a) => (
-          <p key={a.load_id}>
+          <div className="advance-record" key={a.load_id}>
             <strong>
               Capital One advance on {a.load_id}: +{money(a.amount)} on{" "}
               {day(a.on)}.
             </strong>{" "}
-            Repaid {money(a.repay_amount)} on {day(a.repay_on)} when the broker
+            Scheduled repayment {money(a.repay_amount)} on {day(a.repay_on)} when the broker
             pays.
             <br />
-            <small>
-              {a.source === "live"
-                ? `Deposit created in Capital One · id ${a.deposit_id.slice(0, 8)} · repayment bill ${a.bill_id.slice(0, 8)}`
-                : "Bank sandbox unreachable: advance kept on this laptop for the demo"}
-            </small>
-          </p>
+            {a.source === "live" ? <div className="advance-receipt"><span>Capital One sandbox · pending deposit</span><code>Deposit {a.deposit_id}</code><code>Repayment bill {a.bill_id}</code></div> : <p className="advance-fixture">Demo mode · nothing written to the bank. The live pitch writes a real deposit to Capital One.</p>}
+
+          </div>
         ))}
       </div>
     );
@@ -51,7 +55,7 @@ export function AdvanceOffer({
   if (!cash.shortfall) return null;
   if (!offer)
     return (
-      <div className="advance advance-red">
+      <div className="advance advance-red" aria-busy={busy}>
         <p>
           <strong>You'd be overdrawn on the road.</strong> A Capital One advance
           on these loads doesn't cover it; this run needs a different plan.
@@ -60,7 +64,7 @@ export function AdvanceOffer({
     );
 
   return (
-    <div className="advance advance-red">
+    <div className="advance advance-red" aria-busy={busy}>
       <p>
         <strong>
           You'd be overdrawn by {money(-cash.lowest_balance)} on{" "}
@@ -69,7 +73,8 @@ export function AdvanceOffer({
         Get paid for {offer.load_id} the day you deliver it.
       </p>
       {confirming ? (
-        <div className="advance-confirm">
+        <div className="advance-confirm" role="group" aria-label="Confirm sandbox advance">
+          <h3>Confirm advance</h3>
           <p>
             Capital One deposits <strong>{money(offer.amount)}</strong> on{" "}
             {day(offer.on)} when {offer.load_id} delivers. Fee{" "}
@@ -83,13 +88,14 @@ export function AdvanceOffer({
           <div className="advance-actions">
             <button
               className="primary"
+              ref={confirmButton}
               disabled={busy}
               onClick={() => {
-                setConfirming(false);
+                wasSubmitting.current = true;
                 onAdvance(offer.load_id);
               }}
             >
-              Confirm advance →
+              {busy ? "Recording advance…" : "Confirm advance"}
             </button>
             <button
               className="text-button"

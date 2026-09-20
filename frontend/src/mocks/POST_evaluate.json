@@ -1,0 +1,17 @@
+{
+  "load_id": "DEMO-BAD",
+  "deadhead_miles": 99.85827653198801,
+  "loaded_miles": 493.1702641023773,
+  "total_miles": 593.0285406343653,
+  "posted_rpm": 2.4332367284636036,
+  "fuel_cost": 338.9097837386227,
+  "variable_cost": 118.60570812687307,
+  "fixed_cost": 296.51427031718265,
+  "dispatch_fee": 120.0,
+  "net_profit": 325.9702378173215,
+  "true_net_cpm": 0.5496704045114417,
+  "break_even_rate": 837.8108468696428,
+  "counter_offer_rate": 1332.0012973982805,
+  "meets_posted_rule": false,
+  "verdict": "negotiate"
+}

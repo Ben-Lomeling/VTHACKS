@@ -75,3 +75,14 @@ def test_guard_loaded_miles(miles):
 def test_guard_rate(rate):
     with pytest.raises(ValueError, match="rate_usd must be > 0"):
         evaluate_load(load(rate), profile(), 100, 500)
+
+
+def test_posted_rule_is_reported_but_does_not_change_the_verdict():
+    """His own rule ("nothing under $3/mi posted") vs what he actually keeps."""
+    with_rule = profile(min_posted_cpm=3.0)
+    cheap = evaluate_load(load(1200), with_rule, deadhead_miles=100, loaded_miles=500)   # $2.40/mi posted
+    assert cheap.meets_posted_rule is False
+    assert cheap.verdict == evaluate_load(load(1200), profile(), deadhead_miles=100, loaded_miles=500).verdict
+    rich = evaluate_load(load(1600), with_rule, deadhead_miles=100, loaded_miles=500)    # $3.20/mi posted
+    assert rich.meets_posted_rule is True
+    assert evaluate_load(load(1200), profile(), deadhead_miles=100, loaded_miles=500).meets_posted_rule is None

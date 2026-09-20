@@ -123,3 +123,50 @@ def test_live_reads_are_cached(monkeypatch):
     monkeypatch.setattr(nessie, "_live", lambda resources: calls.append(resources) or bank)
     nessie.get_checking_balance(), nessie.get_checking_balance()
     assert calls == [("account",)] and nessie.STATUS == "live"
+
+
+# ---- Reliability: the public site never writes to the bank ----
+def test_writes_off_keeps_the_advance_in_memory(monkeypatch):
+    calls = []
+    monkeypatch.setattr(nessie, "_client", lambda: calls.append("client") or (_ for _ in ()).throw(AssertionError))
+    monkeypatch.setenv("NESSIE_WRITES", "off")
+    monkeypatch.setattr(nessie, "dotenv_values", lambda path: {})
+    assert nessie.writes_enabled() is False
+    record = nessie.create_advance("L027", 1044, date(2026, 9, 21), 1080, date(2026, 10, 21))
+    assert record["source"] == "fixture" and calls == []          # no bank call at all
+    assert nessie.reset_advances() == 1 and calls == []
+    assert client.get("/api/health").json()["bank_writes"] == "off"
+
+
+def test_writes_on_by_default(monkeypatch):
+    monkeypatch.delenv("NESSIE_WRITES", raising=False)
+    monkeypatch.setattr(nessie, "dotenv_values", lambda path: {})
+    assert nessie.writes_enabled() is True
+    assert client.get("/api/health").json()["bank_writes"] == "on"
+
+
+def test_restart_reloads_advances_from_the_bank(monkeypatch):
+    """Render restarts mid-demo; the advance already in the bank must come back."""
+    def handler(request):
+        if request.url.path.endswith("/deposits"):
+            return httpx.Response(200, json=[
+                {"_id": "dep1", "description": "CAPITAL ONE ADVANCE L027 (Blue Ridge Logistics)",
+                 "amount": 1044, "transaction_date": "2026-09-21"},
+                {"_id": "dep2", "description": "LOAD PAY Blue Ridge Logistics", "amount": 1200,
+                 "transaction_date": "2026-09-01"}])
+        return httpx.Response(200, json=[
+            {"_id": "bill1", "payee": nessie.ADVANCE_PAYEE, "nickname": "ADVANCE L027",
+             "payment_amount": 1080, "payment_date": "2026-10-21"},
+            {"_id": "bill2", "payee": "Truck payment", "payment_amount": 2150, "payment_date": "2026-09-22"}])
+    fake_bank(monkeypatch, handler)
+    assert nessie.load_existing_advances() == 1
+    advance = nessie.advances()["L027"]
+    assert advance["deposit_id"] == "dep1" and advance["bill_id"] == "bill1"
+    assert advance["amount"] == 1044 and advance["repay_on"] == "2026-10-21"
+
+
+def test_reload_is_skipped_when_writes_are_off(monkeypatch):
+    monkeypatch.setenv("NESSIE_WRITES", "off")
+    monkeypatch.setattr(nessie, "dotenv_values", lambda path: {})
+    monkeypatch.setattr(nessie, "_client", lambda: (_ for _ in ()).throw(AssertionError("no bank call")))
+    assert nessie.load_existing_advances() == 0

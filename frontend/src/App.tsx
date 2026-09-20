@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { api, USE_MOCKS } from "./api";
 import { defaultProfile } from "./mocks";
 import type {
@@ -13,9 +13,7 @@ import type {
 } from "./types";
 import { Field, PlaceFields } from "./components/Fields";
 import { LoadForm } from "./components/LoadForm";
-import { RouteMap } from "./components/RouteMap";
-import { RunTimeline } from "./components/RunTimeline";
-import { AdvanceOffer } from "./components/AdvanceOffer";
+import { RunsWorkspace } from "./components/RunsWorkspace";
 import {
   ResponsiveContainer,
   LineChart,
@@ -64,9 +62,17 @@ const profileNumbers: [keyof TruckProfile, string, string, number, number?][] =
       "Your minimum after every cost",
       0,
     ],
+    [
+      "min_posted_cpm",
+      "My rule: minimum posted ($/mi)",
+      "What you won't go under on the board. 0 = no rule",
+      0,
+    ],
   ];
 export default function App() {
-  const [screen, setScreen] = useState<Screen>("Check a load");
+  const [screen, setScreen] = useState<Screen>("Check a load");   // the demo starts with a bad load
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  useEffect(() => { headingRef.current?.focus(); }, [screen]);
   const [profile, setProfile] = useState<TruckProfile>();
   const [draft, setDraft] = useState<TruckProfile>();
   const [health, setHealth] = useState<Health>();
@@ -153,11 +159,12 @@ export default function App() {
   // Feature A: the map is colored by money, so fetch the cash flow as soon as a run is picked.
   useEffect(() => {
     if (!chain) return;
+    setCash(undefined);
     let current = true;
     api
       .cashflow(chain)
       .then((c) => current && setCash(c))
-      .catch(() => undefined); // the "Can I afford this run?" button still shows errors
+      .catch(() => { if(current) setError("Cash flow unavailable. Open cash-flow details and retry."); });
     return () => {
       current = false;
     };
@@ -202,46 +209,8 @@ export default function App() {
         );
     });
   return (
-    <div className="app-shell">
-      <aside>
-        <a
-          className="brand"
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            setScreen("Check a load");
-          }}
-        >
-          <span className="brand-icon">↗</span>LoadCheck
-          <span className="brand-dot">.</span>
-        </a>
-        <p className="sidebar-caption">THE OWNER-OPERATOR'S COPILOT</p>
-        <nav aria-label="Main navigation">
-          {(["Setup", "Check a load", "Plan my run"] as Screen[]).map(
-            (s, i) => (
-              <button
-                key={s}
-                disabled={!!busy}
-                className={screen === s ? "nav-active" : ""}
-                onClick={() => setScreen(s)}
-              >
-                <span>0{i + 1}</span>
-                {s}
-                <b>↗</b>
-              </button>
-            ),
-          )}
-        </nav>
-        <div className="sidebar-bottom">
-          <span className="tiny-label">YOUR TRUCK. YOUR NUMBERS.</span>
-          <p>
-            More clarity.
-            <br />
-            Better miles.
-          </p>
-          <small>Built for the road ahead.</small>
-        </div>
-      </aside>
+    <div className={`app-shell ${screen === "Plan my run" ? "runs-screen" : "secondary-screen"}`}>
+      <aside className="app-navigation"><a className="brand" href="#" onClick={e=>{e.preventDefault();setScreen("Plan my run");}}>LoadCheck</a><nav aria-label="Main navigation">{(["Plan my run","Check a load","Setup"] as Screen[]).map(s=><button key={s} disabled={!!busy} className={screen===s?"nav-active":""} aria-current={screen===s?"page":undefined} onClick={()=>setScreen(s)}>{s==="Plan my run"?"Runs":s==="Setup"?"Truck settings":s}</button>)}</nav></aside>
       <main>
         <header>
           <span className="breadcrumb">
@@ -278,31 +247,20 @@ export default function App() {
         </header>
         <div className="content">
           <div className="page-heading">
-            <div>
-              <p className="eyebrow">LESS GUESSWORK. MORE TAKE-HOME.</p>
-              <h1>
-                {screen === "Check a load"
-                  ? "Know what you keep."
-                  : screen === "Setup"
-                    ? "Make it your truck."
-                    : "Good miles. All the way home."}
-              </h1>
-              <p>
-                {screen === "Check a load"
-                  ? "The posted rate is only half the story. See the full picture before you say yes."
-                  : screen === "Setup"
-                    ? "Your costs make the difference. Set them once, check every offer."
-                    : "Compare your next moves, then make sure your balance can handle the run."}
-              </p>
-            </div>
-            <span className="page-number">
-              {screen === "Setup"
-                ? "01"
-                : screen === "Check a load"
-                  ? "02"
-                  : "03"}
-              <small> / 03</small>
-            </span>
+            <h1 ref={headingRef} tabIndex={-1}>
+              {screen === "Check a load"
+                ? "Know what you keep."
+                : screen === "Setup"
+                  ? "Make it your truck."
+                  : "Good miles. All the way home."}
+            </h1>
+            <p>
+              {screen === "Check a load"
+                ? "The posted rate is only half the story. See the full picture before you say yes."
+                : screen === "Setup"
+                  ? "Your costs make the difference. Set them once, check every offer."
+                  : "Compare your next moves, then make sure your balance can handle the run."}
+            </p>
           </div>
           {(USE_MOCKS ||
             (health &&
@@ -321,7 +279,7 @@ export default function App() {
           )}
           {busy && (
             <div className="loading" role="status">
-              <span className="spinner" />
+
               {busy}
             </div>
           )}
@@ -432,6 +390,12 @@ export default function App() {
                       <div>
                         <small>POSTED PER LOADED MILE</small>
                         <del>{money(result.posted_rpm)}</del>
+                        {result.meets_posted_rule != null && profile && (
+                          <em className={result.meets_posted_rule ? "rule-ok" : "rule-no"}>
+                            {result.meets_posted_rule ? "clears" : "below"} your{" "}
+                            {money(profile.min_posted_cpm)}/mi rule
+                          </em>
+                        )}
                       </div>
                       <span>→</span>
                       <div>
@@ -754,6 +718,27 @@ export default function App() {
                       <option value="nessie">Nessie</option>
                     </select>
                   </Field>
+                  <Field
+                    label="How you get paid"
+                    hint={
+                      draft.pays_weekly
+                        ? "Weekly payment dates affect cash flow; the dispatcher takes the share below"
+                        : "Broker terms (often 30–45 days) determine when cash arrives"
+                    }
+                  >
+                    <select
+                      value={draft.pays_weekly ? "weekly" : "broker"}
+                      onChange={(e) =>
+                        setDraft({
+                          ...draft,
+                          pays_weekly: e.target.value === "weekly",
+                        })
+                      }
+                    >
+                      <option value="broker">Direct with brokers</option>
+                      <option value="weekly">Through a dispatcher (weekly)</option>
+                    </select>
+                  </Field>
                   {profileNumbers.map(([key, label, hint, min, max]) => (
                     <Field key={key} label={label} hint={hint}>
                       <input
@@ -899,166 +884,10 @@ export default function App() {
               </section>
             </form>
           )}
-          {screen === "Plan my run" && (
-            <>
-              <section className="card">
-                <div className="section-heading">
-                  <div>
-                    <p className="eyebrow">YOUR NEXT MOVES</p>
-                    <h2>Find a run worth taking.</h2>
-                  </div>
-                  <span className="badge amber">Simulated load board</span>
-                </div>
-                <div className="card-footer">
-                  <label className="checkbox">
-                    <input
-                      type="checkbox"
-                      checked={includeBoard}
-                      disabled={!!busy}
-                      onChange={(e) => {
-                        setIncludeBoard(e.target.checked);
-                        setPlanned(false);
-                        setChains([]);
-                        setCash(undefined);
-                        setRunExplanation("");
-                      }}
-                    />{" "}
-                    Include {board.length} simulated board loads +{" "}
-                    {offers.length} confirmed offers
-                  </label>
-                  <button
-                    className="primary"
-                    disabled={
-                      !!busy || !profile || (!includeBoard && !offers.length)
-                    }
-                    onClick={() => void plan()}
-                  >
-                    Plan my run →
-                  </button>
-                </div>
-              </section>
-              {runExplanation && (
-                <blockquote>
-                  <span>LOADCHECK EXPLAINS</span>
-                  {runExplanation}
-                </blockquote>
-              )}
-              {result && chains[0] && (
-                <CompareCard
-                  offer={result}
-                  load={offers.find((l) => l.id === result.load_id)}
-                  best={chains[0]}
-                />
-              )}
-              {!chains.length ? (
-                <div className="empty-state">
-                  <span>↗</span>
-                  <h2>
-                    {planned
-                      ? "No matching runs yet."
-                      : "Your next good run starts here."}
-                  </h2>
-                  <p>
-                    {planned
-                      ? "Try including the simulated board or adjusting your truck profile."
-                      : "We’ll compare up to three loads, the empty miles between them, and the drive home."}
-                  </p>
-                </div>
-              ) : (
-                <div className="plan-layout">
-                  <div className="chain-list">
-                    {chains.map((c, i) => (
-                      <button
-                        key={i}
-                        className={`chain-card ${selected === i ? "selected" : ""}`}
-                        disabled={!!busy}
-                        onClick={() => {
-                          setSelected(i);
-                          setCash(undefined);
-                          setRunExplanation("");
-                          if (c.legs[0])
-                            void run("Explaining this run…", async () =>
-                              setRunExplanation(
-                                (
-                                  await api.explain({
-                                    economics: c.legs[0],
-                                    chain: c,
-                                  })
-                                ).text,
-                              ),
-                            );
-                        }}
-                      >
-                        <span className="eyebrow">
-                          OPTION 0{i + 1}
-                          {c.losing || c.total_net_profit <= 0
-                            ? " · NO PROFIT"
-                            : i === 0
-                              ? " · HIGHEST TOTAL NET"
-                              : ""}
-                        </span>
-                        <strong>
-                          {money(c.total_net_profit)}
-                          <small> total net</small>
-                        </strong>
-                        <p>
-                          {money(c.net_per_day)}/day · {c.days.toFixed(1)} days
-                        </p>
-                        <p>{c.loads.join(" → ")}</p>
-                        <small>
-                          Ends {c.home_deadhead_miles.toFixed(0)} mi from home ·{" "}
-                          {c.ends_at.city}
-                        </small>
-                        <div>
-                          {(c.losing || c.total_net_profit <= 0) && (
-                            <p className="notice">
-                              {c.losing_reason ||
-                                "This run does not earn a profit after costs."}
-                            </p>
-                          )}
-                          {c.feasible_notes.map((n, j) => (
-                            <span className="note-chip" key={j}>
-                              {n}
-                            </span>
-                          ))}
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                  <section className="card map-card">
-                    <div className="section-heading">
-                      <h2>Your route home</h2>
-                      <span className="badge amber">Simulated load board</span>
-                    </div>
-                    {chain && profile && (
-                      <RouteMap
-                        chain={chain}
-                        loads={allLoads}
-                        profile={profile}
-                        cash={cash}
-                      />
-                    )}
-                    {chain && (
-                      <AdvanceOffer
-                        cash={cash}
-                        busy={!!busy}
-                        onAdvance={(loadId) =>
-                          void run(
-                            "Booking your Capital One advance…",
-                            async () => {
-                              setCash(await api.advance(chain, loadId));
-                              setToast(
-                                `Capital One advance on ${loadId} booked. Your run is covered.`,
-                              );
-                            },
-                          )
-                        }
-                      />
-                    )}
-                    {chain && <RunTimeline chain={chain} route={cash?.route} />}
-                  </section>
-                </div>
-              )}
+          {screen === "Plan my run" && <RunsWorkspace profile={profile} loads={allLoads} chains={chains} selected={selected} cash={cash} busy={!!busy} planned={planned} includeBoard={includeBoard} boardCount={board.length} offerCount={offers.length}
+            onBoard={value=>{setIncludeBoard(value);setChains([]);setCash(undefined);setPlanned(false);}}
+            onPlan={()=>void plan()} onSelect={i=>{setSelected(i);setCash(undefined);}}
+            onAdvance={id=>{if(chain) void run("Recording sandbox advance…",async()=>{const updated=await api.advance(chain,id);setCash(updated);setToast(updated.shortfall?"Advance recorded. A shortfall remains.":"Advance recorded. Run covered.");});}}>
               {chain && (
                 <section className="card">
                   <div className="section-heading">
@@ -1240,8 +1069,9 @@ export default function App() {
                   )}
                 </section>
               )}
-            </>
-          )}
+            {runExplanation && <details><summary>Run explanation</summary><p>{runExplanation}</p></details>}
+            {result && chains[0] && <CompareCard offer={result} load={offers.find(l=>l.id===result.load_id)} best={chains[0]}/>}
+          </RunsWorkspace>}
           <footer>
             LOADCHECK <span>Numbers from code. Clarity for the road.</span>
             <span>VTHACKS 14 / 2026</span>
@@ -1251,6 +1081,7 @@ export default function App() {
     </div>
   );
 }
+
 
 // This offer on its own vs. the best run the optimizer found. Every number is
 // from the API; the frontend only subtracts and divides for display.

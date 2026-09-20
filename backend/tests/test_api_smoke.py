@@ -1,4 +1,6 @@
 """Every route in SPEC.md's API table returns valid JSON of the right shape. No network."""
+import json
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -110,3 +112,15 @@ def test_profile_rejects_city_without_state():
     p["home"] = {"city": "Springfield"}
     r = client.put("/api/profile", json=p)
     assert r.status_code == 422 and "State missing" in r.json()["detail"]
+
+
+def test_health_reports_the_bank_source_it_can_actually_reach(monkeypatch):
+    """nessie.STATUS starts as "fixture"; health must ask, or the ?dev strip lies (Sat bug)."""
+    from app import nessie
+    monkeypatch.setattr(nessie, "_live", lambda resources: (_ for _ in ()).throw(RuntimeError("offline")))
+    nessie._CACHE.clear()
+    assert client.get("/api/health").json()["modules"]["nessie"] == "fixture"
+    bank = json.loads((nessie.DATA / "nessie_fixture.json").read_text())
+    monkeypatch.setattr(nessie, "_live", lambda resources: bank)
+    nessie._CACHE.clear()
+    assert client.get("/api/health").json()["modules"]["nessie"] == "live"

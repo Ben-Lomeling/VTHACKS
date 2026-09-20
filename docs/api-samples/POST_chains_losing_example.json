@@ -25,6 +25,7 @@
           "true_net_cpm": -0.7455987803049275,
           "break_even_rate": 149.46429473819134,
           "counter_offer_rate": 239.45669122012004,
+          "meets_posted_rule": false,
           "verdict": "skip"
         }
       ],
