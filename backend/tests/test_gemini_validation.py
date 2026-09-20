@@ -287,3 +287,37 @@ def test_health_reports_the_read_budget():
 
     assert body["daily_limit"] == 20
     assert "used" in body and "exhausted" in body
+
+
+# --- percentage units -----------------------------------------------------------------------------
+# "quick pay 3%" comes back from Gemini as 3 as often as 0.03. Load caps the fee at 0.99, so an
+# unconverted percentage left the confirm form unsubmittable ("must be less than or equal to 0.99").
+
+def test_quick_pay_percentage_is_converted_to_a_fraction():
+    data = {
+        "origin": {"city": "Bristol, TN"},
+        "destination": {"city": "Columbia, SC"},
+        "rate_usd": 1425,
+        "loaded_miles_est": 310,
+        "quick_pay_fee_pct": 3,
+    }
+
+    result = validate_extracted_load(data, "pasted")
+
+    assert result.load.quick_pay_fee_pct == 0.03
+    assert result.confidence["quick_pay_fee_pct"] == "low"
+    assert "Read the quick-pay fee as 3%" in result.warnings
+
+
+def test_a_fraction_is_left_alone():
+    data = {
+        "origin": {"city": "Bristol, TN"},
+        "destination": {"city": "Columbia, SC"},
+        "rate_usd": 1425,
+        "quick_pay_fee_pct": 0.03,
+    }
+
+    result = validate_extracted_load(data, "pasted")
+
+    assert result.load.quick_pay_fee_pct == 0.03
+    assert not any("quick-pay" in w for w in result.warnings)
