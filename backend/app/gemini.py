@@ -234,6 +234,7 @@ Rules:
 - If the offer only provides a per-mile rate, return that original
   per-mile number. Python validation will convert it when possible.
 - Use ISO 8601 date and time strings when dates are present.
+- quick_pay_fee_pct is a fraction, not a percentage: "quick pay 3%" is 0.03.
 - Do not calculate financial results.
 
 Today's date is {today}. Offers usually give a day without a year ("9/22", "Monday", "tomorrow").
@@ -395,6 +396,14 @@ def validate_extracted_load(data: dict, source: str) -> ExtractionResult:
                 "Rate may be per-mile, but loaded miles are missing"
             )
         low_confidence.add("rate_usd")
+    # "quick pay 3%" comes back as 3 about as often as 0.03, and Load caps the fee at 0.99, so an
+    # unconverted percentage jams the confirm form instead of showing a verdict.
+    fee = data.get("quick_pay_fee_pct")
+    if isinstance(fee, (int, float)) and fee > 1:
+        warnings.append(f"Read the quick-pay fee as {fee:g}%")
+        data = {**data, "quick_pay_fee_pct": fee / 100.0}
+        low_confidence.add("quick_pay_fee_pct")
+
     load_data = {
         "id": "P" + uuid.uuid4().hex[:6],
         "origin": Place(city=origin_city),
