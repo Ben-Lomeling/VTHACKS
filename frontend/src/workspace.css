@@ -11,3 +11,6 @@ body{background:#f3f4f6}button,input,textarea,select{border-radius:12px;min-heig
 @media(max-width:700px){.workspace-collapsed{padding-bottom:max(72px,env(safe-area-inset-bottom))}}
 .workspace-map .map-mode span{display:inline}.workspace-map .map-mode{font-size:11px}.workspace-map .map-mode span{max-width:180px}.workspace-map .map-mode button{font-size:12px;padding:8px}.workspace-panel .compare{grid-template-columns:1fr}.workspace-panel .compare .vs{justify-self:center}
 @media(max-width:700px){.workspace-map .map-mode span{max-width:140px}.workspace-map .map-mode{gap:6px;padding:4px 8px}.workspace-map>.map-legend{top:108px}.workspace-panel .compare{grid-template-columns:1fr}}
+/* The pitch lines are part of the demo: show the subtitle again on Setup and Check a load. */
+.secondary-screen .page-heading p{display:block;color:#5a6270;margin:8px 0 0;max-width:62ch}
+.secondary-screen .page-heading h1{font-size:34px}

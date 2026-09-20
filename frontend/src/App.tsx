@@ -70,7 +70,7 @@ const profileNumbers: [keyof TruckProfile, string, string, number, number?][] =
     ],
   ];
 export default function App() {
-  const [screen, setScreen] = useState<Screen>("Plan my run");
+  const [screen, setScreen] = useState<Screen>("Check a load");   // the demo starts with a bad load
   const headingRef = useRef<HTMLHeadingElement>(null);
   useEffect(() => { headingRef.current?.focus(); }, [screen]);
   const [profile, setProfile] = useState<TruckProfile>();
@@ -246,7 +246,22 @@ export default function App() {
           </div>
         </header>
         <div className="content">
-          <div className="page-heading"><h1 ref={headingRef} tabIndex={-1}>{screen==="Setup"?"Truck settings":screen==="Plan my run"?"Runs":screen}</h1></div>
+          <div className="page-heading">
+            <h1 ref={headingRef} tabIndex={-1}>
+              {screen === "Check a load"
+                ? "Know what you keep."
+                : screen === "Setup"
+                  ? "Make it your truck."
+                  : "Good miles. All the way home."}
+            </h1>
+            <p>
+              {screen === "Check a load"
+                ? "The posted rate is only half the story. See the full picture before you say yes."
+                : screen === "Setup"
+                  ? "Your costs make the difference. Set them once, check every offer."
+                  : "Compare your next moves, then make sure your balance can handle the run."}
+            </p>
+          </div>
           {(USE_MOCKS ||
             (health &&
               Object.values(health.modules).some((x) => x !== "live"))) && (
@@ -291,7 +306,7 @@ export default function App() {
                   <div className="section-heading">
                     <div>
                       <p className="eyebrow">01 / THE OFFER</p>
-                      <h2>Load offer</h2>
+                      <h2>What's on the table?</h2>
                     </div>
                     <button
                       className="text-button"
@@ -751,7 +766,7 @@ export default function App() {
               </section>
               <section className="card bank-card">
                 <p className="eyebrow">CAPITAL ONE · NESSIE SANDBOX</p>
-                <h2>Compare bank costs</h2>
+                <h2>Let your bank fill in the blanks.</h2>
                 <p>
                   Compare your estimates with 90 days of sandbox purchases and
                   recurring bills. Mileage is estimated from your monthly miles.
@@ -877,8 +892,8 @@ export default function App() {
                 <section className="card">
                   <div className="section-heading">
                     <div>
-                      <p className="eyebrow">PROJECTED CASH FLOW</p>
-                      <h2>Cash flow</h2>
+                      <p className="eyebrow">CASH IN THE TANK</p>
+                      <h2>Profit is one thing. Timing is another.</h2>
                     </div>
                     <button
                       className="primary"
@@ -890,7 +905,7 @@ export default function App() {
                         )
                       }
                     >
-                      Refresh cash flow
+                      Can I afford this run? →
                     </button>
                   </div>
                   <p>
@@ -1058,7 +1073,7 @@ export default function App() {
             {result && chains[0] && <CompareCard offer={result} load={offers.find(l=>l.id===result.load_id)} best={chains[0]}/>}
           </RunsWorkspace>}
           <footer>
-            LOADCHECK <span>Simulated loads · Nessie sandbox</span>
+            LOADCHECK <span>Numbers from code. Clarity for the road.</span>
             <span>VTHACKS 14 / 2026</span>
           </footer>
         </div>
@@ -1089,7 +1104,7 @@ function CompareCard({
       <div className="section-heading">
         <div>
           <p className="eyebrow">THIS OFFER VS. YOUR BEST RUN</p>
-          <h2>Offer and best run</h2>
+          <h2>Same truck. Very different week.</h2>
         </div>
       </div>
       <div className="compare">

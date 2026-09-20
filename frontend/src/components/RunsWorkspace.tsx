@@ -24,8 +24,8 @@ export function RunsWorkspace({profile, loads, chains, selected, cash, busy, pla
   useEffect(()=>{if(expanded&&mobile&&!dialog.current?.open){returnFocus.current=document.activeElement as HTMLElement;dialog.current?.showModal();}else if(!expanded&&dialog.current?.open){dialog.current.close();(returnFocus.current?.isConnected?returnFocus.current:expand.current)?.focus();}},[expanded,mobile]);
   const content = <>
     <p className="eyebrow">{profile?.current_location.city || 'Current location'}</p>
-    <h1>{chain ? 'Runs' : 'Plan run'}</h1>
-    <p className="workspace-muted">{chain ? 'Compare estimated round trips.' : `${boardCount} simulated loads · ${offerCount} confirmed offers`}</p>
+    <h1>{chain ? 'Good miles. All the way home.' : 'Find a run worth taking.'}</h1>
+    <p className="workspace-muted">{chain ? 'Your next moves, and whether your balance can handle them.' : `${boardCount} simulated loads · ${offerCount} confirmed offers`}</p>
     {!chain && <><label className="checkbox"><input type="checkbox" checked={includeBoard} disabled={busy} onChange={e=>onBoard(e.target.checked)}/>Include simulated load board</label><button className="primary workspace-full" disabled={busy||!profile||(!includeBoard&&!offerCount)} onClick={onPlan}>Plan run</button>{planned&&<p role="status">No matching runs. Include the board or adjust truck settings.</p>}</>}
     {chain && <>
       <div className="workspace-runs" role="group" aria-label="Select a run">{chains.map((c,i)=><button key={c.loads.join()} disabled={busy} aria-pressed={i===selected} onClick={()=>onSelect(i)}><span>{i===0?'Best net':`Run ${i+1}`}</span><strong>{money(c.total_net_profit)}</strong></button>)}</div>
