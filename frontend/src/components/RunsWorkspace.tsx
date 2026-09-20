@@ -4,15 +4,16 @@ import { divIcon } from 'leaflet';
 import type { TruckProfile, Load, Chain, CashflowCheck } from '../types';
 import { RouteMap } from './RouteMap';
 import { MapTiles } from './MapTiles';
+import { MapViewport, mapInteractionOptions } from './MapViewport';
+import { validCoordinate } from '../mapGeometry';
 import { AdvanceOffer } from './AdvanceOffer';
 import { RunTimeline } from './RunTimeline';
 const money = (n: number) => n.toLocaleString('en-US', {style:'currency',currency:'USD'});
-export function RunsWorkspace({profile, loads, chains, selected, cash, busy, planned, includeBoard, boardCount, offerCount, onBoard, onPlan, onSelect, onAdvance, children}: {
-  profile?: TruckProfile; loads: Load[]; chains: Chain[]; selected: number; cash?: CashflowCheck; busy: boolean; planned: boolean;
-  includeBoard: boolean; boardCount: number; offerCount: number; onBoard:(value:boolean)=>void; onPlan:()=>void; onSelect:(index:number)=>void; onAdvance:(id:string)=>void; children:ReactNode;
+export function RunsWorkspace({profile, loads, chains, selected, planError, cash, cashBusy, cashError, onRetryCash, busy, planned, includeBoard, boardCount, offerCount, onBoard, onPlan, onSelect, onAdvance, children}: {
+  profile?: TruckProfile; loads: Load[]; chains: Chain[]; selected: number; cash?: CashflowCheck; cashBusy: boolean; cashError: string; onRetryCash: () => void; busy: boolean; planned: boolean;
+  planError: string; includeBoard: boolean; boardCount: number; offerCount: number; onBoard:(value:boolean)=>void; onPlan:()=>void; onSelect:(index:number)=>void; onAdvance:(id:string)=>void; children:ReactNode;
 }) {
   const [cashDetails,setCashDetails] = useState(false);
-  const [offline,setOffline] = useState(!navigator.onLine);
   const [expanded,setExpanded] = useState(false);
   const [mobile,setMobile] = useState(()=>matchMedia('(max-width:700px)').matches);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -26,12 +27,13 @@ export function RunsWorkspace({profile, loads, chains, selected, cash, busy, pla
     <p className="eyebrow">{profile?.current_location.city || 'Current location'}</p>
     <h1>{chain ? 'Good miles. All the way home.' : 'Find a run worth taking.'}</h1>
     <p className="workspace-muted">{chain ? 'Your next moves, and whether your balance can handle them.' : `${boardCount} simulated loads · ${offerCount} confirmed offers`}</p>
-    {!chain && <><label className="checkbox"><input type="checkbox" checked={includeBoard} disabled={busy} onChange={e=>onBoard(e.target.checked)}/>Include simulated load board</label><button className="primary workspace-full" disabled={busy||!profile||(!includeBoard&&!offerCount)} onClick={onPlan}>Plan run</button>{planned&&<p role="status">No matching runs. Include the board or adjust truck settings.</p>}</>}
+    {planError && <p className="notice" role="alert">{planError} <button type="button" disabled={busy} onClick={onPlan}>Retry planning</button></p>}
+    {!chain && <><label className="checkbox"><input type="checkbox" checked={includeBoard} disabled={busy} onChange={e=>onBoard(e.target.checked)}/>Include simulated load board</label><button className="primary workspace-full" disabled={busy||!profile||(!includeBoard&&!offerCount)} onClick={onPlan}>Plan run</button>{planned&&!planError&&<p role="status">No matching runs. Include the board or adjust truck settings.</p>}</>}
     {chain && <>
       <div className="workspace-runs" role="group" aria-label="Select a run">{chains.map((c,i)=><button key={c.loads.join()} disabled={busy} aria-pressed={i===selected} onClick={()=>onSelect(i)}><span>{i===0?'Best net':`Run ${i+1}`}</span><strong>{money(c.total_net_profit)}</strong></button>)}</div>
       <section className="workspace-profit"><span>Net profit</span><strong>{money(chain.total_net_profit)}</strong><p>{chain.days.toFixed(1)} days · {chain.total_miles.toFixed(0)} miles · {money(chain.net_per_day)}/day</p></section>
       {chain.losing && <p className="notice">{chain.losing_reason || 'This run does not earn a profit.'}</p>}
-      <section className={`workspace-funding ${cash?.shortfall?'shortfall':'covered'}`} aria-live="polite"><h2>{cash ? cash.shortfall?'! Cash shortfall':'✓ Run covered':'Cash flow'}</h2>{cash ? <><strong>{money(cash.lowest_balance)}</strong><p>Lowest projected balance · {cash.lowest_balance_date}</p></>:<p>Waiting for cash-flow data. Use Refresh cash flow below to retry.</p>}</section>
+      <section aria-busy={cashBusy} className={`workspace-funding ${cash ? cash.shortfall?'shortfall':'covered' : 'pending'}`} aria-live="polite"><h2>{cash ? cash.shortfall?'! Cash shortfall':'✓ Run covered':'Cash flow'}</h2>{cash ? <><strong>{money(cash.lowest_balance)}</strong><p>Lowest projected balance · {cash.lowest_balance_date}</p></>:<p>{cashBusy ? "Checking fuel, bills, and payment dates…" : "Cash flow is not available yet."}</p>}{cashError && <p role="alert">{cashError} {cash && "Showing the last successful projection."}</p>}{!cashBusy && <button type="button" disabled={busy} onClick={onRetryCash}>{cashError ? "Retry cash flow" : "Refresh cash flow"}</button>}</section>
       <AdvanceOffer key={chain.loads.join()} cash={cash} busy={busy} onAdvance={onAdvance}/>
       <h2>Route</h2><ol className="workspace-stops">{chain.loads.map(id=>{const load=loads.find(l=>l.id===id);return <li key={id}><strong>{load?`${load.origin.city} to ${load.destination.city}`:id}</strong><small>{load?.broker || id}</small></li>;})}</ol>
       <details><summary>Schedule and assumptions</summary><RunTimeline chain={chain} route={cash?.route}/>{chain.feasible_notes.map((note,i)=><p key={i}>{note}</p>)}<p>Estimated connections, not road directions. Simplified hours of service.</p></details>
@@ -42,9 +44,9 @@ export function RunsWorkspace({profile, loads, chains, selected, cash, busy, pla
   </>;
   const loc=profile?.current_location;
   return <section className="runs-workspace" aria-label="Runs workspace" aria-busy={busy}>
-    <div className="workspace-map">{chain&&profile ? <RouteMap chain={chain} loads={loads} profile={profile} cash={cash}/> : loc?.lat!=null&&loc.lng!=null ? <><MapContainer center={[loc.lat,loc.lng]} zoom={8} scrollWheelZoom={false} zoomAnimation={false} fadeAnimation={false}><MapTiles offline={offline} onOffline={()=>setOffline(true)}/><Marker position={[loc.lat,loc.lng]} icon={divIcon({className:'workspace-home',html:'<span>H</span>',iconSize:[44,44]})}><Popup>{loc.city}</Popup></Marker></MapContainer>{offline&&<p className="workspace-offline">Offline map · {loc.city}</p>}</> : <p className="workspace-offline">Save a city in Truck settings to place it on the map.</p>}</div>
+    <div className="workspace-map">{chain&&profile ? <RouteMap chain={chain} loads={loads} profile={profile} cash={cash}/> : loc && validCoordinate(loc.lat,loc.lng) ? <><MapContainer center={[loc.lat!,loc.lng!]} zoom={8} {...mapInteractionOptions()}><MapTiles/><MapViewport points={[[loc.lat!,loc.lng!]]} routeKey={JSON.stringify([loc.lat,loc.lng])}/><Marker title={`Current location: ${loc.city}`} position={[loc.lat!,loc.lng!]} icon={divIcon({className:'workspace-home',html:'<span>●</span>',iconSize:[44,44]})}><Popup>Current location: {loc.city}</Popup></Marker></MapContainer></> : <p className="workspace-offline">Save a city in Truck settings to place it on the map.</p>}</div>
     {!mobile&&<div className="workspace-panel">{content}</div>}
-    {mobile&&<div className="workspace-collapsed"><div><span>{chain?'Net profit': 'Starting from'}</span><h1>{chain?money(chain.total_net_profit):loc?.city||'LoadCheck'}</h1><p>{chain?`${chain.days.toFixed(1)} days · ${cash?cash.shortfall?'Cash shortfall':'Run covered':'Cash flow loading'}`:`${boardCount} simulated loads available`}</p></div><button ref={expand} aria-haspopup="dialog" aria-expanded={expanded} onClick={()=>setExpanded(true)}>Expand</button>{!chain&&<button className="primary workspace-full" disabled={busy||!profile} onClick={()=>{onPlan();setExpanded(true);}}>Plan run</button>}</div>}
+    {mobile&&<div className="workspace-collapsed"><div><span>{chain?'Net profit': 'Starting from'}</span><h1>{chain?money(chain.total_net_profit):loc?.city||'LoadCheck'}</h1><p>{chain?`${chain.days.toFixed(1)} days · ${cash?cash.shortfall?'Cash shortfall':'Run covered':cashBusy?'Cash flow loading':'Cash flow unavailable'}`:`${boardCount} simulated loads available`}</p></div><button ref={expand} aria-haspopup="dialog" aria-expanded={expanded} onClick={()=>setExpanded(true)}>Expand</button>{!chain&&<button className="primary workspace-full" disabled={busy||!profile||(!includeBoard&&!offerCount)} onClick={()=>{onPlan();setExpanded(true);}}>Plan run</button>}</div>}
     <dialog ref={dialog} className="workspace-sheet" aria-label="Run details" onCancel={e=>{e.preventDefault();setExpanded(false);}}><button className="workspace-collapse" autoFocus onClick={()=>setExpanded(false)}>Collapse to map</button>{mobile && expanded ? content : null}</dialog>
   </section>;
 }

@@ -32,7 +32,8 @@ async function request<T>(
       body: body ? (multipart ? body : JSON.stringify(body)) : undefined,
       signal: AbortSignal.timeout(60000),
     });
-  } catch {
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "TimeoutError") throw new Error("The request took too long. Please try again.");
     throw new Error(
       "Cannot reach the API. Check that the backend is running on port 8000, then try again.",
     );
@@ -42,7 +43,9 @@ async function request<T>(
     throw new Error(
       typeof error?.detail === "string"
         ? error.detail
-        : `Request failed (${response.status}). Check the fields and try again.`,
+        : Array.isArray(error?.detail)
+          ? error.detail.map((item: { loc?: unknown[]; msg?: string }) => `${item.loc?.filter(part => part !== "body").join(" → ") || "Input"}: ${item.msg || "Invalid value"}`).join("; ")
+          : `Request failed (${response.status}). Check the fields and try again.`,
     );
   }
   return response.json();

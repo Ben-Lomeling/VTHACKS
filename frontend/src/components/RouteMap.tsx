@@ -1,6 +1,8 @@
 import { MapTiles } from "./MapTiles";
-import { useEffect, useState } from "react";
-import type { CashflowCheck, Chain, Load, Place, TruckProfile } from "../types";
+import { Fragment } from "react";
+import { MapViewport, mapInteractionOptions } from "./MapViewport";
+import { routeGeometry, validCoordinate } from "../mapGeometry";
+import type { CashflowCheck, Chain, Load, TruckProfile } from "../types";
 import { BUFFER, MONEY_ICONS, balanceColor } from "../money";
 import {
   MapContainer,
@@ -8,11 +10,17 @@ import {
   Marker,
   Popup,
   Tooltip,
-  useMap,
 } from "react-leaflet";
-import { divIcon, latLngBounds } from "leaflet";
+import { divIcon } from "leaflet";
 const money = (v: number) =>
   `${v < 0 ? "−" : ""}$${Math.abs(v).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
+const stopDescription = (label: string) => label.replace(/(\d+)P/g, "Pickup $1").replace(/(\d+)D/g, "Delivery $1").replace("H", "Home").replace("●", "Current location");
+const stopIcon = (label: string, city: string) => {
+  const span = document.createElement("span");
+  span.textContent = label;
+  span.setAttribute("aria-label", `${city}: ${stopDescription(label)}`);
+  return span;
+};
 const clock = (iso: string) =>
   new Date(iso).toLocaleString("en-US", {
     weekday: "short",
@@ -31,69 +39,18 @@ export function RouteMap({
   profile: TruckProfile;
   cash?: CashflowCheck;
 }) {
-  const [offline, setOffline] = useState(!navigator.onLine);
   // Feature A: when the cash flow is in, the line is colored by his projected balance.
-  const route = cash?.route ?? [];
-  const stops = cash?.money_stops ?? [];
-  const coordinate = (p: Place): [number, number] | null =>
-    p.lat != null && p.lng != null ? [p.lat, p.lng] : null;
-  const points: [number, number][] = [];
-  const lines: { positions: [number, number][]; kind: string }[] = [];
-  const pins: { point: [number, number]; label: string; text: string }[] = [];
-  const addPin = (p: Place, label: string) => {
-    const point = coordinate(p);
-    if (point) {
-      points.push(point);
-      // Stops in the same city share one pin (e.g. "H · 1P · 3D" at home).
-      const same = pins.find(
-        (pin) => pin.point[0] === point[0] && pin.point[1] === point[1],
-      );
-      if (same) same.label += ` · ${label}`;
-      else pins.push({ point, label, text: p.city });
-    }
-    return point;
-  };
-  addPin(profile.home, "H");
-  let last = addPin(profile.current_location, "●");
-  let missing = 0;
-  chain.loads.forEach((id, i) => {
-    const load = loads.find((l) => l.id === id);
-    if (!load) {
-      missing++;
-      last = null;
-      return;
-    }
-    const a = addPin(load.origin, `${i + 1}P`);
-    const b = addPin(load.destination, `${i + 1}D`);
-    if (last && a) lines.push({ positions: [last, a], kind: "empty" });
-    if (a && b) lines.push({ positions: [a, b], kind: "loaded" });
-    else missing++;
-    last = b;
-  });
-  const home = coordinate(profile.home);
-  if (last && home) lines.push({ positions: [last, home], kind: "home" });
-  function Fit() {
-    const map = useMap();
-    useEffect(() => {
-      const fit = () => {
-        if (points.length) map.fitBounds(latLngBounds(points), {
-          paddingTopLeft: matchMedia('(max-width:700px)').matches ? [35,150] : [440,60],
-          paddingBottomRight: matchMedia('(max-width:700px)').matches ? [35,250] : [70,100], maxZoom: 9, animate: false,
-        });
-      };
-      fit();
-      map.on('resize', fit);
-      return () => { map.off('resize', fit); };
-    }, [map, chain, profile]);
-    return null;
-  }
+  const route = (cash?.route ?? []).filter(r => validCoordinate(...r.from) && validCoordinate(...r.to));
+  const stops = (cash?.money_stops ?? []).filter(m => validCoordinate(m.lat, m.lng));
+  const { points, lines, pins, missingLocations, routeKey } = routeGeometry(chain, loads, profile);
+  const omittedOverlays = (cash?.route.length ?? 0) - route.length + (cash?.money_stops.length ?? 0) - stops.length;
   return (
     <>
-      <div className="map-mode"><span role="status">{offline ? "Offline map · city locations and estimated route" : "Online map"}</span><button type="button" onClick={() => setOffline(!offline)}>{offline ? "Retry map tiles" : "Use offline map"}</button></div>
       <div className="map">
-        <MapContainer center={[37, -80]} zoom={6} scrollWheelZoom={false} zoomAnimation={false} fadeAnimation={false} markerZoomAnimation={false}>
-          <MapTiles offline={offline} onOffline={() => setOffline(true)} />
+        <MapContainer center={[37, -80]} zoom={6} {...mapInteractionOptions()}>
+          <MapTiles />
           {route.map((r, i) => (
+            <Fragment key={`route-${i}`}><Polyline positions={[r.from, r.to]} pathOptions={{color: "white", weight: 10, opacity: .9, interactive: false}} />
             <Polyline
               key={`m${i}`}
               positions={[r.from, r.to]}
@@ -108,19 +65,20 @@ export function RouteMap({
                 {clock(r.end)}
                 {r.loaded ? " · loaded" : " · empty"}
               </Tooltip>
-            </Polyline>
+            </Polyline></Fragment>
           ))}
           {stops.map((m, i) => (
             <Marker
-              key={`s${i}`}
+              key={`${m.at}-${m.label}-${i}`}
               position={[m.lat, m.lng]}
+              title={m.label}
               zIndexOffset={1000}
               icon={divIcon({
                 className: `money-pin money-${m.kind}${m.balance < 0 ? " money-red" : ""}`,
                 html: `<span>${MONEY_ICONS[m.kind]}</span>`,
                 iconSize: [44, 44],
-                // sit just above-left of the spot so city pins (1P, 2D…) stay readable
-                iconAnchor: [30, 30],
+                // Place money events beside, rather than on top of, the stop label.
+                iconAnchor: [-(Math.max(44, (pins.find(pin => pin.point[0] === m.lat && pin.point[1] === m.lng)?.label.length ?? 0) * 7 + 16) / 2) - 4, 22],
               })}
             >
               <Popup>
@@ -132,6 +90,7 @@ export function RouteMap({
           ))}
           {!route.length &&
             lines.map((line, i) => (
+              <Fragment key={`line-${i}`}><Polyline positions={line.positions} pathOptions={{color: "white", weight: 8, opacity: .9, interactive: false}} />
               <Polyline
                 key={i}
                 positions={line.positions}
@@ -145,22 +104,23 @@ export function RouteMap({
                   weight: 4,
                   dashArray: line.kind === "loaded" ? undefined : "8 8",
                 }}
-              />
+              /></Fragment>
             ))}
-          {pins.map((pin, i) => (
+          {pins.map((pin) => (
             <Marker
-              key={i}
+              key={`${pin.point.join(",")}:${pin.label}`}
               position={pin.point}
+              title={`${pin.text}: ${stopDescription(pin.label)}`}
               icon={divIcon({
-                className: "map-pin",
-                html: `<span>${pin.label}</span>`,
-                iconSize: [44, 44],
+                className: `map-pin ${pin.label.includes(" · ") ? "pin-combined" : pin.label.includes("P") ? "pin-pickup" : pin.label.includes("D") ? "pin-delivery" : "pin-base"}`,
+                html: stopIcon(pin.label, pin.text),
+                iconSize: [Math.max(44, pin.label.length * 7 + 16), 44], iconAnchor: [Math.max(44, pin.label.length * 7 + 16) / 2, 22],
               })}
             >
-              <Tooltip permanent direction="bottom">{pin.text}</Tooltip><Popup>{pin.text}</Popup>
+              <Tooltip direction="bottom">{pin.text}</Tooltip><Popup><strong>{pin.text}</strong><br/>{stopDescription(pin.label)}</Popup>
             </Marker>
           ))}
-          <Fit />
+          <MapViewport points={points} routeKey={routeKey} />
         </MapContainer>
       </div>
       {route.length ? (
@@ -179,10 +139,9 @@ export function RouteMap({
         Estimated connections, not road directions. Road miles use straight-line
         distance × 1.2; simplified hours of service.
       </small>
-      {missing > 0 && (
-        <p className="notice">
-          Some locations have no coordinates. Those legs cannot be drawn on the
-          map.
+      {(missingLocations.length > 0 || omittedOverlays > 0) && (
+        <p className="notice map-notice" role="status">
+          Some stops or overlays cannot be drawn. {missingLocations.length > 0 && `${missingLocations.join("; ")}. `}Missing or invalid coordinates are omitted; connections are not guessed.
         </p>
       )}
     </>
