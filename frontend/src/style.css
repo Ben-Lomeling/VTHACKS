@@ -1256,15 +1256,15 @@ footer span:last-child {
   /* Explicit box: the logo file's own intrinsic size must not decide the layout, or a taller or
      wider file silently overflows the header row into "Reset demo". object-fit keeps it undistorted
      whatever aspect Nihal's file turns out to have. */
-  height: 16px;
+  height: 22px;
   width: auto;
-  max-width: 108px;
+  max-width: 120px;
   object-fit: contain;
   flex: none;
 }
 .capone-mark-header img {
-  height: 14px;
-  max-width: 88px;
+  height: 18px;
+  max-width: 96px;
 }
 .capone-mark-label {
   font-size: 10px;
