@@ -213,6 +213,11 @@ header {
 }
 .header-actions .text-button {
   margin-left: 18px;
+  flex: none;
+}
+/* Gains a fourth item with the Capital One mark; keep everything on one line and let it grow left. */
+.header-actions > * {
+  flex: none;
 }
 .content {
   max-width: 1450px;
@@ -1237,6 +1242,52 @@ footer span:last-child {
   top: 0;
   bottom: 0;
 }
+/* The Capital One "powered by" mark. Quiet on purpose: same 10px uppercase treatment as .badge,
+   so it credits the bank without competing with the numbers beside it. */
+.capone-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  vertical-align: middle;
+  flex: none;               /* the header row is shrink-to-fit; never let this collapse onto a neighbour */
+}
+.capone-mark img {
+  display: block;
+  /* Explicit box: the logo file's own intrinsic size must not decide the layout, or a taller or
+     wider file silently overflows the header row into "Reset demo". object-fit keeps it undistorted
+     whatever aspect Nihal's file turns out to have. */
+  height: 22px;
+  width: auto;
+  max-width: 120px;
+  object-fit: contain;
+  flex: none;
+}
+.capone-mark-header img {
+  height: 18px;
+  max-width: 96px;
+}
+.capone-mark-label {
+  font-size: 10px;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  font-weight: 750;
+  color: #6b7280;
+  white-space: nowrap;
+}
+.workspace-funding .capone-mark,
+.workspace-disclosure .capone-mark {
+  margin-top: 8px;
+}
+.workspace-disclosure .capone-mark {
+  margin-top: 0;
+}
+/* The header is the tightest row on a phone; drop the word and keep the mark. */
+@media (max-width: 720px) {
+  .capone-mark-header .capone-mark-label {
+    display: none;
+  }
+}
+
 /* Feature B: Capital One advance */
 .advance {
   margin: 14px 0;

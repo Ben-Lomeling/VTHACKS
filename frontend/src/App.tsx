@@ -13,6 +13,7 @@ import type {
 } from "./types";
 import { Field, PlaceFields } from "./components/Fields";
 import { LoadForm } from "./components/LoadForm";
+import { CapitalOneMark } from "./components/CapitalOneMark";
 import { RunsWorkspace } from "./components/RunsWorkspace";
 import {
   ResponsiveContainer,
@@ -242,6 +243,10 @@ export default function App() {
           <div className="header-actions">
             <span className="status-dot" />
             {USE_MOCKS ? "Mock demo" : health ? "API connected" : "API offline"}
+            {/* Only when the bank really is live: the badge being here is itself the evidence. */}
+            {!USE_MOCKS && health?.modules?.nessie === "live" && (
+              <CapitalOneMark label="Bank data by" className="capone-mark-header" />
+            )}
             <button
               className="text-button"
               disabled={!!busy || !profile}
@@ -808,6 +813,7 @@ export default function App() {
                 >
                   Pull my real costs from Capital One →
                 </button>
+                <CapitalOneMark label="Costs read from" />
                 {JSON.stringify(draft) !== JSON.stringify(profile) && (
                   <p>
                     <small>
@@ -927,9 +933,9 @@ export default function App() {
                     </button>
                   </div>
                   <p>
-                    Capital One Nessie sandbox balance and bills, from today
-                    until you're home. Next month's bills are covered by your
-                    next runs.
+                    <CapitalOneMark label="Balance and bills from" />{" "}
+                    sandbox, from today until you're home. Next month's bills
+                    are covered by your next runs.
                   </p>
                   {cash && (
                     <>

@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import type { CashflowCheck } from "../types";
+import { CapitalOneMark } from "./CapitalOneMark";
 
 const money = (v: number) =>
   `${v < 0 ? "−" : ""}$${Math.abs(v).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
@@ -45,7 +46,7 @@ export function AdvanceOffer({
             Scheduled repayment {money(a.repay_amount)} on {day(a.repay_on)} when the broker
             pays.
             <br />
-            {a.source === "live" ? <div className="advance-receipt"><span>Capital One sandbox · pending deposit</span><code>Deposit {a.deposit_id}</code><code>Repayment bill {a.bill_id}</code></div> : <p className="advance-fixture">Demo mode · nothing written to the bank. The live pitch writes a real deposit to Capital One.</p>}
+            {a.source === "live" ? <div className="advance-receipt"><span><CapitalOneMark label="Recorded in" /> sandbox · pending deposit</span><code>Deposit {a.deposit_id}</code><code>Repayment bill {a.bill_id}</code></div> : <p className="advance-fixture">Demo mode · nothing written to the bank. The live pitch writes a real deposit to Capital One.</p>}
 
           </div>
         ))}
@@ -74,7 +75,7 @@ export function AdvanceOffer({
       </p>
       {confirming ? (
         <div className="advance-confirm" role="group" aria-label="Confirm sandbox advance">
-          <h3>Confirm advance</h3>
+          <h3>Confirm advance <CapitalOneMark /></h3>
           <p>
             Capital One deposits <strong>{money(offer.amount)}</strong> on{" "}
             {day(offer.on)} when {offer.load_id} delivers. Fee{" "}
