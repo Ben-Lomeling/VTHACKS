@@ -12,6 +12,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app import cashflow, gemini, geo, nessie, optimizer, profit
 from app.models import (
@@ -230,3 +231,12 @@ def explain(req: ExplainRequest) -> TextResponse:
 def counter_message(req: CounterRequest) -> TextResponse:
     load = _all_loads().get(req.economics.load_id)
     return TextResponse(text=gemini.counter_message(req.economics, load.broker if load else None))
+
+
+# ---- One server: serve the built frontend from the API ----
+# `npm run build` writes frontend/dist. When it's there, this process serves the whole app:
+# one URL, no CORS, and `cloudflared tunnel --url http://localhost:8000` publishes everything.
+# Mounted last so every /api route above wins.
+DIST = BACKEND.parent / "frontend" / "dist"
+if DIST.is_dir():
+    app.mount("/", StaticFiles(directory=DIST, html=True), name="site")
