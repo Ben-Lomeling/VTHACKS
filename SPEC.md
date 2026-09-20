@@ -228,6 +228,13 @@ feasible ends near home. Exclude chains that end more than
   per-mile vs total, return the total if computable and add a warning; always "City, ST".
 - After Gemini returns, **code** validates: rate > 0; if `rate < 20` it's probably per-mile →
   multiply by loaded miles and warn; missing state → warning; mark low-confidence fields.
+- Gemini returns an explicit `null` for anything absent, so `dict.get(key, default)` is not enough:
+  `payment_terms_days` and `quick_pay_fee_pct` are non-optional on `Load` and need a real None check.
+- The prompt is anchored to `DEMO_NOW`; offers say "9/22", and an unanchored year lands in the past.
+- **The frontend's example load is pinned** (`_demo_bad_load`), key or not: the pitch numbers must not
+  move between rehearsal and judging. Everything else a judge pastes is a live call.
+- Free tier allows **20 reads per day per model**. On 429 the app falls back to demo data with a
+  warning that says so, and `/api/health.gemini_reads` reports the remaining budget.
 - Keep 5 real load texts from Dad + 2 screenshots in `backend/tests/fixtures/`. Test against them.
 
 ### Explain — `explain(economics, chain, cashflow) -> str`
@@ -330,6 +337,10 @@ def simulate(chain: Chain, loads_by_id: dict[str, Load], start_balance: float, b
 def balance_along_route(chain, loads_by_id, start: Place, home: Place, start_balance, bills, today, advance=frozenset()) -> tuple[list[dict], list[dict]]
 # gemini.py
 def extract_load(text: str | None, image_bytes: bytes | None, mime_type: str | None) -> ExtractionResult
+def validate_extracted_load(data: dict, source: str) -> ExtractionResult   # pure; code checks Gemini's fields
+def data_source() -> str                                          # "live" only when a key is readable
+def calls_made() -> int                                           # live reads this process has spent
+def quota_exhausted() -> bool                                     # the daily free-tier budget is gone
 def explain(payload: dict) -> str
 def counter_message(economics: LoadEconomics, broker: str | None) -> str
 # nessie.py
@@ -360,7 +371,7 @@ so `main.py` and the frontend can wire everything on day one.
 | POST | `/api/explain` | `{economics, chain?, cashflow?}` → `{text: str}` |
 | POST | `/api/counter-message` | `{economics}` → `{text: str}` (Gemini writes message; rate comes from code) |
 
-| GET | `/api/health` | → `{modules: {profit, geo, optimizer, cashflow, gemini, nessie: "stub"\|"live"\|"fixture"}, demo_now, board_loads, pasted_loads}` |
+| GET | `/api/health` | → `{modules: {profit, geo, optimizer, cashflow, gemini, nessie: "stub"\|"live"\|"fixture"}, bank_writes, gemini_reads: {used, daily_limit, exhausted}, demo_now, board_loads, pasted_loads}` |
 
 Notes:
 - **Demo clock.** The backend's "now" is `DEMO_NOW` from `.env` (default `2026-09-21T06:00`, matching the

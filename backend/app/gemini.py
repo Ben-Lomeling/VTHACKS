@@ -1,24 +1,88 @@
 """Gemini: extract load offers, explain results, write counter-offer messages.
 
-Owner: GEMINI teammate. STUB (Phase 0) — replace the internals, keep the signatures (SPEC.md
-"Module interfaces"). Set STATUS = "live" once the real Gemini calls are in.
+Gemini only reads offers into fields. Every number we display is computed by profit.py /
+optimizer.py / cashflow.py from those fields (SPEC.md rule 1), so a bad extraction can give us
+wrong inputs but never a wrong calculation.
 """
 import json
+import logging
 import math
 import os
 import uuid
 from datetime import datetime
+from pathlib import Path
 
-
-from dotenv import load_dotenv
+from dotenv import dotenv_values
 from google import genai
 from google.genai import types
 
 from app.models import ExtractionResult, Load, LoadEconomics, Place
 
-load_dotenv()
+ROOT = Path(__file__).resolve().parents[2]
+# gemini-2.5-flash is no longer served to new API keys. Pinned, not "-latest": the demo should not
+# change model under us mid-hackathon. Override with GEMINI_MODEL in .env.
+DEFAULT_MODEL = "gemini-3.1-flash-lite"
+LOG = logging.getLogger(__name__)
+ATTEMPTS = 2                        # the Gemini API throws occasional 5xx; retry once
+# Free tier: 20 generate_content requests per day, per model, per project. The pitch itself costs
+# none of these (the "Try an example" load is pinned) — this budget is only for offers judges paste.
+DAILY_LIMIT = 20
+_CALLS = 0                          # live calls this process has made; reset by restarting uvicorn
+_QUOTA_HIT = False                  # set once the API says the daily quota is gone
 
-STATUS = "live"
+
+def calls_made() -> int:
+    return _CALLS
+
+
+def quota_exhausted() -> bool:
+    return _QUOTA_HIT
+
+
+def _api_key() -> str | None:
+    """The local .env file if it has the key, else the environment (same rule as nessie.py)."""
+    return dotenv_values(ROOT / ".env").get("GEMINI_API_KEY") or os.getenv("GEMINI_API_KEY")
+
+
+def _model() -> str:
+    """Same lookup rule as the key, so .env alone is enough to switch models."""
+    return dotenv_values(ROOT / ".env").get("GEMINI_MODEL") or os.getenv("GEMINI_MODEL") or DEFAULT_MODEL
+
+
+def _is_quota_error(exc: Exception) -> bool:
+    """A 429 / RESOURCE_EXHAUSTED from the API: the daily free-tier budget is gone."""
+    text = str(exc)
+    return "429" in text or "RESOURCE_EXHAUSTED" in text or "quota" in text.lower()
+
+
+def _failure_warning(exc: Exception) -> str:
+    """Tell the driver which thing went wrong — running out of reads is not a bad offer."""
+    if _is_quota_error(exc):
+        return (
+            f"Out of Gemini reads for today (free tier allows {DAILY_LIMIT}), so this offer was "
+            "not read — the fields below are demo values, not yours."
+        )
+    return "Gemini couldn't read this offer, so these are demo values — check every field."
+
+
+def _today() -> datetime:
+    """The demo clock, read the same way as the key (SPEC: DEMO_NOW drives the whole app)."""
+    raw = dotenv_values(ROOT / ".env").get("DEMO_NOW") or os.getenv("DEMO_NOW")
+    return datetime.fromisoformat(raw) if raw else datetime.now()
+
+
+def _or_default(value, default):
+    """Falsy-safe default: a stated 0% quick-pay fee is not the same as a missing one."""
+    return default if value is None else value
+
+
+def data_source() -> str:
+    """"live" when a key is actually readable, else "stub". Checked per call, like nessie's, so
+    /api/health can never claim Gemini is live while extract_load is serving canned data."""
+    return "live" if _api_key() else "stub"
+
+
+STATUS = data_source()
 
 def _demo_bad_load() -> ExtractionResult:
     """Return the bad-load example used by the frontend demo."""
@@ -66,8 +130,16 @@ def extract_load(
     if not text and not image_bytes:
         raise ValueError("Provide pasted text, an image, or both")
 
-    api_key = os.getenv("GEMINI_API_KEY")
     source = "screenshot" if image_bytes else "pasted"
+
+    # The frontend's "Try an example" text is pinned to fixed fields, key or no key: the pitch
+    # numbers ($2.43/mi posted -> $0.55/mi kept) must be identical every run. The offer says
+    # "Pickup Mon, deliver Tue" with no mileage, so a live extraction is free to resolve those
+    # differently each time. Anything else a judge pastes goes to Gemini for real.
+    if text and "greensboro" in text.lower():
+        return _demo_bad_load()
+
+    api_key = _api_key()
 
     fallback_data = {
         "origin": {"city": "Roanoke, VA"},
@@ -86,12 +158,9 @@ def extract_load(
     }
 
     if not api_key:
-        if text and "greensboro" in text.lower():
-            return _demo_bad_load()
-
         result = validate_extracted_load(fallback_data, source)
-        result.warnings.append(
-            "Gemini API key is not configured; using offline demo data"
+        result.warnings.insert(
+            0, "Gemini is not configured, so this offer was not read — showing demo data instead."
         )
         return result
 
@@ -166,54 +235,81 @@ Rules:
   per-mile number. Python validation will convert it when possible.
 - Use ISO 8601 date and time strings when dates are present.
 - Do not calculate financial results.
+
+Today's date is {today}. Offers usually give a day without a year ("9/22", "Monday", "tomorrow").
+Resolve those against today's date, choosing the next such day. Never return a date in the past.
 """
 
-    contents = [prompt]
-
-    if text:
-        contents.append(f"LOAD OFFER TEXT:\n{text}")
-
-    if image_bytes:
-        contents.append(
-            types.Part.from_bytes(
-                data=image_bytes,
-                mime_type=mime_type or "image/png",
-            )
-        )
+    prompt = prompt.format(today=_today().date().isoformat())
 
     try:
+        # Built inside the guard: a screenshot we can't turn into a Part is just another reason to
+        # fall back, not a 502 on /api/extract.
+        contents = [prompt]
+
+        if text:
+            contents.append(f"LOAD OFFER TEXT:\n{text}")
+
+        if image_bytes:
+            contents.append(
+                types.Part.from_bytes(
+                    data=image_bytes,
+                    mime_type=mime_type or "image/png",
+                )
+            )
+
         client = genai.Client(
             api_key=api_key,
             http_options=types.HttpOptions(timeout=10_000),
         )
-
-        response = client.models.generate_content(
-            model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
-            contents=contents,
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-                response_schema=schema,
-                temperature=0,
-            ),
+        config = types.GenerateContentConfig(
+            response_mime_type="application/json",
+            response_schema=schema,
+            temperature=0,
         )
 
-        if not response.text:
-            raise RuntimeError("Gemini returned an empty response")
+        # The API throws an occasional 5xx. One immediate retry: two 10 s attempts still fit inside
+        # a judge's patience, and it's the difference between a live read and canned data on stage.
+        for attempt in range(ATTEMPTS):
+            try:
+                global _CALLS
+                _CALLS += 1
+                response = client.models.generate_content(
+                    model=_model(), contents=contents, config=config
+                )
+                if not response.text:
+                    raise RuntimeError("Gemini returned an empty response")
+                break
+            except Exception as exc:
+                if _is_quota_error(exc):
+                    raise          # retrying a spent daily quota just wastes the judge's time
+                if attempt == ATTEMPTS - 1:
+                    raise
+                LOG.warning("Gemini attempt %d failed (%s); retrying", attempt + 1, type(exc).__name__)
 
         extracted = json.loads(response.text)
 
-    except Exception:
-        if text and "greensboro" in text.lower():
-            result = _demo_bad_load()
-        else:
-            result = validate_extracted_load(fallback_data, source)
-
-        result.warnings.append(
-            "Gemini unavailable; using offline demo data"
-        )
+    except Exception as exc:
+        # Never let a Gemini outage take the app down mid-demo — but say so at the top of the
+        # warnings, so nobody mistakes the fallback for a reading of their offer. Log the type:
+        # a silent fallback that looks like success is how a broken key survives to demo day.
+        if _is_quota_error(exc):
+            global _QUOTA_HIT
+            _QUOTA_HIT = True
+        LOG.warning("Gemini extraction failed (%s); using offline demo data", type(exc).__name__)
+        result = validate_extracted_load(fallback_data, source)
+        result.warnings.insert(0, _failure_warning(exc))
         return result
 
-    return validate_extracted_load(extracted, source)
+    try:
+        return validate_extracted_load(extracted, source)
+    except Exception as exc:
+        # Gemini answered, but with something Load can't accept. Same treatment as an outage:
+        # show demo data with a warning on top rather than a 502 in front of a judge.
+        LOG.warning("Gemini returned unusable fields (%s); using offline demo data", type(exc).__name__)
+        result = validate_extracted_load(fallback_data, source)
+        result.warnings.insert(0, _failure_warning(exc))
+        return result
 
 def explain(payload: dict) -> str:
     econ = payload.get("economics") or {}
@@ -312,8 +408,10 @@ def validate_extracted_load(data: dict, source: str) -> ExtractionResult:
         "weight_lbs": data.get("weight_lbs"),
         "commodity": data.get("commodity"),
         "broker": data.get("broker"),
-        "payment_terms_days": data.get("payment_terms_days", 30),
-        "quick_pay_fee_pct": data.get("quick_pay_fee_pct", 0.03),
+        # Gemini returns an explicit null for anything the offer doesn't state, and these two
+        # fields are non-optional on Load. dict.get(key, default) keeps the null, so check for it.
+        "payment_terms_days": _or_default(data.get("payment_terms_days"), 30),
+        "quick_pay_fee_pct": _or_default(data.get("quick_pay_fee_pct"), 0.03),
         "source": source,
     }
 
