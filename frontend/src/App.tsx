@@ -241,8 +241,6 @@ export default function App() {
             Workspace <span>/</span> {screen}
           </span>
           <div className="header-actions">
-            <span className="status-dot" />
-            {USE_MOCKS ? "Mock demo" : health ? "API connected" : "API offline"}
             {/* Only when the bank really is live: the badge being here is itself the evidence. */}
             {!USE_MOCKS && health?.modules?.nessie === "live" && (
               <CapitalOneMark label="Bank data by" className="capone-mark-header" />
